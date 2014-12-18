@@ -17,7 +17,7 @@
     position: relative;
     padding: 30px 15px;
     color: #F5F5F5;
-    text-align: center;
+    /*text-align: center;*/
     text-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
     background: #4393B9;
 }
@@ -52,6 +52,14 @@
     width: 52px;
     height: 52px;
     border-bottom: 1px solid black;
+}
+
+#answerValidation{
+    margin-left: 10px;
+}
+
+#gridContainer{
+    padding-bottom: 50px;
 }
 
 .footer {
