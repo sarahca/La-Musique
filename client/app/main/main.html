@@ -198,7 +198,7 @@
           
          
           var randomRow = hor_cell[Math.floor(Math.random() * (maxCellSize - songAnswer[k].length + 2))];
-          var randomCol = Math.floor(Math.random() * ver_cell.length);
+          var randomCol = ver_cell[Math.floor(Math.random() * ver_cell.length)];
           console.log("randomRow = " + randomRow);
           console.log("randomCol = " + randomCol);
           var counter = 0;
@@ -216,7 +216,7 @@
           console.log("VERTICAL!");
           console.log("songAnswer[k] = " + songAnswer[k]);
           var randomRow = hor_cell[Math.floor(Math.random() * (maxCellSize - songAnswer[k].length + 2))];
-          var randomCol = Math.floor(Math.random() * ver_cell.length);
+          var randomCol = ver_cell[Math.floor(Math.random() * ver_cell.length)];
           console.log("randomRow = " + randomRow);
           console.log("randomCol = " + randomCol);
           var counter = 0;
@@ -244,8 +244,8 @@
 </script>
 
 <div class="container">
+  <h3> Leader Board </h3>
   <div class="row">
-    <h3> Leader Board </h3>
     <!-- <div class="col-lg-12">
       <h1 class="page-header">Leader Board</h1> -->
     <div class="col-md-2">
@@ -326,7 +326,7 @@
             <div class="time" ng-show="mediaPlayer.formatTime">
               <span>[[ mediaPlayer.formatTime ]]</span><b>/</b><span>[[ mediaPlayer.formatDuration ]]</span>
             </div>
-          <
+          
         </div><!-- END OF MAIN CTRL CLASS->
       </div><!-- END OF MEDIA PLAYER ROW DIV -->
   </div> <!-- END OF MEDIA PLAYER CONTAINER DIV-->
@@ -496,14 +496,10 @@
       <h2>TYPE YOUR ANSWER</h2>
       <input type="text" ng-model="answer" ng-change="change()"><span id="answerValidation"></span>
     </div>
-      </div>
-  <!-- RIGHT COLUMN : CHAT -->
-      <div class="col-md-6">
-        <h3>Chat </h3>  
-      </div>  
-    </div>
-  </div> <!-- END OF GAME AREA -->
-</div>
+  </div><!-- END OF ROW DIV-->
+</div><!-- END OF CONTAINER DIV-->
+
+
 
 <!-- <footer class="footer">
   <div class="container">
