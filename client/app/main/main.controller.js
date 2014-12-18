@@ -9,6 +9,17 @@ angular.module('lamusiqueApp')
       socket.syncUpdates('thing', $scope.awesomeThings);
     });
 
+    $scope.answer = 'please enter your answer';
+    $scope.change = function(){
+      if($scope.answer == "Poker Face"){
+      $('#answerIcon').html('&#10004;');
+      }else{
+        $('#answerIcon').html('Incorrect');
+      }
+    }
+    console.log(" $scope.answer = " +  $scope.answer);
+    
+
     $scope.addThing = function() {
       if($scope.newThing === '') {
         return;

@@ -22,6 +22,38 @@
     background: #4393B9;
 }
 
+.musicGrid{
+    width: 540px;
+    height: 540px;
+    border:1px solid black;
+}
+
+.musicGrid td{
+    background: lightblue;
+    border: 1px white solid;
+    padding: 0;
+    font-size: 35px;
+    width: 52px;
+    height: 52px;
+    cursor: pointer;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.musicGrid td.selected{
+    color: orange;
+}
+
+.musicGrid td.selectedSuccess{
+    background-color: lightgreen;
+}
+
+.answerTable td{
+    width: 52px;
+    height: 52px;
+    border-bottom: 1px solid black;
+}
+
 .footer {
     text-align: center;
     padding: 30px 0;

@@ -8,6 +8,376 @@
   </div>
 </header>
 
+<script>
+  $(function(){
+    var isMouseDown = false;
+    var isSelected;
+    var selectedWord = "";
+    var alphabetSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    var maxCellSize = 9;
+    populateTable();
+    generateAnswer("Poker Face");
+    generateAnswerPlaceholder("Poker Face");
+
+    function generateAnswerPlaceholder(quizAnswer){
+      quizAnswer = quizAnswer.split(" ");
+      var answer_table_tr = $('.answerTable').find('tr');
+            //&#10004; heavy check mark
+            //&#10008; heavy X
+    }
+
+    $("#musicSearch td")
+      .on("mousedown",function() {
+        isMouseDown = true;
+        selectedWord += $(this).text();
+        $(this).addClass("selected");
+        //isSelected = $(this).hasClass("selected");
+        return false;
+      })
+
+      .on("mouseover",function () {
+        if (isMouseDown) {
+          selectedWord += $(this).text();
+          $(this).addClass("selected");
+        }
+      })
+
+      .on("mouseup", function(){
+          isMouseDown = false;
+          console.log("SELECTED WORD = " + selectedWord);
+          checkAnswer(selectedWord);
+          selectedWord = "";
+      })
+
+    function checkAnswer(input){
+      if(input === "POKER" || input === "FACE"){
+        console.log("CORRECT");
+        $('#musicSearch td').each(function(i, elem){
+          if($(elem).hasClass("selected") == true){
+            $(elem).addClass("selectedSuccess");
+            $(elem).removeClass("selected");
+          }
+        })
+        
+      }else{
+        console.log("INCORRECT");
+        $('#musicSearch td').removeClass("selected");
+
+      }
+
+    }
+
+    function populateTable(){
+      for(var i = 0; i < 10; i++){
+        for(var j = 0; j < 10; j++){
+          $('#cell_'+i+j).html(alphabetSet.charAt(Math.floor(Math.random() * 26)));
+        }
+      }
+    }
+
+    function generateAnswer(answer){
+      var position = ["horizontal", "vertical"];
+      var songAnswer = answer.toUpperCase().split(" ");
+      var songPosition = {
+        horizontal: [],
+        vertical: []
+      };
+      var hor_cell = [0,1,2,3,4,5,6,7,8,9];
+      var ver_cell = [0,1,2,3,4,5,6,7,8,9];
+      console.log("songAnswer = " + songAnswer);
+      console.log("songAnswer.length = " + songAnswer.length);
+
+      for(var k = 0; k < songAnswer.length; k++){
+  
+        var answerLength = songAnswer[k].length;
+        var ranPos = Math.floor(Math.random() * 2);
+        //console.log("randomPosition = " + ranPos);
+        if(position[ranPos] === 'horizontal'){
+          console.log(" ======== HORIZONTAL! ========");
+          console.log("songAnswer[k] = " + songAnswer[k]);
+
+          //check songPosition array
+
+         if(!songPosition.horizontal.length == 0){
+          console.log("AAA");
+          console.log("hor_cell before splice = " + hor_cell);
+          for(var i in songPosition.horizontal){
+            console.log("songPosition.horizontal[i] = " + songPosition.horizontal[i]);
+            var indexToRemove = hor_cell.indexOf(songPosition.horizontal[i])
+            hor_cell.splice(indexToRemove , 1);
+          }
+          console.log("hor_cell after splice = " + hor_cell);
+          var randomRow = hor_cell[Math.floor(Math.random() * hor_cell.length)];
+          var randomCol = ver_cell[Math.floor(Math.random() * (maxCellSize - songAnswer[k].length + 2))];
+          console.log("randomRow = " + randomRow);
+          console.log("randomCol = " + randomCol);
+          var counter = 0;
+            for(var m = randomCol; m < (randomCol + songAnswer[k].length); m++){
+              //console.log("songAnswer[k].charAt(c) = " + songAnswer[k].charAt(counter));
+              //console.log("randomRow = " + randomRow + " and m = " + m);
+              $('#cell_'+randomRow+m).html(''+ songAnswer[k].charAt(counter));
+              songPosition.vertical.push(m);
+              counter++;
+            }
+           songPosition.horizontal.push(randomRow);
+           console.log("===================================================");
+           console.log("current songPosition.horizontal = " + songPosition.horizontal);
+           console.log("current songPosition.vertical = " + songPosition.vertical);
+            // console.log("songPosition = " + songPosition);
+          }else{
+            console.log("BBB");
+            var randomRow = hor_cell[Math.floor(Math.random() * hor_cell.length)];
+            var randomCol = ver_cell[Math.floor(Math.random() * (maxCellSize - songAnswer[k].length + 2))];
+            console.log("randomRow = " + randomRow);
+            console.log("randomCol = " + randomCol);
+
+            var counter = 0;
+              for(var m = randomCol; m < (randomCol + songAnswer[k].length); m++){
+                //console.log("songAnswer[k].charAt(c) = " + songAnswer[k].charAt(counter));
+                //console.log("randomRow = " + randomRow + " and m = " + m);
+                $('#cell_'+randomRow+m).html(''+ songAnswer[k].charAt(counter));
+                songPosition.vertical.push(m);
+                counter++;
+              }
+             songPosition.horizontal.push(randomRow);
+             console.log("===================================================");
+             console.log("current songPosition.horizontal = " + songPosition.horizontal);
+             console.log("current songPosition.vertical = " + songPosition.vertical);
+            
+          }
+          
+         
+            //console.log("songPosition = " + songPosition);
+        }else if(position[ranPos] === 'vertical'){
+
+         if(!songPosition.vertical.length == 0){
+          console.log("CCC");
+          console.log(" ======== VERTICAL! ========= ");
+          console.log("ver_cell before splice = " + ver_cell);
+          for(var i in songPosition.vertical){
+            console.log("songPosition.vertical[i] = " + songPosition.vertical[i]);
+            var indexToRemove = ver_cell.indexOf(songPosition.vertical[i])
+            ver_cell.splice(indexToRemove , 1);
+
+          }
+          console.log("ver_cell after splice = " + ver_cell);
+          
+         
+          var randomRow = hor_cell[Math.floor(Math.random() * (maxCellSize - songAnswer[k].length + 2))];
+          var randomCol = Math.floor(Math.random() * ver_cell.length);
+          console.log("randomRow = " + randomRow);
+          console.log("randomCol = " + randomCol);
+          var counter = 0;
+            for(var n = randomRow; n < (randomRow + songAnswer[k].length); n++){
+              $('#cell_'+n+randomCol).html(''+ songAnswer[k].charAt(counter));
+              songPosition.horizontal.push(n);
+              counter++;
+            }
+           songPosition.vertical.push(randomCol);
+           console.log("===================================================");
+           console.log("current songPosition.horizontal = " + songPosition.horizontal);
+           console.log("current songPosition.vertical = " + songPosition.vertical);
+         }else{
+          console.log("DDD");
+          console.log("VERTICAL!");
+          console.log("songAnswer[k] = " + songAnswer[k]);
+          var randomRow = hor_cell[Math.floor(Math.random() * (maxCellSize - songAnswer[k].length + 2))];
+          var randomCol = Math.floor(Math.random() * ver_cell.length);
+          console.log("randomRow = " + randomRow);
+          console.log("randomCol = " + randomCol);
+          var counter = 0;
+          for(var n = randomRow; n < (randomRow + songAnswer[k].length); n++){
+              $('#cell_'+n+randomCol).html(''+ songAnswer[k].charAt(counter));
+              songPosition.horizontal.push(n);
+              counter++;
+            }
+           songPosition.vertical.push(randomCol);
+           console.log("===================================================");
+           console.log("current songPosition.horizontal = " + songPosition.horizontal);
+           console.log("current songPosition.vertical = " + songPosition.vertical);
+         }
+         
+        }
+      }//end of for loop
+      console.log("===================================================");
+      console.log("final songPosition.horizontal = " + songPosition.horizontal);
+      console.log("final songPosition.vertical = " + songPosition.vertical);
+    }
+
+  })//end of document ready
+
+
+</script>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-6">
+      <h1 id="wordSearch">Word Search</h1>
+      <table class="musicGrid" id="musicSearch">
+        <tr>
+        <td></td>
+         <td>0</td>
+         <td>1</td>
+         <td>2</td>
+         <td>3</td>
+         <td>4</td>
+         <td>5</td>
+         <td>6</td>
+         <td>7</td>
+         <td>8</td>
+         <td>9</td>
+        </tr>
+        <tr>
+          <td>0</td>
+          <td id="cell_00">T</td>
+          <td id="cell_01">A</td>
+          <td id="cell_02">B</td>
+          <td id="cell_03">C</td>
+          <td id="cell_04">J</td>
+          <td id="cell_05">K</td>
+          <td id="cell_06">I</td>
+          <td id="cell_07">O</td>
+          <td id="cell_08">P</td>
+          <td id="cell_09">Q</td>
+        </tr>
+         <tr>
+          <td>1</td>
+          <td id="cell_10">T</td>
+          <td id="cell_11">A</td>
+          <td id="cell_12">B</td>
+          <td id="cell_13">C</td>
+          <td id="cell_14">J</td>
+          <td id="cell_15">K</td>
+          <td id="cell_16">I</td>
+          <td id="cell_17">O</td>
+          <td id="cell_18">P</td>
+          <td id="cell_19">Q</td>
+        </tr>
+         <tr>
+          <td>2</td>
+          <td id="cell_20">T</td>
+          <td id="cell_21">A</td>
+          <td id="cell_22">B</td>
+          <td id="cell_23">C</td>
+          <td id="cell_24">J</td>
+          <td id="cell_25">K</td>
+          <td id="cell_26">I</td>
+          <td id="cell_27">O</td>
+          <td id="cell_28">P</td>
+          <td id="cell_29">Q</td>
+        </tr>
+         <tr>
+          <td>3</td>
+          <td id="cell_30">T</td>
+          <td id="cell_31">A</td>
+          <td id="cell_32">B</td>
+          <td id="cell_33">C</td>
+          <td id="cell_34">J</td>
+          <td id="cell_35">K</td>
+          <td id="cell_36">I</td>
+          <td id="cell_37">O</td>
+          <td id="cell_38">P</td>
+          <td id="cell_39">Q</td>
+        </tr>
+         <tr>
+          <td>4</td>
+          <td id="cell_40">T</td>
+          <td id="cell_41">A</td>
+          <td id="cell_42">B</td>
+          <td id="cell_43">C</td>
+          <td id="cell_44">J</td>
+          <td id="cell_45">K</td>
+          <td id="cell_46">I</td>
+          <td id="cell_47">O</td>
+          <td id="cell_48">P</td>
+          <td id="cell_49">Q</td>
+        </tr>
+         <tr>
+          <td>5</td>
+          <td id="cell_50">T</td>
+          <td id="cell_51">A</td>
+          <td id="cell_52">B</td>
+          <td id="cell_53">C</td>
+          <td id="cell_54">J</td>
+          <td id="cell_55">K</td>
+          <td id="cell_56">I</td>
+          <td id="cell_57">O</td>
+          <td id="cell_58">P</td>
+          <td id="cell_59">Q</td>
+        </tr>
+         <tr>
+          <td>6</td>
+          <td id="cell_60">T</td>
+          <td id="cell_61">A</td>
+          <td id="cell_62">B</td>
+          <td id="cell_63">C</td>
+          <td id="cell_64">J</td>
+          <td id="cell_65">K</td>
+          <td id="cell_66">I</td>
+          <td id="cell_67">O</td>
+          <td id="cell_68">P</td>
+          <td id="cell_69">Q</td>
+        </tr>
+         <tr>
+          <td>7</td>
+          <td id="cell_70">T</td>
+          <td id="cell_71">A</td>
+          <td id="cell_72">B</td>
+          <td id="cell_73">C</td>
+          <td id="cell_74">J</td>
+          <td id="cell_75">K</td>
+          <td id="cell_76">I</td>
+          <td id="cell_77">O</td>
+          <td id="cell_78">P</td>
+          <td id="cell_79">Q</td>
+        </tr>
+         <tr>
+          <td>8</td>
+          <td id="cell_80">T</td>
+          <td id="cell_81">A</td>
+          <td id="cell_82">B</td>
+          <td id="cell_83">C</td>
+          <td id="cell_84">J</td>
+          <td id="cell_85">K</td>
+          <td id="cell_86">I</td>
+          <td id="cell_87">O</td>
+          <td id="cell_88">P</td>
+          <td id="cell_89">Q</td>
+        </tr>
+         <tr>
+          <td>9</td>
+          <td id="cell_90">T</td>
+          <td id="cell_91">A</td>
+          <td id="cell_92">B</td>
+          <td id="cell_93">C</td>
+          <td id="cell_94">J</td>
+          <td id="cell_95">K</td>
+          <td id="cell_96">I</td>
+          <td id="cell_97">O</td>
+          <td id="cell_98">P</td>
+          <td id="cell_99">Q</td>
+        </tr>
+
+      </table>
+    </div>
+    <div class="col-md-6" >
+      <h2>CORRECT ANSWER</h2>
+        <table class="answerTable">
+          <tr>
+
+          </tr>
+        </table>
+      <br/>
+      <h2>TYPE YOUR ANSWER</h2>
+      <input type="text" ng-model="answer" ng-change="change()"><span id="answerIcon"></span>
+      <p>{{answer}}</p>
+    </div>
+  </div><!-- END OF ROW DIV-->
+</div><!-- END OF CONTAINER DIV-->
+
+
+
+
 <div class="container">
   <div class="row">
     <div class="col-lg-12">
