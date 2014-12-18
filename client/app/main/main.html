@@ -2,9 +2,43 @@
 
 <header class="hero-unit" id="banner">
   <div class="container">
-    <h1>'Allo, 'Allo!</h1>
-    <p class="lead">Kick-start your next web app with Angular Fullstack</p>
-    <img src="assets/images/yeoman.png" alt="I'm Yeoman">
+    <h1>Next round in </h1>
+    <!-- <p class="lead">Kick-start your next web app with Angular Fullstack</p>
+    <img src="assets/images/yeoman.png" alt="I'm Yeoman"> -->
+
+    <div class='row'>
+      <!--QUESTION CATEGORY DROP DOWN-->
+      <div class='col-md-4'>
+        <div class="btn-group">
+          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+            Question category <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" role="menu">
+            <li><a href="#">Artist</a></li>
+            <li><a href="#">Song title</a></li>   
+          </ul>
+        </div>
+      </div>
+      <!--END QUESTION CATEGORY DROP DOWN -->
+
+      <!--GENRE DROP DOWN -->
+      <div class="col-md-4">
+        <div class="btn-group">
+          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+            Music Genre <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" role="menu">
+            <li><a href="#">Rock</a></li>
+            <li><a href="#">Pop</a></li>   
+          </ul>
+        </div>
+      </div> <!--END GENRE DROP DOWN -->
+      <div class="col-md-4">
+        <label>
+          <input type="checkbox"> Bot Mode
+        </label>
+      </div> <!-- END OF BOT MODE-->
+    </div> <!--END OF DROPDOWNS ROW -->
   </div>
 </header>
 
@@ -379,16 +413,36 @@
 
 
 <div class="container">
+<h3> Leader Board </h3>
   <div class="row">
-    <div class="col-lg-12">
-      <h1 class="page-header">Features:</h1>
-      <ul class="nav nav-tabs nav-stacked col-md-4 col-lg-4 col-sm-6" ng-repeat="thing in awesomeThings">
+    <!-- <div class="col-lg-12">
+      <h1 class="page-header">Leader Board</h1> -->
+    <div class="col-md-2">
+      <span> Player 1 </span>
+    </div>
+    <div class="col-md-2">
+      <span> Player 2 </span>
+    </div>
+    <div class="col-md-2">
+      <span> Player 3 </span>
+    </div>
+    <div class="col-md-2">
+      <span> Player 4 </span>
+    </div>
+    <div class="col-md-2">
+      <span> Player 5 </span>
+    </div>
+    <div class="col-md-2">
+      <span> Player 6 </span>
+    </div>
+
+      <!-- <ul class="nav nav-tabs nav-stacked col-md-4 col-lg-4 col-sm-6" ng-repeat="thing in awesomeThings">
         <li><a href="#" tooltip="{{thing.info}}">{{thing.name}}<button type="button" class="close" ng-click="deleteThing(thing)">&times;</button></a></li>
-      </ul>
+      </ul> -->
     </div>
   </div>
 
-  <form class="thing-form">
+ <!--  <form class="thing-form">
     <label>Syncs in realtime across clients</label>
     <p class="input-group">
       <input type="text" class="form-control" placeholder="Add a new thing here." ng-model="newThing">
@@ -396,13 +450,33 @@
         <button type="submit" class="btn btn-primary" ng-click="addThing()">Add New</button>
       </span>
     </p>
-  </form>
+  </form> -->
+
+  <!-- GAME AREA-->
+  <div class="container">
+    <!-- ROW FOR MEDIA PLAYER -->
+    <div class="row" style="background-color: yellow;">
+      <h3>Media player </h3>
+    </div> 
+    <!-- GRID AND CHAT -->
+    <div class="row">
+  <!--LEFT COLUMN -->
+      <div class="col-md-6">
+
+        <h3>Grid </h3>
+      </div>
+  <!-- RIGHT COLUMN : CHAT -->
+      <div class="col-md-6">
+        <h3>Chat </h3>  
+      </div>  
+    </div>
+  </div> <!-- END OF GAME AREA -->
 </div>
 
-<footer class="footer">
+<!-- <footer class="footer">
   <div class="container">
       <p>Angular Fullstack v2.0.13 |
         <a href="https://twitter.com/tyhenkel">@tyhenkel</a> |
          <a href="https://github.com/DaftMonk/generator-angular-fullstack/issues?state=open">Issues</a></p>
   </div>
-</footer>
+</footer> -->
