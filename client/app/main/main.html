@@ -49,16 +49,54 @@
     var selectedWord = "";
     var alphabetSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     var maxCellSize = 9;
+    var validation = false;
     populateTable();
     generateAnswer("Poker Face");
-    generateAnswerPlaceholder("Poker Face");
-
-    function generateAnswerPlaceholder(quizAnswer){
-      quizAnswer = quizAnswer.split(" ");
-      var answer_table_tr = $('.answerTable').find('tr');
-            //&#10004; heavy check mark
-            //&#10008; heavy X
-    }
+    
+    var Test = (function () {
+      
+      'use strict';
+       return {
+          hello: (function(){
+            console.log("ALOHA");
+          }),
+          generateAnswerPlaceholder: (function (quizAnswer, validation) {
+              //quizAnswer = quizAnswer.split(" ");
+              console.log("quizAnswer = " + quizAnswer);
+              console.log("validation = " + validation);
+              // console.log("quizAnswer.length = " + quizAnswer.length);
+              // var answer_table = $('.answerTable').find('tbody').empty();
+              // var tr = $('<tr>').appendTo(answer_table);
+              // for(var i = 0; i < quizAnswer.length; i++){
+              //   for(var j = 0; j < quizAnswer[i].length; j++){
+              //     validation == false ? $("<td>").text('__').appendTo(tr) : $("<td>").text(''+ quizAnswer[i][j]).appendTo(tr)
+              //   }
+              //   if(i !== quizAnswer.length - 1){
+              //     $("<td style='text-decoration: none;'>").html('&nbsp;&nbsp;&nbsp;&nbsp;').appendTo(tr);
+              //   }
+              // };
+          }())
+       };
+    }());
+    //test.hello();
+    //test.generateAnswerPlaceholder("Poker Face", false);
+    
+    // function generateAnswerPlaceholder(quizAnswer, validation){
+    //   "use strict";
+    //   quizAnswer = quizAnswer.split(" ");
+    //   console.log("quizAnswer = " + quizAnswer);
+    //   console.log("quizAnswer.length = " + quizAnswer.length);
+    //   var answer_table = $('.answerTable').find('tbody').empty();
+    //   var tr = $('<tr>').appendTo(answer_table);
+    //   for(var i = 0; i < quizAnswer.length; i++){
+    //     for(var j = 0; j < quizAnswer[i].length; j++){
+    //       validation == false ? $("<td>").text('__').appendTo(tr) : $("<td>").text(''+ quizAnswer[i][j]).appendTo(tr)
+    //     }
+    //     if(i !== quizAnswer.length - 1){
+    //       $("<td style='text-decoration: none;'>").html('&nbsp;&nbsp;&nbsp;&nbsp;').appendTo(tr);
+    //     }
+    //   }
+    // }
 
     $("#musicSearch td")
       .on("mousedown",function() {
@@ -339,9 +377,7 @@
       <h1 id="wordSearch">Word Search</h1>
       <h2>CORRECT ANSWER</h2>
         <table class="answerTable">
-          <tr>
-
-          </tr>
+         <tbody></tbody>
         </table>
       <br/>
       

@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('lamusiqueApp')
-  .controller('MainCtrl', function ($scope, $http, socket, $timeout) {
+  .controller('MainCtrl', function ($scope, $http, $filter,socket, $timeout) {
     $scope.awesomeThings = [];
 
     $http.get('/api/things').success(function(awesomeThings) {
@@ -9,12 +9,27 @@ angular.module('lamusiqueApp')
       socket.syncUpdates('thing', $scope.awesomeThings);
     });
 
-    $scope.answer = 'your answer';
+    $scope.answer = '';
+    generateAnswerPlaceholder("Poker Face",null,false);
+    $scope.$watch('answer', function(val) {
+      $scope.answer = $filter('uppercase')(val);
+    }, true);
+
     $scope.change = function(){
-      if($scope.answer == "Poker Face"){
-      $('#answerValidation').html('&#10004;');
+      if(angular.uppercase($scope.answer) === "POKER"){
+        $('#answerValidation').html('&#10004;');
+        $('#answerValidation').removeClass('error');
+        $('#answerValidation').addClass('success');
+        generateAnswerPlaceholder("POKER FACE",angular.uppercase($scope.answer), true);
+      }else if(angular.uppercase($scope.answer) === "POKER FACE") {
+        $('#answerValidation').html('&#10004;');
+        $('#answerValidation').removeClass('error');
+        $('#answerValidation').addClass('success');
+        generateAnswerPlaceholder("POKER FACE",angular.uppercase($scope.answer), true);
       }else{
         $('#answerValidation').html('&#10008;');
+        $('#answerValidation').addClass('error');
+        $('#answerValidation').removeClass('success');
       }
     }
     console.log(" $scope.answer = " +  $scope.answer);

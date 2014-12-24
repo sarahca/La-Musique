@@ -51,11 +51,21 @@
 .answerTable td{
     width: 52px;
     height: 52px;
-    border-bottom: 1px solid black;
+    font-size: 35px;
+    text-decoration: underline;
+    padding: 5px;
 }
 
 #answerValidation{
-    margin-left: 10px;
+    margin-left: 25px;
+}
+
+#answerValidation.success{
+    color: green;
+}
+
+#answerValidation.error{
+    color: red;
 }
 
 #gridContainer{
