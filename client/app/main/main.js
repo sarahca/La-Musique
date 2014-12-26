@@ -4,8 +4,8 @@ angular.module('lamusiqueApp')
   .config(function ($stateProvider) {
     $stateProvider
       .state('main', {
-        url: '/',
+        url: '/:channel',
         templateUrl: 'app/main/main.html',
-        controller: 'MainCtrl'
+        //controller: 'MainCtrl'
       });
   });
