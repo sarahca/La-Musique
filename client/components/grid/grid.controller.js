@@ -1,7 +1,5 @@
   'use strict';
 
-  console.log('in grid controller');
-
 var gridInit = function(){
 
 
@@ -207,9 +205,9 @@ angular.module('lamusiqueApp')
   .controller('GridCtrl', function ($scope, $http, socket, $timeout, $rootScope) {
     console.log('GridCtrl');
 
-    $timeout(function () {
-      gridInit();
-    });
+    // $timeout(function () {
+    //   gridInit();
+    // });
     
   });
 

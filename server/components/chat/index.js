@@ -1,11 +1,12 @@
 'use strict';
 
-redis_lib.createClient().flushall();
-
+var redisLib = require("redis");
 var PlayerSocket = require('./player.js'); 
 
-io.on('connection', function (socket) {
-  var playerSocket = new PlayerSocket(socket);
-});
+module.exports = function (appSocket) {
+  redisLib.createClient().flushall();
 
-module.exports = null;
+  appSocket.on('connection', function (socket) {
+    var playerSocket = new PlayerSocket(socket);
+  });
+};
