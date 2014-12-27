@@ -210,6 +210,7 @@ angular.module('lamusiqueApp')
     $timeout(function () {
       gridInit();
     });
+    
   });
 
   

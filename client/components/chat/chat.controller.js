@@ -14,15 +14,18 @@ angular.module('lamusiqueApp')
     console.log(socket);
 
     $scope.sendMessage = function() {
-      $scope.messages.push($scope.msg.text);
-      console.log($scope.msg.text);
-      // var text = $scope.msg.text;
+      console.log('in send message');
+      console.log($scope.newMsg);
+      console.log($scope);
+      // $scope.messages.push($scope.newMsg.text);
+      // console.log($scope.newMsg.text);
+      // var text = $scope.newMsg.text;
       // message = {
       //   'channel': $scope.channelName,
       //   'text': text,
       // };
       // socket.emit('post_message', JSON.stringify(message));
-      $scope.msg.text = '';
+      //$scope.newMsg.text = '';
     };
 
     // socket.on('new_message', function(data){
