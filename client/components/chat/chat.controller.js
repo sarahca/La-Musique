@@ -20,8 +20,7 @@ angular.module('lamusiqueApp')
     console.log(join_msg);
     $scope.socket.emit('join_channel', join_msg);
 
-    // update nickname when the player is changing it
-
+    // update nickname when the player is changing it in contenteditable label
     this.onNicknameChange = function(el) {
       console.log('->   ' + el.text());
       var message = {
@@ -33,7 +32,7 @@ angular.module('lamusiqueApp')
       $scope.socket.emit('command', JSON.stringify(message));
     };
 
-
+    // listen for changes on contenteditable label
     $timeout( function () {
       var el = angular.element('#nickname');
       el.bind('blur', function () {
@@ -62,6 +61,7 @@ angular.module('lamusiqueApp')
       $scope.newMsg.text = '';
     };
 
+    // helper method called when receiving a new message to determine the nickname associated with our own client
     this.getOwnNickname = function(message) {
       if (message['message_type'] == 'bot' && message['player_nickname']) {
         $scope.nickname = message['player_nickname'];
@@ -86,7 +86,6 @@ angular.module('lamusiqueApp')
     });
 
     // methods which processes the feedback coming from the backend when trying to change nickname
-
     this.processNicknameFeedback = function (message) {
       console.log($scope.nickname);
       if (message['nickname_feedback'] == 'not_updated') {
@@ -99,6 +98,7 @@ angular.module('lamusiqueApp')
       
     };
 
+    // processes messages depending on their type and content
     this.setMessageColor = function (message) {
       if (message['message_type'] == 'notification') {
         message['color'] =  'grey';
@@ -118,7 +118,7 @@ angular.module('lamusiqueApp')
       message['color'] = $scope.users[message['nickname']];
     }
 
-
+    // return a random color
     function getRandomRolor() {
       var letters = '0123456789'.split('');
       var color = '#';

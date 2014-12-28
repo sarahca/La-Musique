@@ -1,4 +1,9 @@
-<div class="container"  ng-controller="LandingCtrl">
+<div class="container"  ng-controller="LandingCtrl as LandingCtrl">
   <h1> Landing page </h1>
   <button id="enter" ng-click="enter()"> Enter </button>
+  <hr>
+  <div ng-include="'components/login/login.html'"></div>
+  <hr>
+  <div ng-include="'components/register/register.html'"></div>
+  
 </div>

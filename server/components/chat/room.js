@@ -62,11 +62,11 @@ Room.prototype.addPlayer = function(player){
 
 Room.prototype.changeNickname = function (player, newNickname) {
   var oldNickname = player.nickname;
-  var room = this
+  var room = this;
   console.log(newNickname);
   room.redisPub.sadd('users-' + room.channel, newNickname, function(err, inserted) {
     if ( inserted == 1 ) {
-      room.redisPub.srem('users-' + room.channel, player.nickname, function(err, removed) {
+      room.redisPub.srem('users-' + room.channel, oldNickname, function(err, removed) {
         if ( removed == 1) {
           console.log('old nickname ' + player.nickname + ' was removed from redis');
           player.nickname = newNickname;
