@@ -5,41 +5,38 @@ var async = require('async');
 // var credentials = {"host": "127.0.0.1", "port": 6379 };
 // var redisClient = redis_lib.createClient(credentials.port, credentials.host);
 
-var rooms = {};
+var rooms = {}; // keep list of all channels on this server
+var room; // keep a reference of the Room object
 
 function getRoom(channel) {
   if (!(channel in rooms))
-    rooms[channel] = new Room(channel, null);
+    rooms[channel] = new Room(channel);
   return rooms[channel];
 }
 
-function Room(channel, owner) {
+function Room(channel) {
   this.channel = channel;
-  this.owner = owner;
+  this.owner;
   this.players = [];
   this.redisSub = redisLib.createClient();
   this.redisPub = redisLib.createClient();
   this.redisSub.subscribe(this.channel);
 
-  var room = this;
-  // redis
+  // Room subscribes to messages sent on its channel
   this.redisSub.on('message', function(channel, data) {
     var message = JSON.parse(data);
     console.log('From redis: ' + message['text']);
     room.broadcast(message);
   });
   console.log('Room ' + channel + ' created');
+
+  room = this; // keep a reference of the Room object
 }
 
 Room.prototype.addPlayer = function(player){
-  if ( this.owner === null ) {
-    this.owner = player;
-  }
-  var room = this;
-
   async.timesSeries(20, function (n, next) {
     var nickname = 'Player ' + (n + 1);
-    //in redis, save set of users in the room
+    //in redis, save set of users in the room- gives default nickname to new player
     room.redisPub.sadd('users-' + room.channel, nickname, function(err, inserted) {
       console.log(nickname + ' inserted ' + inserted + ' err ' + err);
       if (inserted == 1)
@@ -52,17 +49,68 @@ Room.prototype.addPlayer = function(player){
     if (!nickname)
       console.log('Too many players in this channel ({0})'.format(room.channel));    
     else {
-      player.nickname = nickname;
-      room.welcomeNewPlayer(player);
-      room.players.push(player);
-      room.joinNoticeMessage(player);
+      //keep track of players on the channel and time they joined
+      room.redisPub.set('user-' + room.channel + '-' + nickname, Date.now(), function(err, inserted){
+        if (!err && inserted) {
+          player.nickname = nickname;
+          room.welcomeNewPlayer(player);
+          room.players.push(player);
+          room.joinNoticeMessage(player);
+          if (room.owner == null)
+            room.setAdminPlayer();
+        }
+      })     
     }
   });
 }
 
+// helper method: get player from players based on nickname
+Room.prototype.getPlayerFromPlayersList = function (nickname ) {
+  return room.players.filter(function (player) {
+    return (player.nickname == nickname);
+  });
+}
+
+
+// set owner of the room ie admin player = first person to join the channel
+Room.prototype.setAdminPlayer = function() {
+  console.log('setting new admin for the game');
+  var keys, keysValues, keyValueObject, adminNickname;
+  room.redisPub.keys('user-' + room.channel + '-*', function(err, replies) {
+    if ( !err && replies) {
+      keys = replies;
+      room.redisPub.mget(replies, function(err, values){
+        if ( !err && values) {
+          console.log(values);
+          keysValues = values;
+
+          keyValueObject = new Object(); // create an object to store key/value pairs as ppty/value
+          for (var i = 0; i < keysValues.length; i++)
+            keyValueObject[keys[i]] = keysValues[i];
+
+          // sort keys to find out which player joined first
+          var keysSorted = Object.keys(keyValueObject).sort(function(a,b){ return keyValueObject[a] - keyValueObject[b]});
+          var adminKey = keysSorted[0];
+          var regexExp = /user-(.*)-(.*)/g;
+          var match = regexExp.exec(adminKey);
+          adminNickname =  match[2];
+          room.owner = adminNickname; // set room's admin
+          console.log('--> new admin is ' + match[2]);
+          var adminPlayerInRoom = room.getPlayerFromPlayersList(adminNickname); // check if admin is in this room
+          if ( adminPlayerInRoom ) {
+            console.log('admin player is in this room');
+            room.adminPlayerGreeting(adminPlayerInRoom[0]);
+          }
+        }
+      });
+    }         
+  });
+}
+
+
+// handle front end request to change nickname
 Room.prototype.changeNickname = function (player, newNickname) {
   var oldNickname = player.nickname;
-  var room = this;
   console.log(newNickname);
   room.redisPub.sadd('users-' + room.channel, newNickname, function(err, inserted) {
     if ( inserted == 1 ) {
@@ -73,6 +121,10 @@ Room.prototype.changeNickname = function (player, newNickname) {
           console.log('successfully changed nickname');
           room.changeNicknameFeedback(player, newNickname, 1);
           room.nicknameChangeNotice(oldNickname, newNickname);
+          room.renameUserKey(oldNickname, newNickname);
+          //update room owner if necessary
+          if (room.owner == oldNickname )
+            room.owner = newNickname;
         }  
       });
     }
@@ -83,7 +135,18 @@ Room.prototype.changeNickname = function (player, newNickname) {
   });
 }
 
-// inform the user that their nickname has been changed or not
+// rename player key after nickname has been updated
+Room.prototype.renameUserKey = function(oldNickname, newNickname) {
+  var keyBase = 'user-' + room.channel + '-';
+  room.redisPub.rename(keyBase + oldNickname, keyBase + newNickname, function(err, res) {
+    if ( err )
+      console.log("couldn't rename key for " + oldNickname + ' -> ' + err);
+    else
+      console.log("key renamed for " + oldNickname + " to " + newNickname + " -> " + res);
+  });
+}
+
+// inform the user if their nickname has been changed or not
 Room.prototype.changeNicknameFeedback = function (player, newNickname, inserted) {
    var message = {
     'message_type': 'bot',
@@ -123,6 +186,17 @@ Room.prototype.welcomeNewPlayer = function(player) {
   player.receiveMessage(message);
 }
 
+// inform player they are the admin of the game
+Room.prototype.adminPlayerGreeting = function(player) {
+  var message = {
+    'message_type': 'bot',
+    'text': 'Hey ' + player.nickname + ', you are now the game admin',
+    'player_nickname': player.nickname,
+    'time' : Date.now(),
+  };
+  player.receiveMessage(message);
+}
+
 // broadcast message to everyone except player when someone joined the room
 Room.prototype.joinNoticeMessage = function(player) {
   console.log('in join notice message');
@@ -151,8 +225,7 @@ Room.prototype.leaveNoticeMessage = function(player){
 Room.prototype.saveAndPublishMessage = function(data) {
   var jsonData = JSON.stringify(data);
   var timestamp = Date.now();
-  var key = this.channel + '-' + timestamp;
-  var room = this;
+  var key = 'message-' + this.channel + '-' + timestamp;
 
   room.redisPub.set(key , jsonData, function(err, res){
     if ( err ){
@@ -175,11 +248,11 @@ Room.prototype.broadcast = function (message) {
 };
 
 Room.prototype.removePlayer = function(player) {
-  var room = this;
   console.log('=======  in room.removePlayer method ====');
+  console.log(player.nickname);
   console.log(room.channel);
   room.redisPub.scard('users-' + room.channel, function(err, res) {
-    if ( ! err ) {
+    if ( !err ) {
       console.log('room currently has ' + res + ' players.');
     }
   });
@@ -188,14 +261,27 @@ Room.prototype.removePlayer = function(player) {
       room.players.splice(i, 1);
       console.log('room removed 1 player');
       room.redisPub.srem('users-' + room.channel, player.nickname, function(err, res){
-        if ( ! err ) {
+        if ( !err ) {
+          // player was removed 
           room.leaveNoticeMessage(player);
-          room.isEmpty();
+          room.isEmpty(); // check if room is empty
           console.log('Player was successfully removed from the room');
-          room.redisPub.scard('users-' + room.channel, function(err, res) {
+          room.redisPub.scard('users-' + room.channel,  function (err, res) {
             if ( !err )
               console.log('room now has ' + res + ' players.');
           });
+          // delete player key
+          room.redisPub.del('user-' + room.channel + '-' + player.nickname, function (err, res) {
+            if (err)
+              console.log(err)
+            else {
+              console.log( 'user-' + room.channel + '-' + player.nickname + ' was deleted from redis' + '--> ' + res);
+              if (player.nickname == room.owner) {
+                console.log('admin player left ' + room.owner);
+                room.setAdminPlayer();
+              }
+            }
+          })
         }
       });
     }
@@ -204,7 +290,7 @@ Room.prototype.removePlayer = function(player) {
 
 Room.prototype.getMessages = function(socket) {
   var messages = [];
-  redisClient.keys(this.channel + '-*', function(err, keys){
+  redisClient.keys('message-' + this.channel + '-*', function(err, keys){
     console.log('getting history from redis');
     console.log('nb of keys in history ' + keys.length);
     console.log('before sort ' + keys);
@@ -227,11 +313,10 @@ Room.prototype.getMessages = function(socket) {
 
 
 Room.prototype.isEmpty = function() {
-  var room = this;
   this.redisPub.scard('users-' + this.channel, function(err, res) {
     if ( !err  && ( res == 0) ) {
       console.log('room is empty');
-      room.redisPub.keys(room.channel + '-*', function(err, keys){
+      room.redisPub.keys('message-' + room.channel + '-*', function(err, keys){
         async.each(keys, function (key) {
           room.redisPub.del(key, function(err, res) {
             if ( err ) 

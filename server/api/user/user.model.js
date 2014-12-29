@@ -6,7 +6,9 @@ var mongoose = require('mongoose'),
 var UserSchema = new Schema({
   username: String,
   email: String,
-  password: String
+  password: String,
+  points: Number,
+  gems: Number
 });
 
 UserSchema.index({username: 1}, {unique: true});

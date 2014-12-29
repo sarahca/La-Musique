@@ -10,7 +10,6 @@ angular.module('lamusiqueApp')
     $scope.nickname;
 
     var controller = this;
-
     $scope.pathname = window.location.pathname;
     $scope.channelName = $scope.pathname.replace(/\//, '');
     $scope.messages = [];
@@ -19,6 +18,16 @@ angular.module('lamusiqueApp')
     var join_msg = JSON.stringify({'channel': $scope.channelName});
     console.log(join_msg);
     $scope.socket.emit('join_channel', join_msg);
+
+    //http POST request to set up the channel in the session cookie even if not logged in
+    $http.post('/api/chat/channel', 
+      {'channel': $scope.channelName,}).
+        success(function(data, status, headers, config) {
+          console.log(data.message);
+        }).
+        error(function(data, status, headers, config) {
+          console.log(data.message);
+        });
 
     // update nickname when the player is changing it in contenteditable label
     this.onNicknameChange = function(el) {
@@ -45,7 +54,6 @@ angular.module('lamusiqueApp')
         }
       });
     });
-
 
     // post a new message
     $scope.sendMessage = function() {
@@ -87,13 +95,17 @@ angular.module('lamusiqueApp')
 
     // methods which processes the feedback coming from the backend when trying to change nickname
     this.processNicknameFeedback = function (message) {
-      console.log($scope.nickname);
+      console.log( 'old nickname ' + $scope.nickname);
+      var oldNickname = $scope.nickname;
       if (message['nickname_feedback'] == 'not_updated') {
         var el = angular.element('#nickname');
-        el.text($scope.nickname);
+        el.text(oldNickname);
       }
       else {
         $scope.nickname = message['new_nickname'];
+        //update nickname in list of users in $scope
+        $scope.users[$scope.nickname] = $scope.users[oldNickname];
+        delete $scope.users[oldNickname];
       }
       
     };

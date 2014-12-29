@@ -1,67 +1,8 @@
-/**
- * Using Rails-like standard naming convention for endpoints.
- * GET     /things              ->  index
- * POST    /things              ->  create
- * GET     /things/:id          ->  show
- * PUT     /things/:id          ->  update
- * DELETE  /things/:id          ->  destroy
- */
+
 
 'use strict';
 
-var _ = require('lodash');
 var User = require('./user.model');
-
-// Get list of things
-// exports.index = function(req, res) {
-//   Thing.find(function (err, things) {
-//     if(err) { return handleError(res, err); }
-//     return res.json(200, things);
-//   });
-// };
-
-// // Get a single thing
-// exports.show = function(req, res) {
-//   Thing.findById(req.params.id, function (err, thing) {
-//     if(err) { return handleError(res, err); }
-//     if(!thing) { return res.send(404); }
-//     return res.json(thing);
-//   });
-// };
-
-// // Creates a new thing in the DB.
-// exports.create = function(req, res) {
-//   Thing.create(req.body, function(err, thing) {
-//     if(err) { return handleError(res, err); }
-//     return res.json(201, thing);
-//   });
-// };
-
-// // Updates an existing thing in the DB.
-// exports.update = function(req, res) {
-//   if(req.body._id) { delete req.body._id; }
-//   Thing.findById(req.params.id, function (err, thing) {
-//     if (err) { return handleError(res, err); }
-//     if(!thing) { return res.send(404); }
-//     var updated = _.merge(thing, req.body);
-//     updated.save(function (err) {
-//       if (err) { return handleError(res, err); }
-//       return res.json(200, thing);
-//     });
-//   });
-// };
-
-// // Deletes a thing from the DB.
-// exports.destroy = function(req, res) {
-//   Thing.findById(req.params.id, function (err, thing) {
-//     if(err) { return handleError(res, err); }
-//     if(!thing) { return res.send(404); }
-//     thing.remove(function(err) {
-//       if(err) { return handleError(res, err); }
-//       return res.send(204);
-//     });
-//   });
-// };
 
 exports.register = function (req, res) {
   console.log('in register');
@@ -84,15 +25,33 @@ exports.register = function (req, res) {
 
 exports.login = function (req, res) {
   var email = req.body.email;
-  var password = req.body.email;
+  var password = req.body.password;
   console.log('in login');
-  var query  = User.where({ 'email': email, 'password': password});
+
+  var o = { 'email': email, 'password': password}
+  var query  = User.where(o);
   query.findOne(function ( err, user) {
-    if ( err )
-      res.send(404, {message: "this account doesn't seem to exist. Register?"});
-    else
-      res.send(200, {message: 'loggin successful'});
+    if ( err || !user )
+      res.send(404, {message: "this account doesn't seem to exist. Register? " });
+    else {
+      console.log(user);
+      req.session.userId = user._id;
+      res.send(200, {message: 'loggin successful '});
+    }
   })
+}
+
+exports.isLoggedIn = function (req, res ) {
+  var userId = req.session.userId;
+  if ( userId )
+    res.send(200, {});
+  else
+    res.send(401, {});
+}
+
+exports.logout = function (req, res) {
+  req.session = null;
+  res.send(200, {});
 }
 
 function handleError(res, err) {

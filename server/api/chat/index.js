@@ -1,7 +1,7 @@
 'use strict';
 
 var express = require('express');
-var controller = require('./user.controller');
+var controller = require('./chat.controller');
 
 var router = express.Router();
 
@@ -12,9 +12,7 @@ var router = express.Router();
 // router.patch('/:id', controller.update);
 // router.delete('/:id', controller.destroy);
 
-router.post('/login', controller.login);
-router.post('/register', controller.register);
-router.get('/isLoggedIn', controller.isLoggedIn);
-router.post('/logout', controller.logout);
+router.post('/channel', controller.joinChannel);
+router.get('/channel', controller.getChannel);
 
 module.exports = router;
