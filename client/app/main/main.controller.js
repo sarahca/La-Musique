@@ -16,7 +16,7 @@ angular.module('lamusiqueApp')
     }, true);
 
     $scope.change = function(){
-      if(angular.uppercase($scope.answer) === "POKER"){
+      if(angular.uppercase($scope.answer) === "POKER" || angular.uppercase($scope.answer) === "FACE"){
         $('#answerValidation').html('&#10004;');
         $('#answerValidation').removeClass('error');
         $('#answerValidation').addClass('success');
