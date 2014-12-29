@@ -2,23 +2,35 @@
 
 
 angular.module('lamusiqueApp')
-  .controller('LandingCtrl', function ($scope, $http, socket, $timeout, $rootScope, $location) {
+  .controller('LandingCtrl', function ( $scope, $http, socket, $timeout, $rootScope, $location) {
     $rootScope.channel = (Math.floor(Math.random()*100000)).toString();
     console.log('channel ' + $rootScope.channel);
-    
-    
 
-    $scope.enter = function() {
-      console.log(window);
-      $location.path("/" + $rootScope.channel);
+    $timeout(function() {
+      $http.get('/api/user/isLoggedIn')
+        .success(function() {
+          $http.get('/api/chat/channel')
+            .success(function(data, status, headers, config) {
+              $scope.redirect(data.channel);
+            })
+        })
+    })
+
+    $scope.redirect = function(channel){
+      $location.path("/" + channel);
       console.log($location.path());
-      //$scope.$digest();
-      // window.history.pushState("channel", "", "/" + $rootScope.channel);
       $scope = $scope || angular.element(document).scope();
       if(!$scope.$$phase) {
-        //this will kickstart angular if to notice the change
-        console.log('in if');
+        //this will kickstart angular  to notice the change
         $scope.$apply();
       }
     }
+    
+    $scope.enter = function() {
+      $scope.redirect($rootScope.channel)
+    };
+
+    $rootScope.$on("userLoggedIn", function() {
+      $scope.enter();
+    });
   });

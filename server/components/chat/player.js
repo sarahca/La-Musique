@@ -7,7 +7,6 @@ function PlayerSocket(socket){
   this.socket = socket;
   this.points = 42;
   this.gems = 0;
-  this.textColor = '';
 
   var self = this;
 
@@ -25,10 +24,9 @@ function PlayerSocket(socket){
   // player posts a message- message received in json format and saved as a JS object
   this.socket.on('post_message', function (data) {
     var d = JSON.parse(data);
-
     console.log('post message ' + data);
-
     d['nickname'] = self.nickname;
+    d['message_type'] = 'message';
     self.room.saveAndPublishMessage(d);
   });
 
@@ -38,6 +36,12 @@ function PlayerSocket(socket){
       self.room.removePlayer(self);
    });
 
+
+  this.socket.on('command', function (data) {
+    var d = JSON.parse(data);
+    if ( d['command'] == 'nickname' )
+      self.room.changeNickname(self, d['new_nickname']);
+  });
 };
 
 // messages are received as an object and sent to front-end in json format

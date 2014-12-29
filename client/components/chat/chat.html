@@ -2,9 +2,15 @@
 
 <div ng-controller="ChatCtrl">
   <div id="chat">
-    <p ng-repeat="msg in messages track by $index"> {{msg}}</p>
+    <div ng-repeat="msg in messages track by $index"> 
+      <p>
+        <strong> <span ng-show="msg.nickname"> {{msg.nickname}} </span> </strong> {{msg.time | date:'HH:mm:ss'}} 
+      </p>
+      <p ng-style="{'color': msg.color}"> {{msg.text}}</p>
+    </div>
   </div>
   <form ng-submit="sendMessage()" >
-    <input type="text" ng-model="newMsg"/>
+    <label id="nickname" contenteditable="true" ng-model="nickname">{{nickname}}</label>
+    <input type="text" ng-model="newMsg.text"/>
   </form>
 </div>

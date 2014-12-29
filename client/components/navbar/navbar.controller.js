@@ -1,15 +1,9 @@
 'use strict';
 
 angular.module('lamusiqueApp')
-  .controller('NavbarCtrl', function ($scope, $location) {
-    $scope.menu = [{
-      'title': 'Home',
-      'link': '/'
-    }];
+  .controller('NavbarCtrl', function ($scope, $http) {
 
-    $scope.isCollapsed = true;
-
-    $scope.isActive = function(route) {
-      return route === $location.path();
-    };
+    $scope.logout = function() {
+      $http.post('/api/user/logout');
+    }
   });

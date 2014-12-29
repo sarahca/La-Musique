@@ -131,6 +131,9 @@ var ans_positions = {};
         }        
    };
 }());
+=======
+var gridInit = function(){
+>>>>>>> development
 
 var gridInit = function(){
 
@@ -372,5 +375,4 @@ angular.module('lamusiqueApp')
     
   });
 
-  
 
