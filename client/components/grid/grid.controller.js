@@ -74,7 +74,7 @@ var ans_positions = {};
                     $('#cell_'+answerPositions['answer_pos_'+j][l]).addClass("selectedSuccess");
                   }
                 }else{
-                  $("<td>").text('__').appendTo(tr);
+                  $("<td>").text('_').appendTo(tr);
                 }
                 
               }       
@@ -98,7 +98,7 @@ var ans_positions = {};
             console.log("userAnswer is null");
             for(var j = 1; j < answers[quizAnswer].length; j++){
               for(var k = 0; k < answers[quizAnswer][j].length; k++){
-                $("<td>").text('__').appendTo(tr);
+                $("<td>").text('_').appendTo(tr);
               }
               if(j !== quizAnswer.length - 1){
                 $("<td style='text-decoration: none;'>").html('&nbsp;&nbsp;&nbsp;&nbsp;').appendTo(tr);
@@ -121,7 +121,7 @@ var ans_positions = {};
           if(userAnswer === null){
             for(var j = 1; j < answers[quizAnswer].length; j++){
               for(var k = 0; k < answers[quizAnswer][j].length; k++){
-                $("<td>").text('__').appendTo(tr);
+                $("<td>").text('_').appendTo(tr);
               }       
               if(j !== quizAnswer.length - 1){
                 $("<td style='text-decoration: none;'>").html('&nbsp;&nbsp;&nbsp;&nbsp;').appendTo(tr);
@@ -131,9 +131,6 @@ var ans_positions = {};
         }        
    };
 }());
-=======
-var gridInit = function(){
->>>>>>> development
 
 var gridInit = function(){
 
