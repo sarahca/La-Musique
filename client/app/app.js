@@ -14,4 +14,8 @@ angular.module('lamusiqueApp', [
       .otherwise('/');
 
     $locationProvider.html5Mode(true);
-  });
+  })
+
+  .service('MediaPlayer', function () {
+    return angular.element(document.querySelector('audio')).scope().mediaPlayer;
+  })
