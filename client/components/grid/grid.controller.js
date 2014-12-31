@@ -12,15 +12,6 @@ var ans_positions = {};
         console.log("quizAnswer = " + quizAnswer);
 
         if(answers[quizAnswer] != null){
-          console.log("========== Answer is in cache : " + answers[quizAnswer]);
-          console.log("answers[quizAnswer].length = " + answers[quizAnswer].length)
-          console.log("quizAnswer in cache = " + answers[quizAnswer]);
-          console.log("validation = " + validation);
-          console.log("userAnswer = " + userAnswer);
-          
-          /*
-           * check if user answer is null 
-           */
           
           for(var p = 1; p <= answers[quizAnswer].length; p++){
             if(ans_positions[p] == null){
@@ -40,6 +31,7 @@ var ans_positions = {};
             if(userAnswer_len === 1){
               var userAnswer_pos = answers[quizAnswer].indexOf(userAnswer);
               console.log("userAnswer_pos = " + userAnswer_pos);
+              
               if(ans_positions[userAnswer_pos][2] !== true){
                 if(userAnswer_pos === 1){
                   ans_positions[userAnswer_pos][1] = true;
