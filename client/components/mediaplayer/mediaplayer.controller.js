@@ -5,7 +5,7 @@ angular.module('lamusiqueApp')
     //Music Player
     $scope.audioPlaylist = [];
     $scope.audioPlaylist.push({
-      src: 'http://www.amazon.com/gp/dmusic/get_sample_url.html/ref=dm_dp_trk_B00K9FRA8Q?ie=UTF8&ASIN=B00K9FRA8Q&DownloadLocation=WEBSITE',
+      src: 'http://www.amazon.com/gp/dmusic/get_sample_url.html/ref=dm_dp_trk_B001IXQU3O?ie=UTF8&ASIN=B001IXQU3O&DownloadLocation=WEBSITE',
       type: 'audio/mp3'
     });
     $timeout(function () {
