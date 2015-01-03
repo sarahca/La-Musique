@@ -1,26 +1,52 @@
 'use strict';
 
+
+
+var playSong = function (scope, rootScope){
+  setTimeout(function(){
+    console.log('media player starts playing at ' + Date.now());
+    scope.mediaPlayer.play(0);
+    var song = scope.audioPlaylist[0].song_details;
+    rootScope.$emit('update grid', song); // send song data for the grid
+    }, 5000);
+}
+
 angular.module('lamusiqueApp')
   .controller('MediaplayerCtrl', function ($scope, $http, socket, $timeout, $rootScope) {
-    //Music Player
-    $scope.audioPlaylist = [];
-    $scope.audioPlaylist.push({
-      src: 'http://www.amazon.com/gp/dmusic/get_sample_url.html/ref=dm_dp_trk_B00K9FRA8Q?ie=UTF8&ASIN=B00K9FRA8Q&DownloadLocation=WEBSITE',
-      type: 'audio/mp3'
-    });
-    $timeout(function () {
-      $scope.audioPlaylist.unshift({
-        src: 'http://www.amazon.com/gp/dmusic/get_sample_url.html/ref=dm_dp_trk_B00K9FRA8Q?ie=UTF8&ASIN=B00K9FRA8Q&DownloadLocation=WEBSITE',
-        type: 'audio/mp3'
-      });
-    }, 5500);
-    $timeout(function () {
-      $scope.audioPlaylist.push({
-        src: 'http://demos.w3avenue.com/html5-unleashed-tips-tricks-and-techniques/demo-audio.oggs',
-        type: 'audio/ogg'
-      });
-    }, 9500);
 
-    
- 
+    $scope.getSongPlayerUrl = function (amazonId) {
+      return 'http://www.amazon.com/gp/dmusic/get_sample_url.html/ref=dm_dp_trk_' + amazonId + '?ie=UTF8&ASIN=' + amazonId +'&DownloadLocation=WEBSITE'
+    };
+
+
+
+    $scope.audioPlaylist = [];
+
+    $timeout(function () {
+
+      $rootScope.$on('next-song-to-play', function (e, song) {
+        var url = $scope.getSongPlayerUrl(song.amazonId);
+        var songToPlay = {
+          src: url,
+          type: 'audio/mp3',
+          song_details: song,
+        };
+        $scope.audioPlaylist.push(songToPlay);
+        if ( !$scope.mediaPlayer.playing ) {
+          playSong($scope, $rootScope);
+        }
+      });
+
+      $scope.mediaPlayer.on('ended', function(){
+        $scope.audioPlaylist.shift();
+        if ($scope.audioPlaylist.length > 0) { 
+          playSong($scope, $rootScope);
+        }
+        else {
+          console.log('requesting new song');
+          $rootScope.$emit('request-new-song', {'genre': 'pop'});
+        }
+      });
+    });
   });
+
