@@ -9,6 +9,7 @@ var playSong = function (scope, rootScope){
     var song = scope.audioPlaylist[0].song_details;
     rootScope.$emit('update grid', song); // send song data for the grid
     rootScope.$emit('song details for chat', song);
+    rootScope.$emit('clear leaderboard');
     }, 5000);
 }
 

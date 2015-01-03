@@ -22,7 +22,6 @@ angular.module('lamusiqueApp')
     })
 
     $scope.redirect = function(channel){
-      console.log('==== in redirect to channel =====');
       $location.path("/" + channel);
       console.log($location.path());
       $scope = $scope || angular.element(document).scope();
@@ -37,7 +36,6 @@ angular.module('lamusiqueApp')
     };
 
     $rootScope.$on("userLoggedIn", function(e, data) {
-      console.log(' ////////  user logged in event ' + JSON.stringify(data));
       controller.saveUserDataOnLogin(data);
       $scope.enter();
     });

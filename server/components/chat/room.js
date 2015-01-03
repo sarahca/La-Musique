@@ -194,54 +194,47 @@ Room.prototype.processNextSongRequestMessage =  function(player, message) {
 };
 
 Room.prototype.processGuessTime = function (player, data) {
-  console.log("====> process guess time for " + player.nickname);
   var songId;
   room.redisPub.get("song-" + room.channel, function (err, reply){
-    if (! err && reply)
+    if (! err && reply){
       songId = reply;
-  });
-  if (data['song_id'] != songId) {
-    console.log('wrong song id');
-    return;
-  };
-
-  var points = Math.floor(30 - data['guess_time']);
-  console.log ('in process guess time ' + data['guess_time'] + ' --> ' + points + ' points');
-  var playerData = {
-    'nickname': player.nickname,
-    'points': points,
-  };
-  room.redisPub.lrange('leaders-' + room.channel, 0, -1, function (err, reply){
-    if ( !err && reply ){
-      var currentLeaders = reply;
-      var alreadySubmitted = currentLeaders.filter(function (p) {
-        var currentPlayer = JSON.parse(p);
-        console.log('checking if ' + player.nickname + ' has submitted --- ' + currentPlayer);
-        console.log('checking equality ' + (currentPlayer['nickname'] == player.nickname));
-        return (currentPlayer.nickname == player.nickname);
-      });
-      console.log(' has player already submitted ' + alreadySubmitted.length);
-      if (alreadySubmitted.length < 1){
-        room.redisPub.rpush('leaders-' + room.channel, JSON.stringify(playerData), function(err, inserted) {
-          if (! err && inserted) {
-            console.log('inserted new player guess');
-            room.sendPointsUpdate(player, points);
-            room.orderPlayersAndNotify(data['song_id']);
+      if (data.song._id != songId) {
+        console.log('wrong song id');
+        return;
+      }
+      else {
+        var points = Math.floor(30 - data['guess_time']);
+        console.log('in processing points ' + points)
+        var playerData = {
+          'nickname': player.nickname,
+          'points': points,
+        };
+        room.redisPub.lrange('leaders-' + room.channel, 0, -1, function (err, reply){
+          if ( !err && reply ){
+            var currentLeaders = reply;
+            var alreadySubmitted = currentLeaders.filter(function (p) {
+              var currentPlayer = JSON.parse(p);
+              return (currentPlayer.nickname == player.nickname);
+            });
+            if (alreadySubmitted.length < 1){
+              room.redisPub.rpush('leaders-' + room.channel, JSON.stringify(playerData), function(err, inserted) {
+                if (! err && inserted) {
+                  room.sendPointsUpdate(player, points);
+                  room.orderPlayersAndNotify(data['song_id']);
+                }
+              });
+            }
+            else {
+              room.AnswerAlreadyRegistered(player);
+            }
           }
         });
       }
-      else {
-        console.log(' has player already submitted ');
-        room.AnswerAlreadyRegistered(player);
-      }
-    }
+    };
   });
 }
 
 Room.prototype.sendPointsUpdate = function (player, points) {
-  console.log('sending update points command');
-  console.log('players current points ' + player.points);
-  console.log('total points for player now is ' + (player.points + points));
   player.points += points;
   var command = {
     'message_type': 'command',
@@ -264,19 +257,26 @@ Room.prototype.AnswerAlreadyRegistered = function(player){
 }
 
 Room.prototype.orderPlayersAndNotify = function (songId) {
-  console.log('in orderPlayersAndNotify'); 
   room.redisPub.lrange('leaders-' + room.channel, 0, -1, function (err, reply){
     if ( !err && reply ){
-      var sortedPlayers = reply.sort(room.comparePlayersPoints);
-      console.log('all leaders for this round ' + sortedPlayers);
+      console.log('reply ' + reply);
+      var players = reply.map(function (p){
+        var player = JSON.parse(p);
+        console.log('before json parse ' + p);
+        return playerObject = {
+          nickname: player.nickname,
+          points: player.points
+        };
+      });
+      var sortedPlayers = players.sort(room.comparePlayersPoints);
       var message = {
         'message_type': 'command',
         'command': 'refresh leaderboard',
         'song_id': songId,
         'time': Date.now(),
-        'leaders': sortedPlayers.slice(0,7)
+        'leaders': sortedPlayers.slice(0,5)
       };
-      console.log(' ////  to redis refresh leaderboard' + message.leaders);
+      console.log('to redis refresh leaderboard' + message.leaders + ' - nb leaders ' + message.leaders.length);
       room.redisPub.publish(room.channel, JSON.stringify(message));
     }
   }); 

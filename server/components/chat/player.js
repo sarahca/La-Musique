@@ -62,7 +62,7 @@ function PlayerSocket(socket){
 PlayerSocket.prototype.receiveMessage = function (message) {
   var jsonMessage = JSON.stringify(message);
   if (message['message_type'] == 'command') {
-    console.log('emitting nnew command ' + message['command']);
+    console.log('emitting new command ' + message['command']);
     this.socket.emit('command', jsonMessage);
   }
   else

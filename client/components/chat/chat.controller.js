@@ -87,7 +87,8 @@ angular.module('lamusiqueApp')
 
     function sendAnswer(text) {
       console.log('message is the right answer');
-      var time = $scope.mediaPlayer.currentTime;
+      var time = $scope.mediaPlayer.player().currentTime;
+      console.log(time + ' in send answer');
       var data = {
         song: $scope.currentSong,
         guessTime: time,
@@ -134,6 +135,7 @@ angular.module('lamusiqueApp')
           $scope.user.setUserAdmin(false);
           break;
         case 'refresh leaderboard':
+          console.log('chat emits refresh leaderboard event');
           $rootScope.$emit('refresh leaderboard', command);
           break;
         case 'update points':

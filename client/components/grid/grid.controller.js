@@ -212,7 +212,7 @@ angular.module('lamusiqueApp')
     $timeout(function () {
       
       gridInit($scope);
-      $scope.mediaPlayer.play();
+      $scope.mediaPlayer.player().play();
     });
 
     $scope.generateAnswerPlaceholder = (function(){
@@ -372,9 +372,9 @@ angular.module('lamusiqueApp')
 
     $scope.calculateTotalTime = function(){
       console.log("*************************************************");
-      console.log("************ Your time = "+ $scope.mediaPlayer.currentTime + " seconds");
+      console.log("************ Your time = "+ $scope.mediaPlayer.player().currentTime + " seconds");
       console.log("*************************************************");
-      $scope.mediaPlayer.pause();
+      $scope.mediaPlayer.player().pause();
     }
 
     $scope.$watch('answer', function(val) {

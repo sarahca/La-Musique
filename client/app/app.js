@@ -63,7 +63,11 @@ angular.module('lamusiqueApp', [
     });
   })
   .service('MediaPlayer', function () {
-    return angular.element(document.querySelector('audio')).scope().mediaPlayer;
+    return {
+      player: function () {
+        return angular.element(document.querySelector('audio')).scope().mediaPlayer;
+      }
+    };
   });
 
   
