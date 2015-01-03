@@ -1,7 +1,7 @@
 'use strict';
 
 exports.joinChannel = function (req, res) {
-  console.log('joining channel');
+  console.log('joining channel in chat/api');
   var channel = req.body.channel;
   req.session.channel = channel;
   res.send(200, {message: 'you are on channel ' + channel});

@@ -2,11 +2,11 @@
     <h3> Register </h3>
     <form name="registerForm" ng-submit="registerSubmit(registerForm.$valid)" novalidate>
       <div class="form-group">
-        <label for="username">Username</label>
-        <input type="text" class="form-control" name="username" placeholder="Enter username" ng-model="user.username" ng-minlength="3" ng-maxlength="8" required>
-        <p ng-show="registerForm.username.$error.required && registerForm.username.$dirty" class="help-block">A username is required.</p>
-        <p ng-show="registerForm.username.$error.minlength" class="help-block">Username is too short (min. 3 characters).</p>
-        <p ng-show="registerForm.username.$error.maxlength" class="help-block">Username is too long (max. 8 characters).</p>
+        <label for="registerUsername">Username</label>
+        <input type="text" class="form-control" name="registerUsername" placeholder="Enter username" ng-model="user.registerUsername" ng-minlength="3" ng-maxlength="8" required>
+        <p ng-show="registerForm.registerUsername.$error.required && registerForm.registerUsername.$dirty" class="help-block">A username is required.</p>
+        <p ng-show="registerForm.registerUsername.$error.minlength" class="help-block">Username is too short (min. 3 characters).</p>
+        <p ng-show="registerForm.registerUsername.$error.maxlength" class="help-block">Username is too long (max. 8 characters).</p>
       </div>
       <div class="form-group">
         <label for="email">Email address</label>

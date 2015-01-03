@@ -2,8 +2,7 @@ var http = require('http');
 var request = require('request');
 var fs = require('fs');
 var cheerio = require('cheerio');
-//var wstream = fs.createWriteStream('amazon_song_id.csv');
-var base_url = 'http://www.amazon.com/s/ref=nb_sb_ss_i_1_9?url=search-alias%3Ddigital-music&field-keywords=';
+var BASE_URL = 'http://www.amazon.com/s/ref=nb_sb_ss_i_1_9?url=search-alias%3Ddigital-music&field-keywords=';
 
 module.exports = function(songArtist, songTitle, callback){
   var song = songArtist.split(" ").concat(songTitle.split(" "));
@@ -14,7 +13,7 @@ module.exports = function(songArtist, songTitle, callback){
      i != song.length-1 ? result += song[i] + "+" : result += song[i]
   }
 
-  url = base_url + result;
+  url = BASE_URL  + result;
 
   request(url, function(error, response, body){
     if(!error && response.statusCode == 200){
@@ -22,8 +21,6 @@ module.exports = function(songArtist, songTitle, callback){
       var songID = $('.mp3Tracks tr:first-child a:first-child').attr('id');
       songID = songID.substr(songID.indexOf('_') + 1, songID.length);
       callback(songID);
-      //wstream.write(songID);
-      //wstream.end();
     }
   })
 }

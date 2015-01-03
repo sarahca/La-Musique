@@ -12,11 +12,15 @@ angular.module('lamusiqueApp')
           'password': $scope.user.password}).
         success(function(data, status, headers, config) {
           console.log(data);
-          $rootScope.$broadcast("userLoggedIn", {});
+          $rootScope.$broadcast("userLoggedIn", data);
         }).
         error(function(data, status, headers, config) {
           console.log(data.message);
         });
       }
+    }
+
+    $scope.loginWhilePlaying = function(isValid) {
+      
     }
   });
