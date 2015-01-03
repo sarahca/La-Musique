@@ -1,5 +1,5 @@
 <div class="navbar navbar-default navbar-static-top" ng-controller="NavbarCtrl">
-  <div class="container">
+  <div class="container" ng-nodel="user">
     <div class="navbar-header">
       <button class="navbar-toggle" type="button" ng-click="isCollapsed = !isCollapsed">
         <span class="sr-only">Toggle navigation</span>
@@ -11,24 +11,31 @@
     </div>
     <div collapse="isCollapsed" class="navbar-collapse collapse" id="navbar-main">
       <ul class="nav navbar-nav">
-        <!-- <li ng-repeat="item in menu" ng-class="{active: isActive(item.link)}">
-            <a ng-href="{{item.link}}">{{item.title}}</a>
-        </li> -->
-        <li> <a> Player name </a></li>
-        <li> <a> 0 points </a></li>
-        <li> <a> 0 gems </a></li>
+        <li> <a> {{user.getUserAdmin()}}</a></li>
+        <li> <a> {{user.getUserUsername()}}</a></li>        
+        <li> <a> {{user.getUserPoints()}} points </a></li>
+        <li> <a> {{user.getUserGems()}} gems </a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        <li>
-          <a> Sign up </a>
+        <li ng-hide="user.getUserLoggedIn()">
+          <a href="#" ng-click="signup()"> Sign up </a>
         </li>
-        <li>
-          <a> Login </a>
+        <li ng-hide="user.getUserLoggedIn()" >
+          <a href="#" ng-click="login()"> Login </a>
         </li>
-        <li>
+        <li ng-show="user.getUserLoggedIn()">
           <a href="#" ng-click="logout()"> Logout  </a>
         </li>
       </ul>
+    </div><!-- END OF NAVBAR HEADER -->
+
+    <div ng-show="inLogin"> <!--LOGIN FORM -->
+      <hr> 
+      <div ng-include="'components/login/login.html'"></div>
+    </div>
+    <div ng-show="inSignup"> <!--SIGNUP FORM -->
+      <hr>
+      <div ng-include="'components/register/register.html'"></div>
     </div>
   </div>
 </div>
