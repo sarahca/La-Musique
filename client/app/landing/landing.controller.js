@@ -7,13 +7,6 @@ angular.module('lamusiqueApp')
 
     var controller = this;
     controller.saveUserDataOnLogin = $scope.user.saveUserDataOnLogin;
-    // this.saveUserInfo = function (data) {
-    //   console.log(' +++++ saving data in userservice ++++');
-    //   $scope.user.setUserLoggedIn(true);
-    //   $scope.user.setUserUsername(data['user-username']);
-    //   $scope.user.setUserPoints(data['user-points']);
-    //   $scope.user.setUserGems(data['user-gems']);
-    // }
     $rootScope.channel = (Math.floor(Math.random()*100000)).toString();
     console.log('channel ' + $rootScope.channel);
 
