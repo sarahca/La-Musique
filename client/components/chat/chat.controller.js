@@ -1,12 +1,14 @@
 'use strict';
 
 angular.module('lamusiqueApp')
-  .controller('ChatCtrl', function ($scope, $http, socket, $timeout, $rootScope, UserService) {
+  .controller('ChatCtrl', function ($scope, $http, socket, $timeout, $rootScope, UserService, MediaPlayer) {
 
     $scope.socket = socket.socket;
     $scope.users = {};
     $scope.user = UserService;
+    $scope.mediaPlayer = MediaPlayer;
     $scope.nickname;
+    $scope.currentSong;
     var controller = this;
     $scope.pathname = window.location.pathname;
     $scope.channelName = $scope.pathname.replace(/\//, '');
@@ -37,8 +39,7 @@ angular.module('lamusiqueApp')
         .error(function(data, status, headers, config) {
           console.log(data);
         });
-    }
-    
+    };
 
     // update nickname when the player is changing it in contenteditable label
     function onNicknameChange (el) {
@@ -70,14 +71,34 @@ angular.module('lamusiqueApp')
     // post a new message
     $scope.sendMessage = function() {
       var text = $scope.newMsg.text;
-      var message = {
-        'channel': $scope.channelName,
-        'text': text,
-        'time': Date.now()
-      };
-      $scope.socket.emit('post_message', JSON.stringify(message));
+      console.log('sending message ' + text);
+      if ($scope.currentSong && (text == $scope.currentSong.title))
+        sendAnswer(text);
+      else {
+        var message = {
+          'channel': $scope.channelName,
+          'text': text,
+          'time': Date.now()
+        };
+        $scope.socket.emit('post_message', JSON.stringify(message));
+      }
       $scope.newMsg.text = '';
     };
+
+    function sendAnswer(text) {
+      console.log('message is the right answer');
+      var time = $scope.mediaPlayer.currentTime;
+      var data = {
+        song: $scope.currentSong,
+        guessTime: time,
+      };
+      $rootScope.$emit('guess-time', data);
+    };
+
+    $rootScope.$on('song details for chat', function(e, data){
+      console.log('chat received song details');
+      $scope.currentSong = data;
+    });
 
     // helper method to set our nickname
     function setOwnNickname (message) {
@@ -114,6 +135,9 @@ angular.module('lamusiqueApp')
           break;
         case 'refresh leaderboard':
           $rootScope.$emit('refresh leaderboard', command);
+          break;
+        case 'update points':
+          $rootScope.$emit('update points', command);
           break;
     }    
 
@@ -190,22 +214,18 @@ angular.module('lamusiqueApp')
       };
       $scope.socket.emit('command', JSON.stringify(message));
     };
-
-
     //send guess time
-
     $rootScope.$on('guess-time', function (e, data){
       submitGuessTime(data);
-
     });
 
-    function submitGuessTime() {
+    function submitGuessTime(data) {
       var message = {
         'channel': $scope.channelName,
         'message_type': 'command',
         'command': 'submit guess',
-        'guess_time': 0,
-        'song_id': '_id',
+        'guess_time': data.guessTime ,
+        'song': data.song,
         'nickname': $scope.nickname,
         'time': Date.now(),
       };

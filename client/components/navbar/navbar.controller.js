@@ -15,6 +15,11 @@ angular.module('lamusiqueApp')
         });
     });
 
+    $rootScope.$on('update points', function(e, data){
+      console.log('navbar received update points event for ' + data.points);
+      $scope.user.setUserPoints(data.points);
+    });
+
     $scope.logout = function() {
       $http.post('/api/user/logout');
       $scope.user.setUserLoggedIn(false);

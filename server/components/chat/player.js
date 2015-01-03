@@ -10,7 +10,7 @@ function PlayerSocket(socket){
   this.room = null;
   this.nickname = null;
   this.socket = socket;
-  this.points = 42;
+  this.points = 0;
   this.gems = 0;
 
   var self = this;

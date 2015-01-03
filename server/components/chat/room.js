@@ -181,9 +181,110 @@ Room.prototype.processNextSongRequestMessage =  function(player, message) {
       player.getNextSong(message['song_genre'], function(err, song){
         room.broadcastNextSong(song);
       });
+      room.redisPub.del('leaders-' + room.channel, function(err, res) {
+        if ( err ){
+          console.log( "couldn't delete the list of leaders for channel " + room.channel);
+        }
+        else {
+          console.log(' deleted list of leaders before new song');
+        }
+      })
     }
   });
 };
+
+Room.prototype.processGuessTime = function (player, data) {
+  console.log("====> process guess time for " + player.nickname);
+  var songId;
+  room.redisPub.get("song-" + room.channel, function (err, reply){
+    if (! err && reply)
+      songId = reply;
+  });
+  if (data['song_id'] != songId) {
+    console.log('wrong song id');
+    return;
+  };
+
+  var points = Math.floor(30 - data['guess_time']);
+  console.log ('in process guess time ' + data['guess_time'] + ' --> ' + points + ' points');
+  var playerData = {
+    'nickname': player.nickname,
+    'points': points,
+  };
+  room.redisPub.lrange('leaders-' + room.channel, 0, -1, function (err, reply){
+    if ( !err && reply ){
+      var currentLeaders = reply;
+      var alreadySubmitted = currentLeaders.filter(function (p) {
+        var currentPlayer = JSON.parse(p);
+        console.log('checking if ' + player.nickname + ' has submitted --- ' + currentPlayer);
+        console.log('checking equality ' + (currentPlayer['nickname'] == player.nickname));
+        return (currentPlayer.nickname == player.nickname);
+      });
+      console.log(' has player already submitted ' + alreadySubmitted.length);
+      if (alreadySubmitted.length < 1){
+        room.redisPub.rpush('leaders-' + room.channel, JSON.stringify(playerData), function(err, inserted) {
+          if (! err && inserted) {
+            console.log('inserted new player guess');
+            room.sendPointsUpdate(player, points);
+            room.orderPlayersAndNotify(data['song_id']);
+          }
+        });
+      }
+      else {
+        console.log(' has player already submitted ');
+        room.AnswerAlreadyRegistered(player);
+      }
+    }
+  });
+}
+
+Room.prototype.sendPointsUpdate = function (player, points) {
+  console.log('sending update points command');
+  console.log('players current points ' + player.points);
+  console.log('total points for player now is ' + (player.points + points));
+  player.points += points;
+  var command = {
+    'message_type': 'command',
+    'command': 'update points',
+    'time': Date.now(),
+    'points': player.points,
+    'player_nickname': player.nickname,
+  };
+  player.receiveMessage(command);
+}
+
+Room.prototype.AnswerAlreadyRegistered = function(player){
+  var message = {
+    'message_type': 'bot',
+    'text': player.nickname + ', your answer has already been registered for this song',
+    'player_nickname': player.nickname,
+    'time' : Date.now(),
+  };
+  player.receiveMessage(message);
+}
+
+Room.prototype.orderPlayersAndNotify = function (songId) {
+  console.log('in orderPlayersAndNotify'); 
+  room.redisPub.lrange('leaders-' + room.channel, 0, -1, function (err, reply){
+    if ( !err && reply ){
+      var sortedPlayers = reply.sort(room.comparePlayersPoints);
+      console.log('all leaders for this round ' + sortedPlayers);
+      var message = {
+        'message_type': 'command',
+        'command': 'refresh leaderboard',
+        'song_id': songId,
+        'time': Date.now(),
+        'leaders': sortedPlayers.slice(0,7)
+      };
+      console.log(' ////  to redis refresh leaderboard' + message.leaders);
+      room.redisPub.publish(room.channel, JSON.stringify(message));
+    }
+  }); 
+}
+
+Room.prototype.comparePlayersPoints = function(player1, player2){
+  return (player2.points - player1.points);
+}
 
 
 // handle front end request to change nickname
@@ -354,7 +455,7 @@ Room.prototype.broadcast = function (message) {
 };
 
 Room.prototype.removePlayer = function(player) {
-  console.log('removing player ' + player);
+  console.log('removing player ' + player.nickname);
   for ( var i = 0; i < room.players.length; i++ ) {
     if (player.room.players[i].nickname === player.nickname ) {
       room.players.splice(i, 1);

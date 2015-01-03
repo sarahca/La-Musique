@@ -2,10 +2,6 @@
 
 var Music = require('./music.model');
 var amazon_scraper = require('../../components/amazon_scraper/amazon_scraper.js'); // require amazon scraper function
-//var events = require('../../components/events/events.js');
-
-//var sendNextSongEmitter = new EventEmitter();
-
  function getRandomSongByGenre(genre, callback) {
    var query = {genre: {$regex: ".*" + genre + ".*"}};
 
@@ -32,13 +28,6 @@ var amazon_scraper = require('../../components/amazon_scraper/amazon_scraper.js'
 }
 exports.getRandomSongByGenre = getRandomSongByGenre;
 
-// events.on("get-next-song", function (data) {
-//   console.log("  =====>   get-next-song event received for data " + data.genre);
-//   getRandomSongByGenre(data.genre, function(err, song) {
-//     if (!err)
-//       console.log("  =====>   " + JSON.stringify(song));
-//   });
-// });
 
 function processHttpGetRandomSongByGenre(req, res) {
   console.log('getting song by Genre');

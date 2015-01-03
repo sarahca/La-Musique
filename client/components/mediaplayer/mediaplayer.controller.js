@@ -8,6 +8,7 @@ var playSong = function (scope, rootScope){
     scope.mediaPlayer.play(0);
     var song = scope.audioPlaylist[0].song_details;
     rootScope.$emit('update grid', song); // send song data for the grid
+    rootScope.$emit('song details for chat', song);
     }, 5000);
 }
 
@@ -17,8 +18,6 @@ angular.module('lamusiqueApp')
     $scope.getSongPlayerUrl = function (amazonId) {
       return 'http://www.amazon.com/gp/dmusic/get_sample_url.html/ref=dm_dp_trk_' + amazonId + '?ie=UTF8&ASIN=' + amazonId +'&DownloadLocation=WEBSITE'
     };
-
-
 
     $scope.audioPlaylist = [];
 
