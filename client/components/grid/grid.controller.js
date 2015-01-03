@@ -311,6 +311,16 @@ angular.module('lamusiqueApp')
       };
     }());
 
+    //just a suggestion to get the song's details once the media player starts playing
+    $rootScope.$on('update grid', function (e, data){
+      console.log('need to update grid ' + data['title'] + ' received at ' + Date.now());
+    });
+
+    // just another suggestion,
+    //IN THE CHAT CONTROLLER, I added an event listener (line 196) which listens for the event 'guess-time'
+    // in order to send a message to the back end to give points to the player
+    // I was planning to prepare the backend to give points to players.
+
     $scope.answer = '';
     $scope.generateAnswerPlaceholder("Poker Face",null,false);
 

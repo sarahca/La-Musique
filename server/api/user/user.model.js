@@ -4,11 +4,11 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
 var UserSchema = new Schema({
-  username: String,
-  email: String,
-  password: String,
-  points: Number,
-  gems: Number
+  username: {type: String},
+  email: {type: String},
+  password: {type: String},
+  points: {type: Number, default: 0},
+  gems: {type: Number, default: 0}
 });
 
 UserSchema.index({username: 1}, {unique: true});
