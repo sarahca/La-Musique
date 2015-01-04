@@ -6,6 +6,7 @@ var playSong = function (scope, rootScope){
   setTimeout(function(){
     console.log('media player starts playing at ' + Date.now());
     scope.mediaPlayer.play(0);
+    scope.mediaPlayer.volume = 0.1;
     var song = scope.audioPlaylist[0].song_details;
     rootScope.$emit('update grid', song); // send song data for the grid
     }, 5000);
@@ -15,6 +16,7 @@ angular.module('lamusiqueApp')
   .controller('MediaplayerCtrl', function ($scope, $http, socket, $timeout, $rootScope) {
 
     $scope.getSongPlayerUrl = function (amazonId) {
+      console.log("******AMAZON ID = " + amazonId);
       return 'http://www.amazon.com/gp/dmusic/get_sample_url.html/ref=dm_dp_trk_' + amazonId + '?ie=UTF8&ASIN=' + amazonId +'&DownloadLocation=WEBSITE'
     };
 
