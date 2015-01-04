@@ -1,4 +1,4 @@
-var genres = ['country-songs', 'pop-songs', 'rock-songs', 'alternative-songs', 'r-and-b-songs', 'r-b-hip-hop-songs'];
+var genres = ['country-songs', 'pop-songs', 'rock-songs', 'alternative-songs', 'r-and-b-songs'];
 var extraGenres = ['dance-electronic-songs', 'latin-songs', 'latin-pop-songs', 'hot-holiday-songs', 'jazz-songs'];
 var albumsGenres = ['Different Shades Of Blue'];
 
@@ -57,7 +57,11 @@ function getData2(url, genre, done) {
       //console.log(title + '-' + artist);
       title = removeFeaturing(title);
       artist = removeFeaturing(artist);
-      addSongToPlaylist(title, artist, genre, eachSongCallBack);
+      // take only title/artist of max 3 words
+      if (countWords(title) && countWords(artist))
+        addSongToPlaylist(title, artist, genre, eachSongCallBack);
+      else
+        eachSongCallBack();
     });
   });
 }
@@ -107,7 +111,7 @@ function addSongToPlaylist(title, artist, genre, done) {
 //filters complicated titles or authors
 // returns FALSE if data is NOT VALID
 function validData(title, artist) { 
-  var goodRegex = /^[a-zA-Z0-9 ]+$/;
+  var goodRegex = /^[a-zA-Z ]+$/;
   //var badRegex = /(featuring|DJ)/;
   var badRegex = /dj/;
 
@@ -115,12 +119,16 @@ function validData(title, artist) {
     !badRegex.test(title) && !badRegex.test(artist));
 }
 
+function countWords(string){
+  var wordsArray = string.split(" ");
+  return (wordsArray.length <= 3);
+}
+
 function removeFeaturing(string) {
   var featuringIndex = string.indexOf('featuring');
   if (featuringIndex != -1)
     return string.substring(0, featuringIndex);
   else {
-    console.log ("-- no featuring in " + string);
     return string;
   }
 }
@@ -128,7 +136,7 @@ function removeFeaturing(string) {
 
 // MAIN method
 async.each(genres, function (genre, callback) {
-  severalWeeksOfCharts(50, genre, callback);
+  severalWeeksOfCharts(100, genre, callback);
 }, function (err) {
   db.close();
 });
