@@ -3,6 +3,7 @@
 
 
 var playSong = function (scope, rootScope){
+      rootScope.$emit('start countdown');
   setTimeout(function(){
     console.log('media player starts playing at ' + Date.now());
     scope.mediaPlayer.play(0);
@@ -10,6 +11,8 @@ var playSong = function (scope, rootScope){
     rootScope.$emit('update grid', song); // send song data for the grid
     rootScope.$emit('song details for chat', song);
     rootScope.$emit('clear leaderboard');
+    rootScope.$emit('stop countdown');
+    rootScope.$emit('reset countdown');
     }, 5000);
 }
 
@@ -38,6 +41,7 @@ angular.module('lamusiqueApp')
       });
 
       $scope.mediaPlayer.on('ended', function(){
+        $rootScope.$emit('reset countdown');
         $scope.audioPlaylist.shift();
         if ($scope.audioPlaylist.length > 0) { 
           playSong($scope, $rootScope);

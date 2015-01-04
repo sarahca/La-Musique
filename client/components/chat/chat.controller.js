@@ -37,12 +37,14 @@ angular.module('lamusiqueApp')
 
       //set up the channel in the session cookie 
       $http.post('/api/chat/channel', {'channel': $scope.channelName,})
-        .success(function(data, status, headers, config) {
-          newSongRequestCommand({'genre': 'pop'});
+        .success(function(data, status, headers, config) {     
         })
         .error(function(data, status, headers, config) {
           console.log(data);
         });
+      newSongRequestCommand({'genre': 'pop'});
+      // caught by the main controller to set message
+      $rootScope.$emit('new player joined'); 
     };
 
     // update nickname when the player is changing it in contenteditable label

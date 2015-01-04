@@ -219,7 +219,6 @@ Room.prototype.processGuessTime = function (player, data) {
               room.redisPub.rpush('leaders-' + room.channel, JSON.stringify(playerData), function(err, inserted) {
                 if (! err && inserted) {
                   if (player.username != 'New Player') {
-                    console.log(' //////  this player is logged in, update points in db ' + player.username);
                     player.updatePoints(points, function(updatedPoints){
                       room.sendPointsUpdate(player, updatedPoints);
                     });
@@ -244,7 +243,6 @@ Room.prototype.processGuessTime = function (player, data) {
 }
 
 Room.prototype.sendPointsUpdate = function (player, updatedPoints) {
-  console.log('in room send points update player ' + player.username + ' ' + player.points);
   player.points = updatedPoints;
   var command = {
     'message_type': 'command',

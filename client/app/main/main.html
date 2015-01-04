@@ -1,10 +1,16 @@
 <div ng-include="'components/navbar/navbar.html'"></div>
 
-<header class="hero-unit" id="banner">
-  <div class="container">
-    <h1>Next round in </h1>
+<header class="hero-unit" id="banner" ng-controller="MainCtrl">
 
-    <div class='row'>
+  
+  <div class="container">
+    <h3 ng-show="newPlayer && !user.getUserAdmin()">There might a round in progress, the next one will start soon</h3>
+    <h3 ng-show="secondsLeft > 0">Next round in ... {{secondsLeft}} seconds</h3>
+    <h3 ng-show="secondsLeft == 0">Next round ... NOW, GOOD LUCK!!</h3>
+
+    <!--LAYOUT FOR ADMIN -->
+    <div class='row' ng-show="user.getUserAdmin()" >
+    
       <!--QUESTION CATEGORY DROP DOWN-->
       <div class='col-md-4'>
         <div class="btn-group">
@@ -37,7 +43,19 @@
         </label>
       </div> <!-- END OF BOT MODE-->
     </div> <!--END OF DROPDOWNS ROW -->
-  </div>
+
+  <!-- LAYOUT IF NOT ADMIN -->
+    <div class="row" ng-hide="user.getUserAdmin()">
+      <div class='col-md-4'>
+        <span> Guess the title </span>
+      </div>
+      <div class='col-md-4'>
+        <span> Music genre is pop </span>
+      </div>
+    </div><!-- END OF LAYOUT IF NOT ADMIN -->
+  </div> 
+
+
 </header>
 
  <!-- LEADER BOARD -->
