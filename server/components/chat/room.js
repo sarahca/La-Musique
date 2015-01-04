@@ -204,7 +204,6 @@ Room.prototype.processGuessTime = function (player, data) {
       }
       else {
         var points = Math.floor(30 - data['guess_time']);
-        console.log('in processing points ' + points)
         var playerData = {
           'nickname': player.nickname,
           'points': points,
@@ -219,7 +218,17 @@ Room.prototype.processGuessTime = function (player, data) {
             if (alreadySubmitted.length < 1){
               room.redisPub.rpush('leaders-' + room.channel, JSON.stringify(playerData), function(err, inserted) {
                 if (! err && inserted) {
-                  room.sendPointsUpdate(player, points);
+                  if (player.username != 'New Player') {
+                    console.log(' //////  this player is logged in, update points in db ' + player.username);
+                    player.updatePoints(points, function(updatedPoints){
+                      room.sendPointsUpdate(player, updatedPoints);
+                    });
+                  }
+                  else {
+                    var updatedPoints = player.points + points;
+                    room.sendPointsUpdate(player, updatedPoints);
+                  }
+
                   room.orderPlayersAndNotify(data['song_id']);
                 }
               });
@@ -234,13 +243,14 @@ Room.prototype.processGuessTime = function (player, data) {
   });
 }
 
-Room.prototype.sendPointsUpdate = function (player, points) {
-  player.points += points;
+Room.prototype.sendPointsUpdate = function (player, updatedPoints) {
+  console.log('in room send points update player ' + player.username + ' ' + player.points);
+  player.points = updatedPoints;
   var command = {
     'message_type': 'command',
     'command': 'update points',
     'time': Date.now(),
-    'points': player.points,
+    'points': updatedPoints,
     'player_nickname': player.nickname,
   };
   player.receiveMessage(command);

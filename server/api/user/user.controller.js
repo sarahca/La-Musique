@@ -30,6 +30,25 @@ exports.register = function (req, res) {
   })
 }
 
+exports.updatePoints = function(player, newPoints, callback) {
+  var criteria = {'username': player.username};
+  User.findOne(criteria, function(err, user){
+    if (err)
+      console.log("an error occured " + err);
+    if (user) {
+      user.points += newPoints;
+      user.save( function (err, user){
+        if (err)
+          console.log("couldn't save changes " + err);
+        else
+          callback(user.points);
+      })
+    }
+    if (!user)
+      console.log("couldn't find this user in the db");
+  });
+}
+
 exports.login = function (req, res) {
   var email = req.body.email;
   var password = req.body.password;

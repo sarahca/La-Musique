@@ -28,8 +28,12 @@ angular.module('lamusiqueApp')
 
     // player joins the channel
     $scope.joinChannel = function() {     
-      var join_msg = JSON.stringify({'channel': $scope.channelName, 'nickname': $scope.nickname});
-      $scope.socket.emit('join_channel', join_msg);
+      var joinMessage = {
+        'channel': $scope.channelName,
+        'nickname': $scope.nickname,
+        'username': $scope.user.getUserUsername()
+      } 
+      $scope.socket.emit('join_channel', JSON.stringify(joinMessage));
 
       //set up the channel in the session cookie 
       $http.post('/api/chat/channel', {'channel': $scope.channelName,})

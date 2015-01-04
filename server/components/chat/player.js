@@ -1,7 +1,7 @@
 var async = require('async');
 var getRoom = require('./room.js').getRoom;
 var request = require('request');
-//var events = require('../events/events.js');
+var user = require('./../../api/user/user.controller.js');
 
 var music = require('./../../api/music/music.controller.js');
 
@@ -12,12 +12,15 @@ function PlayerSocket(socket){
   this.socket = socket;
   this.points = 0;
   this.gems = 0;
+  this.username;
 
   var self = this;
 
   // player joins a channel ie a room
   this.socket.on('join_channel', function (data) {
     var d = JSON.parse(data);
+    if (d['username'])
+      self.username = d['username'];
     var channel = d['channel'];
     console.log('Joining channel ' + channel + ' by ' + d['nickname']);
     self.room = getRoom(channel);
@@ -82,6 +85,13 @@ PlayerSocket.prototype.getNextSong = function (genre, callback) {
   music.getRandomSongByGenre(genre, function (err, song ){
     callback(err, song);
   });
-}
+};
+
+PlayerSocket.prototype.updatePoints = function(points, callback){
+  console.log('in player update points ' + this.username);
+  if (this.username != 'New Player'){
+    user.updatePoints(this, points, callback);
+  }
+};
 
 module.exports = PlayerSocket;

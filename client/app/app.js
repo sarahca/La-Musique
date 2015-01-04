@@ -53,10 +53,10 @@ angular.module('lamusiqueApp', [
           this.admin = admin;
         },
         saveUserDataOnLogin: function(data) {
-          this.setUserLoggedIn(true);
-          this.setUserUsername(data['user-username']);
-          this.setUserPoints(data['user-points']);
-          this.setUserGems(data['user-gems']);
+          user.setUserLoggedIn(true);
+          user.setUserUsername(data['user-username']);
+          user.setUserPoints(data['user-points']);
+          user.setUserGems(data['user-gems']);
         },
       }
       return user;
