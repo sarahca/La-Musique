@@ -28,12 +28,18 @@
       </ul>
     </div><!-- END OF NAVBAR HEADER -->
 
-    <div ng-show="inLogin"> <!--LOGIN FORM -->
+    <div ng-show="inLogin" style="margin-bottom: 10px"> <!--LOGIN FORM -->
       <hr> 
+      <div> 
+        <button type="button" class="btn btn-default pull-right" ng-click="cancel()"> Cancel </button>
+      </div>
       <div ng-include="'components/login/login.html'"></div>
     </div>
-    <div ng-show="inSignup"> <!--SIGNUP FORM -->
+    <div ng-show="inSignup" style="margin-bottom: 10px"> <!--SIGNUP FORM -->
       <hr>
+      <div> 
+        <button type="button" class="btn btn-default pull-right" ng-click="cancel()"> Cancel </button>
+      </div>
       <div ng-include="'components/register/register.html'"></div>
     </div>
   </div>

@@ -26,11 +26,20 @@ angular.module('lamusiqueApp')
     }
 
     $scope.login = function() {
+      $scope.inSignup = false;
       $scope.inLogin = true;
     }
 
     $scope.signup = function() {
+      $scope.inLogin = false;
       $scope.inSignup = true;
+    }
+
+    $scope.cancel = function() {
+      $scope.inLogin = false;
+      $scope.inSignup = false;
+
+
     }
   });
 
