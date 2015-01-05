@@ -459,7 +459,8 @@ angular.module('lamusiqueApp')
   .controller('GridCtrl', function ($rootScope, $scope, $filter, $timeout, MediaPlayer) {
     console.log('GridCtrl');
     $scope.mediaPlayer = MediaPlayer;
-    $scope.correctAnswer = '';
+
+    $scope.correctAnswer = 'SWEET HOME ALABAMA';
 
     $scope.resetGrid = function(){
       $('#musicSearch td').each(function(i, elem){
@@ -479,9 +480,10 @@ angular.module('lamusiqueApp')
 
     $rootScope.$on('update grid', function (e, data){
       $scope.resetGrid();
-      console.log('~~~~~~~~~~~~ data["artist"] = ' + data['artist']);
-      console.log('~~~~~~~~~~~~ data["title"] = ' + data['title']);
-      console.log('********************* data =  ' + data['title'] + ' received at ' + Date.now());
+      console.log('--- IN GRID UPDATE---- need to update grid received at ' + Date.now());
+      console.log('--- IN GRID UPDATE ---- question in grid is guess the ' + data.question);
+      console.log('--- IN GRID UPDATE ---- title is ' +  data.song['title'] );
+      console.log('--- IN GRID UPDATE ---- artist is ' +  data.song['artist'] );
       $scope.artist = angular.uppercase(data['artist']);
       //$scope.correctAnswer = angular.uppercase(data['title']);
       $scope.correctAnswer = 'ALL ABOUT THAT BASS OF MISTER EMINEM';
@@ -491,7 +493,7 @@ angular.module('lamusiqueApp')
       grid.populateTable();
       grid.generateAnswer($scope.correctAnswer);
       $scope.generateAnswerPlaceholder($scope.correctAnswer,null,false);
-    });
+
 
     // just another suggestion,
     //IN THE CHAT CONTROLLER, I added an event listener (line 196) which listens for the event 'guess-time'
@@ -623,16 +625,30 @@ angular.module('lamusiqueApp')
       };
     }());
 
-    
-   
-    
+
+    //just a suggestion to get the song's details once the media player starts playing
+    // $rootScope.$on('update grid', function (e, data){
+    //   console.log('--- IN GRID UPDATE---- need to update grid received at ' + Date.now());
+    //   console.log('--- IN GRID UPDATE ---- question in grid is guess the ' + data.question);
+    //   console.log('--- IN GRID UPDATE ---- title is ' +  data.song['title'] );
+    //   console.log('--- IN GRID UPDATE ---- artist is ' +  data.song['artist'] );
+    // });
+
+    // just another suggestion,
+    //IN THE CHAT CONTROLLER, I added an event listener (line 196) which listens for the event 'guess-time'
+    // in order to send a message to the back end to give points to the player
+    // I was planning to prepare the backend to give points to players.
+
+
     $scope.answer = '';
     
     $scope.calculateTotalTime = function(){
       console.log("*************************************************");
-      console.log("************ Your time = "+ $scope.mediaPlayer.currentTime + " seconds");
+      console.log("************ Your time = "+ $scope.mediaPlayer.player().currentTime + " seconds");
       console.log("*************************************************");
+
       //$rootScope.$emit('guess-time', $scope.mediaPlayer.currentTime); 
+      $scope.mediaPlayer.player().pause();
     }
 
     $scope.$watch('answer', function(val) {

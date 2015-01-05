@@ -1,5 +1,6 @@
 var redisLib = require("redis");
 var async = require('async');
+var config = require('../../config/environment');
 
 var rooms = {}; // keep list of all channels on this server
 var room; // keep a reference of the Room object
@@ -14,8 +15,8 @@ function getRoom(channel) {
 function Room(channel) {
   this.channel = channel;
   this.players = [];
-  this.redisSub = redisLib.createClient();
-  this.redisPub = redisLib.createClient();
+  this.redisSub = redisLib.createClient(6379, config.redis.hostname);
+  this.redisPub = redisLib.createClient(6379, config.redis.hostname);
   this.redisSub.subscribe(this.channel);
 
   this.redisSub.on('message', function(channel, data) {
@@ -157,11 +158,13 @@ Room.prototype.setAdminPlayer = function() {
 }
 
 //Room broadcasts next song
-Room.prototype.broadcastNextSong = function(song) {
+Room.prototype.broadcastNextSong = function(song, questionType, questionGenre) {
   var message = {
     'message_type': 'command',
     'command': 'next song to play',
     'song': song,
+    'question': questionType,
+    'genre': questionGenre,
     'time': Date.now(),
   };
   room.redisPub.publish(room.channel, JSON.stringify(message));
@@ -176,14 +179,144 @@ Room.prototype.broadcastNextSong = function(song) {
 };
 
 Room.prototype.processNextSongRequestMessage =  function(player, message) {
+
   room.redisPub.get('admin-' + room.channel, function(err, res){
     if (!err && (res == player.nickname)) {
       player.getNextSong(message['song_genre'], function(err, song){
-        room.broadcastNextSong(song);
+        room.broadcastNextSong(song, message['question'], message['song_genre']);
       });
+      room.redisPub.del('leaders-' + room.channel, function(err, res) {
+        if ( err ){
+          console.log( "couldn't delete the list of leaders for channel " + room.channel);
+        }
+        else {
+          console.log(' deleted list of leaders before new song');
+        }
+      })
     }
+    else
+      console.log('an error might have occured or the request wasnt coming from the game admin');
   });
 };
+
+Room.prototype.submitFeedback = function (player, message) {
+  var feedbackMessage = {
+    'message_type': 'bot',
+    'text': "You submitted " + message['answer'] + ", it's pretty close to the right answer, try again!",
+    'player_nickname': player.nickname,
+    'time' : Date.now(),
+  };
+  player.receiveMessage(feedbackMessage);
+}
+
+Room.prototype.processGuessTime = function (player, data) {
+  var songId;
+  room.redisPub.get("song-" + room.channel, function (err, reply){
+    if (! err && reply){
+      songId = reply;
+      if (data.song._id != songId) {
+        console.log('wrong song id');
+        return;
+      }
+      else {
+        var points = Math.floor(30 - data['guess_time']);
+        var playerData = {
+          'nickname': player.nickname,
+          'points': points,
+        };
+        room.redisPub.lrange('leaders-' + room.channel, 0, -1, function (err, reply){
+          if ( !err && reply ){
+            var currentLeaders = reply;
+            var alreadySubmitted = currentLeaders.filter(function (p) {
+              var currentPlayer = JSON.parse(p);
+              return (currentPlayer.nickname == player.nickname);
+            });
+            if (alreadySubmitted.length < 1){
+              room.redisPub.rpush('leaders-' + room.channel, JSON.stringify(playerData), function(err, inserted) {
+                if (! err && inserted) {
+                  if (player.username != 'New Player') {
+                    player.updatePoints(points, function(updatedPoints){
+                      room.sendPointsUpdate(player, updatedPoints, points);
+                    });
+                  }
+                  else {
+                    var updatedPoints = player.points + points;
+                    room.sendPointsUpdate(player, updatedPoints, points);
+                  }
+
+                  room.orderPlayersAndNotify(data['song_id']);
+                }
+              });
+            }
+            else {
+              room.AnswerAlreadyRegistered(player);
+            }
+          }
+        });
+      }
+    };
+  });
+}
+
+Room.prototype.sendPointsUpdate = function (player, updatedPoints, newPoints) {
+  player.points = updatedPoints;
+  var command = {
+    'message_type': 'command',
+    'command': 'update points',
+    'time': Date.now(),
+    'points': updatedPoints,
+    'player_nickname': player.nickname,
+  };
+  player.receiveMessage(command);
+
+  var message = {
+    'message_type': 'bot',
+    'text': "Well done, you just got " + newPoints + " points",
+    'player_nickname': player.nickname,
+    'time' : Date.now(),
+  };
+  player.receiveMessage(message);
+}
+
+Room.prototype.AnswerAlreadyRegistered = function(player){
+  var message = {
+    'message_type': 'bot',
+    'text': player.nickname + ', your answer has already been registered for this song',
+    'player_nickname': player.nickname,
+    'time' : Date.now(),
+  };
+  player.receiveMessage(message);
+}
+
+Room.prototype.orderPlayersAndNotify = function (songId) {
+  room.redisPub.lrange('leaders-' + room.channel, 0, -1, function (err, reply){
+    if ( !err && reply ){
+      console.log('reply ' + reply);
+      var players = reply.map(function (p){
+        var player = JSON.parse(p);
+        console.log('before json parse ' + p);
+        return playerObject = {
+          nickname: player.nickname,
+          points: player.points
+        };
+      });
+      var sortedPlayers = players.sort(room.comparePlayersPoints);
+      var message = {
+        'message_type': 'command',
+        'command': 'refresh leaderboard',
+        'song_id': songId,
+        'time': Date.now(),
+        'leaders': sortedPlayers.slice(0,5)
+      };
+      console.log('to redis refresh leaderboard' + message.leaders + ' - nb leaders ' + message.leaders.length);
+      room.redisPub.publish(room.channel, JSON.stringify(message));
+    }
+  }); 
+}
+
+Room.prototype.comparePlayersPoints = function(player1, player2){
+  return (player2.points - player1.points);
+}
 
 
 // handle front end request to change nickname
@@ -354,7 +487,7 @@ Room.prototype.broadcast = function (message) {
 };
 
 Room.prototype.removePlayer = function(player) {
-  console.log('removing player ' + player);
+  console.log('removing player ' + player.nickname);
   for ( var i = 0; i < room.players.length; i++ ) {
     if (player.room.players[i].nickname === player.nickname ) {
       room.players.splice(i, 1);

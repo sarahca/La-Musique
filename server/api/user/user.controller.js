@@ -14,6 +14,7 @@ exports.register = function (req, res) {
   var controller = this;
   newUser.save(function(err, user){
     if ( err ) {
+      console.log( 'user save ' + err);
       res.send(400,JSON.stringify({ message: 'username and email are already used'}) )
       console.log('username and email are already used');
     }
@@ -28,6 +29,25 @@ exports.register = function (req, res) {
       res.send(200, JSON.stringify(data) );
     }
   })
+}
+
+exports.updatePoints = function(player, newPoints, callback) {
+  var criteria = {'username': player.username};
+  User.findOne(criteria, function(err, user){
+    if (err)
+      console.log("an error occured " + err);
+    if (user) {
+      user.points += newPoints;
+      user.save( function (err, user){
+        if (err)
+          console.log("couldn't save changes " + err);
+        else
+          callback(user.points);
+      })
+    }
+    if (!user)
+      console.log("couldn't find this user in the db");
+  });
 }
 
 exports.login = function (req, res) {
