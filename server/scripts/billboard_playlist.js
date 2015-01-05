@@ -121,7 +121,7 @@ function validData(title, artist) {
 
 function countWords(string){
   var wordsArray = string.split(" ");
-  return (wordsArray.length <= 3);
+  return ((wordsArray.length <= 3) && validLengthWordArray(wordsArray));
 }
 
 function removeFeaturing(string) {
@@ -131,6 +131,16 @@ function removeFeaturing(string) {
   else {
     return string;
   }
+}
+
+function validLengthWordArray(wordsArray){
+  for (var x in wordsArray) {
+    if (wordsArray[x].length > 9){
+      console.log ("====== " + wordsArray[x] + ' is too long');
+      return false;
+    }
+  }
+  return true;
 }
 
 
