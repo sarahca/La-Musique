@@ -3,17 +3,19 @@
 
 
 var playSong = function (scope, rootScope){
-      rootScope.$emit('start countdown');
+  rootScope.$emit('start countdown'); // for main controller
+  var song = scope.audioPlaylist[0].song_details;
+  var questionType = scope.audioPlaylist[0].question;
+  var musicGenre = scope.audioPlaylist[0].genre;
+  var nextRoundData = {'genre': musicGenre, 'question': questionType};
+  rootScope.$emit('update round details', nextRoundData); // for main controller
   setTimeout(function(){
     console.log('media player starts playing at ' + Date.now());
     scope.mediaPlayer.play(0);
-    var song = scope.audioPlaylist[0].song_details;
-    rootScope.$emit('update grid', song); // send song data for the grid
-    rootScope.$emit('song details for chat', song);
-    rootScope.$emit('clear leaderboard');
-    rootScope.$emit('stop countdown');
-    rootScope.$emit('reset countdown');
-    }, 5000);
+    rootScope.$emit('update grid', {'song': song, 'question': questionType}); // send song data to the grid
+    rootScope.$emit('song details for chat', {'song': song, 'question': questionType});
+    rootScope.$emit('clear leaderboard'); // for leaderboard
+  }, 5000);
 }
 
 angular.module('lamusiqueApp')
@@ -27,12 +29,14 @@ angular.module('lamusiqueApp')
 
     $timeout(function () {
 
-      $rootScope.$on('next-song-to-play', function (e, song) {
-        var url = $scope.getSongPlayerUrl(song.amazonId);
+      $rootScope.$on('next-song-to-play', function (e, data) {
+        var url = $scope.getSongPlayerUrl(data.song.amazonId);
         var songToPlay = {
           src: url,
           type: 'audio/mp3',
-          song_details: song,
+          song_details: data.song,
+          question: data.question,
+          genre: data.genre
         };
         $scope.audioPlaylist.push(songToPlay);
         if ( !$scope.mediaPlayer.playing ) {
@@ -48,7 +52,10 @@ angular.module('lamusiqueApp')
         }
         else {
           console.log('requesting new song');
-          $rootScope.$emit('request-new-song', {'genre': 'pop'});
+          var nextGenre = $rootScope.genreSelected;
+          var nextQuestion = $rootScope.questionSelected;
+          var nextRoundRequest = {'genre': nextGenre, 'question': nextQuestion};
+          $rootScope.$emit('request-new-song', nextRoundRequest); // for chat
         }
       });
     });

@@ -42,7 +42,7 @@ angular.module('lamusiqueApp')
         .error(function(data, status, headers, config) {
           console.log(data);
         });
-      newSongRequestCommand({'genre': 'pop'});
+      newSongRequestCommand({'genre': $rootScope.genreSelected, 'question': $rootScope.questionSelected});
       // caught by the main controller to set message
       $rootScope.$emit('new player joined'); 
     };
@@ -78,7 +78,7 @@ angular.module('lamusiqueApp')
     $scope.sendMessage = function() {
       var text = $scope.newMsg.text;
       console.log('sending message ' + text);
-      if ($scope.currentSong && (text == $scope.currentSong.title))
+      if ($scope.currentSong && checkIfAnswer(text))
         sendAnswer(text);
       else {
         var message = {
@@ -90,6 +90,12 @@ angular.module('lamusiqueApp')
       }
       $scope.newMsg.text = '';
     };
+
+    function checkIfAnswer(text){
+      var text = text.trim().toLowerCase();
+      console.log('/// in chat check if ' + text + '= ' + $scope.currentSong[$scope.currentQuestion]);
+      return (text == $scope.currentSong[$scope.currentQuestion]);
+    }
 
     function sendAnswer(text) {
       console.log('message is the right answer');
@@ -103,8 +109,9 @@ angular.module('lamusiqueApp')
     };
 
     $rootScope.$on('song details for chat', function(e, data){
-      console.log('chat received song details');
-      $scope.currentSong = data;
+      console.log('updating round details in chat question is ' + data.question);
+      $scope.currentSong = data.song;
+      $scope.currentQuestion = data.question;
     });
 
     // helper method to set our nickname
@@ -141,7 +148,6 @@ angular.module('lamusiqueApp')
           $scope.user.setUserAdmin(false);
           break;
         case 'refresh leaderboard':
-          console.log('chat emits refresh leaderboard event');
           $rootScope.$emit('refresh leaderboard', command);
           break;
         case 'update points':
@@ -192,7 +198,9 @@ angular.module('lamusiqueApp')
 
     function songMessage (message) {
       var nextSongToPlay = message.song;
-      $rootScope.$emit('next-song-to-play', nextSongToPlay);
+      var question = message.question;
+      var genre = message.genre
+      $rootScope.$emit('next-song-to-play', {'song': nextSongToPlay, 'question': question, 'genre': genre});
     }
 
     // return a random color
@@ -218,6 +226,7 @@ angular.module('lamusiqueApp')
         'command': 'new song request',
         'nickname': $scope.nickname,
         'song_genre': data['genre'],
+        'question': data['question'],
         'time': Date.now(),
       };
       $scope.socket.emit('command', JSON.stringify(message));

@@ -157,11 +157,13 @@ Room.prototype.setAdminPlayer = function() {
 }
 
 //Room broadcasts next song
-Room.prototype.broadcastNextSong = function(song) {
+Room.prototype.broadcastNextSong = function(song, questionType, questionGenre) {
   var message = {
     'message_type': 'command',
     'command': 'next song to play',
     'song': song,
+    'question': questionType,
+    'genre': questionGenre,
     'time': Date.now(),
   };
   room.redisPub.publish(room.channel, JSON.stringify(message));
@@ -176,10 +178,11 @@ Room.prototype.broadcastNextSong = function(song) {
 };
 
 Room.prototype.processNextSongRequestMessage =  function(player, message) {
+
   room.redisPub.get('admin-' + room.channel, function(err, res){
     if (!err && (res == player.nickname)) {
       player.getNextSong(message['song_genre'], function(err, song){
-        room.broadcastNextSong(song);
+        room.broadcastNextSong(song, message['question'], message['song_genre']);
       });
       room.redisPub.del('leaders-' + room.channel, function(err, res) {
         if ( err ){
@@ -190,6 +193,8 @@ Room.prototype.processNextSongRequestMessage =  function(player, message) {
         }
       })
     }
+    else
+      console.log('an error might have occured or the request wasnt coming from the game admin');
   });
 };
 

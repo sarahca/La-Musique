@@ -22,7 +22,6 @@ function PlayerSocket(socket){
     if (d['username'])
       self.username = d['username'];
     var channel = d['channel'];
-    console.log('Joining channel ' + channel + ' by ' + d['nickname']);
     self.room = getRoom(channel);
     self.nickname = d['nickname'];
     self.room.addPlayer(self);
@@ -65,7 +64,6 @@ function PlayerSocket(socket){
 PlayerSocket.prototype.receiveMessage = function (message) {
   var jsonMessage = JSON.stringify(message);
   if (message['message_type'] == 'command') {
-    console.log('emitting new command ' + message['command']);
     this.socket.emit('command', jsonMessage);
   }
   else
@@ -88,7 +86,6 @@ PlayerSocket.prototype.getNextSong = function (genre, callback) {
 };
 
 PlayerSocket.prototype.updatePoints = function(points, callback){
-  console.log('in player update points ' + this.username);
   if (this.username != 'New Player'){
     user.updatePoints(this, points, callback);
   }

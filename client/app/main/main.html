@@ -4,55 +4,63 @@
 
   
   <div class="container">
-    <h3 ng-show="newPlayer && !user.getUserAdmin()">There might a round in progress, the next one will start soon</h3>
+    <h3 ng-show="newPlayer && !user.getUserAdmin()">There might a round in progress, the next one will start soon...</h3>
+    <h3 ng-show="newPlayer && user.getUserAdmin()">The first round will start soon...</h3>
     <h3 ng-show="secondsLeft > 0">Next round in ... {{secondsLeft}} seconds</h3>
     <h3 ng-show="secondsLeft == 0">Next round ... NOW, GOOD LUCK!!</h3>
+    <h3 ng-show="roundInProgress" ng-model="questionSelected" ng-model="genreSelected"> 
+      Current round is 'guess the {{questionSelected}}' in {{genreSelected}} music
+    </h3>
+    <h3 ng-show="user.getUserAdmin() && roundInProgress"> 
+      You are the game admin and can choose the next round:
+    </h3>
+
 
     <!--LAYOUT FOR ADMIN -->
     <div class='row' ng-show="user.getUserAdmin()" >
     
       <!--QUESTION CATEGORY DROP DOWN-->
-      <div class='col-md-4'>
-        <div class="btn-group">
-          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-            Question category <span class="caret"></span>
-          </button>
+      <div class='col-md-4' ng-show="roundInProgress">
+        <select id="select-question" class="form-control btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false" ng-model="questionSelected" ng-change="updateQuestion()" ng-disabled="questionSelectable">
           <ul class="dropdown-menu" role="menu">
-            <li><a href="#">Artist</a></li>
-            <li><a href="#">Song title</a></li>   
-          </ul>
-        </div>
+            <!-- <li><a href="#"><option value="default">Question type (default: guess the title)</option></a></li> -->
+            <li><a href="#"><option value="title">Guess the title</option></a></li>
+            <li><a href="#"><option value="artist">Guess the artist</option></a></li>
+        </select>
       </div>
       <!--END QUESTION CATEGORY DROP DOWN -->
 
       <!--GENRE DROP DOWN -->
-      <div class="col-md-4">
-        <div class="btn-group">
-          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-            Music Genre <span class="caret"></span>
-          </button>
+      <div class="col-md-4" ng-show="roundInProgress">
+        <select id="select-genre" class="form-control btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false" ng-model="nextGenreSelected" ng-change="updateGenre()" ng-disabled="genreSelectable">
           <ul class="dropdown-menu" role="menu">
-            <li><a href="#">Rock</a></li>
-            <li><a href="#">Pop</a></li>   
-          </ul>
-        </div>
+            <!-- <li><a href="#"><option value="default">Music genre (default: rock)</option></a></li> -->
+            <li><a href="#"><option value="rock">Rock</option></a></li>
+            <li><a href="#"><option value="pop">Pop</option></a></li>
+            <li><a href="#"><option value="alternative">Alternative</option></a></li>
+            <li><a href="#"><option value="country">Country</option></a></li>
+            <li><a href="#"><option value="r-and-b">R&ampB</option></a></li>
+        </select>
       </div> <!--END GENRE DROP DOWN -->
-      <div class="col-md-4">
+      <div class="col-md-4" ng-show="user.getUserAdmin() && roundInProgress">
         <label>
           <input type="checkbox"> Bot Mode
         </label>
       </div> <!-- END OF BOT MODE-->
     </div> <!--END OF DROPDOWNS ROW -->
 
-  <!-- LAYOUT IF NOT ADMIN -->
-    <div class="row" ng-hide="user.getUserAdmin()">
-      <div class='col-md-4'>
-        <span> Guess the title </span>
+    <!-- LAYOUT IF NOT ADMIN -->
+   <!--  <div class="row" ng-hide="user.getUserAdmin()">
+      <div ng-hide="newPlayer">
+        <div class='col-md-4' ng-show="roundInProgress" ng-model="nextQuestionSelected">
+          <span> Guess the {{questionSelected}} </span>
+        </div>
+        <div class='col-md-4' ng-show="roundInProgress" ng-model="genreSelected">
+          <span> Music genre is {{genreSelected}} </span>
+        </div>
       </div>
-      <div class='col-md-4'>
-        <span> Music genre is pop </span>
-      </div>
-    </div><!-- END OF LAYOUT IF NOT ADMIN -->
+    </div> -->
+    <!-- END OF LAYOUT IF NOT ADMIN -->
   </div> 
 
 

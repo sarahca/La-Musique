@@ -359,7 +359,10 @@ angular.module('lamusiqueApp')
 
     //just a suggestion to get the song's details once the media player starts playing
     $rootScope.$on('update grid', function (e, data){
-      console.log('need to update grid ' + data['title'] + ' received at ' + Date.now());
+      console.log('--- IN GRID UPDATE---- need to update grid received at ' + Date.now());
+      console.log('--- IN GRID UPDATE ---- question in grid is guess the ' + data.question);
+      console.log('--- IN GRID UPDATE ---- title is ' +  data.song['title'] );
+      console.log('--- IN GRID UPDATE ---- artist is ' +  data.song['artist'] );
     });
 
     // just another suggestion,
