@@ -10,6 +10,7 @@ var playSong = function (scope, rootScope){
   var nextRoundData = {'genre': musicGenre, 'question': questionType};
   rootScope.$emit('update round details', nextRoundData); // for main controller
   setTimeout(function(){
+    rootScope.$emit('round started');
     console.log('media player starts playing at ' + Date.now());
     scope.mediaPlayer.play(0);
     rootScope.$emit('update grid', {'song': song, 'question': questionType}); // send song data to the grid
@@ -24,6 +25,14 @@ angular.module('lamusiqueApp')
     $scope.getSongPlayerUrl = function (amazonId) {
       return 'http://www.amazon.com/gp/dmusic/get_sample_url.html/ref=dm_dp_trk_' + amazonId + '?ie=UTF8&ASIN=' + amazonId +'&DownloadLocation=WEBSITE'
     };
+
+    $scope.getNextSong = function() {
+      console.log('requesting new song');
+      var nextGenre = $rootScope.genreSelected;
+      var nextQuestion = $rootScope.questionSelected;
+      var nextRoundRequest = {'genre': nextGenre, 'question': nextQuestion};
+      $rootScope.$emit('request-new-song', nextRoundRequest); // for chat
+    }
 
     $scope.audioPlaylist = [];
 
@@ -45,19 +54,22 @@ angular.module('lamusiqueApp')
       });
 
       $scope.mediaPlayer.on('ended', function(){
+        $rootScope.$emit('round ended');
         $rootScope.$emit('reset countdown');
         $scope.audioPlaylist.shift();
         if ($scope.audioPlaylist.length > 0) { 
           playSong($scope, $rootScope);
         }
         else {
-          console.log('requesting new song');
-          var nextGenre = $rootScope.genreSelected;
-          var nextQuestion = $rootScope.questionSelected;
-          var nextRoundRequest = {'genre': nextGenre, 'question': nextQuestion};
-          $rootScope.$emit('request-new-song', nextRoundRequest); // for chat
-        }
+          if (!$rootScope.gameOnPause) 
+            $scope.getNextSong(); 
+        }         
       });
+
+      $rootScope.$on('game restarted', function() {
+        $scope.getNextSong(); 
+      });
+
     });
   });
 

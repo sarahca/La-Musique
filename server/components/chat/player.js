@@ -56,6 +56,13 @@ function PlayerSocket(socket){
       case 'submit guess':
         self.room.processGuessTime(self, d);
         break;
+      case 'almost right answer':
+        console.log('player submitted almost right answer');
+        self.room.submitFeedback(self, d);
+        break;
+      case 'answer already submitted':
+        self.room.AnswerAlreadyRegistered(self);
+        break;
     }    
   });
 };
@@ -69,6 +76,7 @@ PlayerSocket.prototype.receiveMessage = function (message) {
   else
     this.socket.emit('new_message', jsonMessage);
 };
+
 
 
 PlayerSocket.prototype.getChatHistory = function(){

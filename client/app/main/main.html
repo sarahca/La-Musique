@@ -20,10 +20,9 @@
     <div class='row' ng-show="user.getUserAdmin()" >
     
       <!--QUESTION CATEGORY DROP DOWN-->
-      <div class='col-md-4' ng-show="roundInProgress">
-        <select id="select-question" class="form-control btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false" ng-model="questionSelected" ng-change="updateQuestion()" ng-disabled="questionSelectable">
+      <div class='col-md-3' ng-show="roundInProgress">
+        <select id="select-question" class="form-control btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false" ng-model="nextQuestionSelected" ng-change="updateQuestion()" ng-disabled="questionSelectable">
           <ul class="dropdown-menu" role="menu">
-            <!-- <li><a href="#"><option value="default">Question type (default: guess the title)</option></a></li> -->
             <li><a href="#"><option value="title">Guess the title</option></a></li>
             <li><a href="#"><option value="artist">Guess the artist</option></a></li>
         </select>
@@ -31,7 +30,7 @@
       <!--END QUESTION CATEGORY DROP DOWN -->
 
       <!--GENRE DROP DOWN -->
-      <div class="col-md-4" ng-show="roundInProgress">
+      <div class="col-md-3" ng-show="roundInProgress">
         <select id="select-genre" class="form-control btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false" ng-model="nextGenreSelected" ng-change="updateGenre()" ng-disabled="genreSelectable">
           <ul class="dropdown-menu" role="menu">
             <!-- <li><a href="#"><option value="default">Music genre (default: rock)</option></a></li> -->
@@ -42,25 +41,19 @@
             <li><a href="#"><option value="r-and-b">R&ampB</option></a></li>
         </select>
       </div> <!--END GENRE DROP DOWN -->
-      <div class="col-md-4" ng-show="user.getUserAdmin() && roundInProgress">
+      <div class="col-md-3" ng-show="user.getUserAdmin() && roundInProgress">
         <label>
           <input type="checkbox"> Bot Mode
         </label>
       </div> <!-- END OF BOT MODE-->
-    </div> <!--END OF DROPDOWNS ROW -->
-
-    <!-- LAYOUT IF NOT ADMIN -->
-   <!--  <div class="row" ng-hide="user.getUserAdmin()">
-      <div ng-hide="newPlayer">
-        <div class='col-md-4' ng-show="roundInProgress" ng-model="nextQuestionSelected">
-          <span> Guess the {{questionSelected}} </span>
-        </div>
-        <div class='col-md-4' ng-show="roundInProgress" ng-model="genreSelected">
-          <span> Music genre is {{genreSelected}} </span>
-        </div>
+      <!-- PAUSE THE GAME -->
+      <div class="col-md-3" ng-show="user.getUserAdmin() && roundInProgress && !gameOnPause">
+        <button id="pause-button" type="button" class="btn btn-default" ng-click="pauseGame()"> Pause game </button>
       </div>
-    </div> -->
-    <!-- END OF LAYOUT IF NOT ADMIN -->
+      <div class="col-md-3" ng-show="user.getUserAdmin() && roundInProgress && gameOnPause">
+        <button id="pause-button" type="button" class="btn btn-default" ng-click="restartGame()"> Restart game </button>
+      </div>
+    </div> <!--END OF DROPDOWNS ROW -->
   </div> 
 
 

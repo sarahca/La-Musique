@@ -10,6 +10,7 @@ angular.module('lamusiqueApp')
     $scope.genreSelectable = true; // deactivate genre selection
     $scope.questionSelectable = true; // deactivate question category selection
     $scope.roundInProgress = false;
+    $scope.gameOnPause = false;
 
     $scope.updateQuestion = function() {
       $rootScope.questionSelected = $scope.nextQuestionSelected;
@@ -33,7 +34,18 @@ angular.module('lamusiqueApp')
       if ($scope.secondsLeft == 0)
         $scope.showCurrentRoundDetails();
       }, 1000, 5);
-    }
+    };
+
+    $scope.pauseGame = function() {
+      $scope.gameOnPause = $rootScope.gameOnPause = true;
+    };
+
+    $scope.restartGame = function() {
+      $scope.gameOnPause = $rootScope.gameOnPause = false;
+      $rootScope.$emit('game restarted');
+    };
+
+
     //event sent by mediaPlayer controller when new song received
     $rootScope.$on('start countdown', function(){
       $scope.roundInProgress = false;

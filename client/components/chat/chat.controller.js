@@ -9,10 +9,12 @@ angular.module('lamusiqueApp')
     $scope.mediaPlayer = MediaPlayer;
     $scope.nickname;
     $scope.currentSong;
+    $scope.hasSubmitted = false;
     var controller = this;
     $scope.pathname = window.location.pathname;
     $scope.channelName = $scope.pathname.replace(/\//, '');
     $scope.messages = [];
+    $scope.roundInProgress = false;
 
     $timeout(function() {
       $http.get('/api/user/isLoggedIn')
@@ -77,10 +79,7 @@ angular.module('lamusiqueApp')
     // post a new message
     $scope.sendMessage = function() {
       var text = $scope.newMsg.text;
-      console.log('sending message ' + text);
-      if ($scope.currentSong && checkIfAnswer(text))
-        sendAnswer(text);
-      else {
+      if ($scope.roundInProgress && !checkIfAnswer(text)) {
         var message = {
           'channel': $scope.channelName,
           'text': text,
@@ -93,12 +92,20 @@ angular.module('lamusiqueApp')
 
     function checkIfAnswer(text){
       var text = text.trim().toLowerCase();
-      return (text == $scope.currentSong[$scope.currentQuestion]);
+      var expectedAnswer = $scope.currentSong[$scope.currentQuestion];
+      var lDist = new Levenshtein(text, expectedAnswer);
+      console.log("ldist = " + lDist);
+      if (text == expectedAnswer)
+        sendAnswer(text);
+      if ((lDist > 0 ) && (lDist <= 5))
+        almostRightAnswerNotice(text)
+      return ((text == expectedAnswer) || (lDist <= 5));
     }
 
     function sendAnswer(text) {
       console.log('message is the right answer');
       var time = $scope.mediaPlayer.player().currentTime;
+      console.log('time submitted ' + time);
       console.log(time + ' in send answer');
       var data = {
         song: $scope.currentSong,
@@ -106,6 +113,19 @@ angular.module('lamusiqueApp')
       };
       $rootScope.$emit('guess-time', data);
     };
+
+    function almostRightAnswerNotice(text){
+      var message = {
+        'channel': $scope.channelName,
+        'message_type': 'command',
+        'command': 'almost right answer',
+        'nickname': $scope.nickname,
+        'answer': text,
+        'time': Date.now(),
+      };
+      $scope.socket.emit('command', JSON.stringify(message));
+
+    }
 
     $rootScope.$on('song details for chat', function(e, data){
       console.log('updating round details in chat question is ' + data.question);
@@ -200,7 +220,16 @@ angular.module('lamusiqueApp')
       var question = message.question;
       var genre = message.genre
       $rootScope.$emit('next-song-to-play', {'song': nextSongToPlay, 'question': question, 'genre': genre});
-    }
+      $scope.hasSubmitted = false;
+    };
+
+    $rootScope.$on('round started', function(){
+      $scope.roundInProgress = true;
+    });
+
+    $rootScope.$on('round ended', function(){
+      $scope.roundInProgress = false;
+    });
 
     // return a random color
     function getRandomRolor() {
@@ -236,6 +265,17 @@ angular.module('lamusiqueApp')
     });
 
     function submitGuessTime(data) {
+      if ($scope.hasSubmitted) {
+        var message = {
+          'channel': $scope.channelName,
+          'message_type': 'command',
+          'command': 'answer already submitted',
+          'nickname': $scope.nickname,
+          'time': Date.now(),
+        };
+        $scope.socket.emit('command', JSON.stringify(message));
+        return;
+      }
       var message = {
         'channel': $scope.channelName,
         'message_type': 'command',
@@ -246,7 +286,8 @@ angular.module('lamusiqueApp')
         'time': Date.now(),
       };
       $scope.socket.emit('command', JSON.stringify(message));
-    }
+      $scope.hasSubmitted = true;
+    };
 
 
   });

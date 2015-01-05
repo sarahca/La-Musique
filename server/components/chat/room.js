@@ -199,6 +199,16 @@ Room.prototype.processNextSongRequestMessage =  function(player, message) {
   });
 };
 
+Room.prototype.submitFeedback = function (player, message) {
+  var feedbackMessage = {
+    'message_type': 'bot',
+    'text': "You submitted " + message['answer'] + ", it's pretty close to the right answer, try again!",
+    'player_nickname': player.nickname,
+    'time' : Date.now(),
+  };
+  player.receiveMessage(feedbackMessage);
+}
+
 Room.prototype.processGuessTime = function (player, data) {
   var songId;
   room.redisPub.get("song-" + room.channel, function (err, reply){
@@ -226,12 +236,12 @@ Room.prototype.processGuessTime = function (player, data) {
                 if (! err && inserted) {
                   if (player.username != 'New Player') {
                     player.updatePoints(points, function(updatedPoints){
-                      room.sendPointsUpdate(player, updatedPoints);
+                      room.sendPointsUpdate(player, updatedPoints, points);
                     });
                   }
                   else {
                     var updatedPoints = player.points + points;
-                    room.sendPointsUpdate(player, updatedPoints);
+                    room.sendPointsUpdate(player, updatedPoints, points);
                   }
 
                   room.orderPlayersAndNotify(data['song_id']);
@@ -248,7 +258,7 @@ Room.prototype.processGuessTime = function (player, data) {
   });
 }
 
-Room.prototype.sendPointsUpdate = function (player, updatedPoints) {
+Room.prototype.sendPointsUpdate = function (player, updatedPoints, newPoints) {
   player.points = updatedPoints;
   var command = {
     'message_type': 'command',
@@ -258,6 +268,14 @@ Room.prototype.sendPointsUpdate = function (player, updatedPoints) {
     'player_nickname': player.nickname,
   };
   player.receiveMessage(command);
+
+  var message = {
+    'message_type': 'bot',
+    'text': "Well done, you just got " + newPoints + " points",
+    'player_nickname': player.nickname,
+    'time' : Date.now(),
+  };
+  player.receiveMessage(message);
 }
 
 Room.prototype.AnswerAlreadyRegistered = function(player){
