@@ -89,9 +89,9 @@ function addSongToPlaylist(title, artist, genre, done) {
     function (callback) {
       collection.insert(
         {
-          "title" : title,
-          "artist" : artist,
-          "genre" : genre
+          "title" : title.trim(),
+          "artist" : artist.trim(),
+          "genre" : genre.trim()
         },
         function (err, doc) {
           if (err)
@@ -127,7 +127,7 @@ function countWords(string){
 function removeFeaturing(string) {
   var featuringIndex = string.indexOf('featuring');
   if (featuringIndex != -1)
-    return string.substring(0, featuringIndex);
+    return string.substring(0, featuringIndex).trim();
   else {
     return string;
   }

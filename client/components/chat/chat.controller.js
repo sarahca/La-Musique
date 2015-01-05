@@ -93,7 +93,6 @@ angular.module('lamusiqueApp')
 
     function checkIfAnswer(text){
       var text = text.trim().toLowerCase();
-      console.log('/// in chat check if ' + text + '= ' + $scope.currentSong[$scope.currentQuestion]);
       return (text == $scope.currentSong[$scope.currentQuestion]);
     }
 
