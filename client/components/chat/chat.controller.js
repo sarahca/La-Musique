@@ -195,6 +195,7 @@ angular.module('lamusiqueApp')
     //send guess time
 
     $rootScope.$on('guess-time', function (e, data){
+      console.log("TIME RECEIVED FROM GRID = " + data);
       submitGuessTime(data);
 
     });

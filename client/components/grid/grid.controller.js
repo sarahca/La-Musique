@@ -29,40 +29,79 @@ var Grid = function(scope){
         scope.validateAnswer(selectedWord,"grid");
         selectedWord = "";
     })
+
+    grid = this;
+}
+
+Grid.prototype.sayHi = function(){
+  console.log("~~~~~~~~~~~~~~MUAHAHAHAHAHA  ALOHA!~~~~~~~~~~~~~~~");
+}
+
+Grid.prototype.updateHorizontal = function(horizontal, vertical, answer, horRow){
+  console.log("UPDATE HORIZONTAL - answer = " + answer);
+  for(var j = 0; j < answer.length; j++){
+      console.log("horizontal[randomRow-1] = " + horizontal[horRow]);
+      console.log("answer[j] = " + answer[j]);
+      var indexToRemoveHor = horizontal[horRow].indexOf(answer[j]);
+      var verRow = parseInt(answer[j].split('')[1]);
+      console.log("verRow = " + verRow);
+      var indexToRemoveVer = vertical[verRow-1].indexOf(answer[j]);
+      console.log("index to be removed Horizontal = " + indexToRemoveHor);
+      console.log("index to be removed Vertical = " + indexToRemoveVer);
+      horizontal[horRow].splice(indexToRemoveHor , 1);
+      vertical[verRow-1].splice(indexToRemoveVer, 1);
+      console.log("after splice vertical["+verRow+"] = " + vertical[verRow-1]);
+  }
+  console.log("after splice horizontal[horRow] = " + horizontal[horRow]);
+}
+
+Grid.prototype.updateVertical = function(horizontal,vertical,answer,verRow){
+  console.log("UPDATE VERTICAL - answer = " + answer);
+  for(var j = 0; j < answer.length; j++){
+    console.log("vertical[verRow] = " + vertical[verRow]);
+    var indexToRemoveVer = vertical[verRow].indexOf(answer[j]);
+    var horRow = parseInt(answer[j].split('')[0]);
+    console.log("horRow = " + horRow);
+    var indexToRemoveHor = horizontal[horRow-1].indexOf(answer[j]);
+    console.log("indexToRemoveHor = " + indexToRemoveHor);
+    console.log("before splice horizontal["+horRow+"] = " + horizontal[horRow-1]);
+    vertical[verRow].splice(indexToRemoveVer, 1);
+    horizontal[horRow-1].splice(indexToRemoveHor, 1);
+    console.log("after splice horizontal["+horRow+"] = " + horizontal[horRow-1]);
+  }
+  console.log("after splice vertical[verRow] = " + vertical[verRow] );
 }
 
 Grid.prototype.generateAnswer = function(answer){
   var MAXCELLSIZE = 9;
-  var position = ["horizontal", "vertical"];
+  var position = ["horizontal","vertical"];
   var songAnswer = answer.toUpperCase().split(" ");
   var songPosition = {
     horizontal: [],
     vertical: []
   };
 
-  var horizontal = [['00', '01', '02', '03', '04', '05', '06', '07', '08', '09'],
-               ['10', '11', '12', '13', '14', '15', '16', '17', '18', '19'],
-               ['20', '21', '22', '23', '24', '25', '26', '27', '28', '29'],
-               ['30', '31', '32', '33', '34', '35', '36', '37', '38', '39'],
-               ['40', '41', '42', '43', '44', '45', '46', '47', '48', '49'],
-               ['50', '51', '52', '53', '54', '55', '56', '57', '58', '59'],
-               ['60', '61', '62', '63', '64', '65', '66', '67', '68', '69'],
-               ['70', '71', '72', '73', '74', '75', '76', '77', '78', '79'],
-               ['80', '81', '82', '83', '84', '85', '86', '87', '88', '89'],
-               ['90', '91', '92', '93', '94', '95', '96', '97', '98', '99']];
-   var vertical = [['00', '10', '20', '30', '40', '50', '60', '70', '80', '90'],
-               ['01', '11', '21', '31', '41', '51', '61', '71', '81', '91'],
-               ['02', '12', '22', '32', '42', '52', '62', '72', '82', '92'],
-               ['03', '13', '23', '33', '43', '53', '63', '73', '83', '93'],
-               ['04', '14', '24', '34', '44', '54', '64', '74', '84', '94'],
-               ['05', '15', '25', '35', '45', '55', '65', '75', '85', '95'],
-               ['06', '16', '26', '36', '46', '56', '66', '76', '86', '96'],
-               ['07', '17', '27', '37', '47', '57', '67', '77', '87', '97'],
-               ['08', '18', '28', '38', '48', '58', '68', '78', '88', '98'],
-               ['09', '19', '29', '39', '49', '59', '69', '79', '89', '99']];
+  var horizontal = [['11', '12', '13', '14', '15', '16', '17', '18', '19'],
+                    ['21', '22', '23', '24', '25', '26', '27', '28', '29'],
+                    ['31', '32', '33', '34', '35', '36', '37', '38', '39'],
+                    ['41', '42', '43', '44', '45', '46', '47', '48', '49'],
+                    ['51', '52', '53', '54', '55', '56', '57', '58', '59'],
+                    ['61', '62', '63', '64', '65', '66', '67', '68', '69'],
+                    ['71', '72', '73', '74', '75', '76', '77', '78', '79'],
+                    ['81', '82', '83', '84', '85', '86', '87', '88', '89'],
+                    ['91', '92', '93', '94', '95', '96', '97', '98', '99']];
+   var vertical = [['11', '21', '31', '41', '51', '61', '71', '81', '91'],
+                   ['12', '22', '32', '42', '52', '62', '72', '82', '92'],
+                   ['13', '23', '33', '43', '53', '63', '73', '83', '93'],
+                   ['14', '24', '34', '44', '54', '64', '74', '84', '94'],
+                   ['15', '25', '35', '45', '55', '65', '75', '85', '95'],
+                   ['16', '26', '36', '46', '56', '66', '76', '86', '96'],
+                   ['17', '27', '37', '47', '57', '67', '77', '87', '97'],
+                   ['18', '28', '38', '48', '58', '68', '78', '88', '98'],
+                   ['19', '29', '39', '49', '59', '69', '79', '89', '99']];
   
-  var hor_cell = [0,1,2,3,4,5,6,7,8,9];
-  var ver_cell = [0,1,2,3,4,5,6,7,8,9];
+  var hor_cell = [1,2,3,4,5,6,7,8,9];
+  var ver_cell = [1,2,3,4,5,6,7,8,9];
 
   console.log("songAnswer = " + songAnswer);
   console.log("songAnswer.length = " + songAnswer.length);
@@ -71,45 +110,161 @@ Grid.prototype.generateAnswer = function(answer){
   for(var k = 0; k < songAnswer.length; k++){
     var answerLength = songAnswer[k].length;
     var ranPos = Math.floor(Math.random() * 2);
+    console.log("ranPos = " + ranPos);
+    console.log("position[ranPos] = " + position[ranPos]);
+    console.log("~~~~~~~~~k = " + k);
     answerPositions["answer_pos_"+(k+1)] = [];
+    console.log("~~~~~~~~~answerPositions['answer_pos_'"+(k+1)+"] = " + answerPositions["answer_pos_"+(k+1)]);
     if(position[ranPos] === 'horizontal'){
       console.log("===================================================");
       console.log(" =====================HORIZONTAL! =================");
       console.log("===================================================");
       console.log("songAnswer[k] = " + songAnswer[k]);
+      console.log("songAnswer[k].length = " + songAnswer[k].length);
      
-      //var randomCol = ver_cell[Math.floor(Math.random() * ver_cell.length)];
-      var bool = false;
+      var found = false;
 
-      while(bool == false){
+      while(found == false){
         var randomRow = hor_cell[Math.floor(Math.random() * hor_cell.length)];
-        if(horizontal[randomRow].length >= songAnswer[k].length){
-          console.log("randomRow = " + randomRow);
+        console.log("randomRow = " + randomRow);
+        console.log("horizontal[randomRow-1] = " + horizontal[randomRow-1]);
+        if(horizontal[randomRow-1].length >= songAnswer[k].length){
           var counter = 0;
-          for(var i = 0; i < songAnswer[k].length; i++){
-            $('#cell_'+horizontal[randomRow][i]).html(''+ songAnswer[k].charAt(counter));
-            answerPositions["answer_pos_"+(k+1)].push(''+ horizontal[randomRow][i]);
-            counter++;
+          // 20, 21, ?, 23, 24, ? 26, 27, 28, 29
+          var occupied_container = [];
+          var head = parseInt(horizontal[randomRow-1][0].split('')[0] + '1');
+          console.log("head = " + head);
+          //for(var i = 0; i < 10; i++){
+            for(var j = head; j < head+8; j++){
+              if(horizontal[randomRow-1].indexOf(j.toString()) < 0){
+                console.log("j = " + j);
+                occupied_container.push([j.toString()]);
+              }
+            }
+          //}
+          console.log("occupied_container.length = " + occupied_container.length);
+          if(occupied_container.length > 0){
+            var startPoint, endPoint;
+            var usableRow = false;
+            for(var m=0; m < occupied_container.length; m++){
+              if( occupied_container.length > 1){
+                if( m == 0){
+                  console.log("CASE - A");
+                  var left = occupied_container[m] - head;
+                  var right = occupied_container[m+1] - occupied_container[m] - 1;
+                  console.log("occupied_container[m] = " + occupied_container[m]);
+                  console.log("occupied_container[m+1] = " + occupied_container[m+1]);
+                  console.log("left = " + left);
+                  console.log("right = " + right);
+                  if( left >= songAnswer[k].length ){
+                    startPoint = parseInt(head);
+                    endPoint = parseInt(head) + songAnswer[k].length - 1;
+                    usableRow = true;
+                    console.log("CASE - A1");
+                  }else if(right >= songAnswer[k].length){
+                    startPoint = parseInt(occupied_container[m]) + 1;
+                    endPoint = parseInt(occupied_container[m]) + songAnswer[k].length;
+                    usableRow = true;
+                    console.log("CASE - A2");
+                  }
+                }else if(m == occupied_container.length-1){
+                  console.log("CASE - C");
+                  var left = occupied_container[m] - occupied_container[m-1] - 1;
+                  var right = (head+8) - occupied_container[m];
+                  console.log("occupied_container[m] = " + occupied_container[m]);
+                  console.log("typeof occupied_container[m] = " + typeof occupied_container[m]);
+                  console.log("occupied_container[m-1] = " + occupied_container[m-1]);
+                  console.log("left = " + left);
+                  console.log("right = " + right);
+                  console.log("songAnswer[m].length = " + songAnswer[m].length);
+                  if( left >= songAnswer[k].length ){
+                    startPoint = parseInt(occupied_container[m-1]) + 1;
+                    endPoint = parseInt(occupied_container[m-1]) + songAnswer[k].length;
+                    usableRow = true;
+                    console.log("CASE - C1");
+                  }else if(right >= songAnswer[k].length){
+                    startPoint = parseInt(occupied_container[m]) + 1;
+                    endPoint = parseInt(occupied_container[m]) + songAnswer[k].length;
+                    usableRow = true;
+                    console.log("CASE - C2");
+                  }else{
+                    console.log("left = " + left);
+                    console.log("right = " + right);
+                    console.log("typeof right = " + typeof right);
+                    console.log("songAnswer[k].length = " + songAnswer[k].length);
+                    console.log("typeof songAnswer[k].length = " + typeof songAnswer[k].length);
+                  }
+                }else{
+                  console.log("CASE - B");
+                  var left = occupied_container[m] - occupied_container[m-1] - 1;
+                  var right = occupied_container[m+1] - occupied_container[m] - 1;
+                  console.log("occupied_container[m] = " + occupied_container[m]);
+                  console.log("occupied_container[m+1] = " + occupied_container[m+1]);
+                  console.log("left = " + left);
+                  console.log("right = " + right);
+                  if( left >= songAnswer[k].length){
+                    startPoint = parseInt(occupied_container[m-1]) + 1;
+                    endPoint = parseInt(occupied_container[m-1]) + songAnswer[k].length;
+                    usableRow = true;
+                    console.log("CASE - B1");
+                  }else if(right >= songAnswer[k].length){
+                    startPoint = parseInt(occupied_container[m]) + 1;
+                    endPoint = parseInt(occupied_container[m]) + songAnswer[k].length;
+                    usableRow = true;
+                    console.log("CASE - B2");
+                  }
+                }
+              }else{
+                console.log("CASE - D");
+                var left = occupied_container[m] - head;
+                var right = (head+8) - occupied_container[m];
+                console.log("left = " + left);
+                console.log("right = " + right);
+                if( left >= songAnswer[k].length ){
+                  startPoint = parseInt(head);
+                  endPoint = parseInt(head) + songAnswer[k].length - 1;
+                  usableRow = true;
+                  console.log("CASE - D1");
+                }else if(right >= songAnswer[k].length){
+                  startPoint = parseInt(occupied_container[m]) + 1;
+                  endPoint = parseInt(occupied_container[m]) + songAnswer[k].length;
+                  usableRow = true;
+                  console.log("CASE - D2");
+                }
+              }
+            }
+
+            if(usableRow == true){
+              var counter = 0;
+              console.log("startPoint = " + startPoint);
+              console.log("endPoint = " + endPoint);
+              for(var i = startPoint; i <= endPoint; i++){
+                $('#cell_'+ i).html(''+ songAnswer[k].charAt(counter));
+                console.log("k= " + k);
+                console.log("answerPositions['answer_pos_'"+(k+1)+"] = " + answerPositions["answer_pos_"+(k+1)]);
+                answerPositions["answer_pos_"+(k+1)].push(''+ i);
+                counter++;
+              }
+              found = true;
+            }else{
+              console.log("THIS ROW IS NOT USABLE");
+              found = false;
+            }
+          }else{ // if occupied_container.length < 1 or whole rows are not occupied
+            for(var i = 0; i < songAnswer[k].length; i++){
+              $('#cell_'+horizontal[randomRow-1][i]).html(''+ songAnswer[k].charAt(counter));
+              answerPositions["answer_pos_"+(k+1)].push(''+ horizontal[randomRow-1][i]);
+              counter++;
+            }
+            found = true;
           }
-          for(var j = 0; j < songAnswer[k].length; j++){
-            console.log("horizontal[randomRow] = " + horizontal[randomRow]);
-            console.log("answerPositions[answer_pos_"+(k+1)+"][j] = " + answerPositions["answer_pos_"+(k+1)][j]);
-            //console.log("typeof answerPositions[answer_pos_"+(k+1)+"][j] = " + typeof answerPositions["answer_pos_"+(k+1)][j]);
-            var indexToRemoveHor = horizontal[randomRow].indexOf(answerPositions["answer_pos_"+(k+1)][j]);
-            var verRow = parseInt(answerPositions["answer_pos_"+(k+1)][j].split('')[1]);
-            console.log("verRow = " + verRow);
-            var indexToRemoveVer = vertical[verRow].indexOf(answerPositions["answer_pos_"+(k+1)][j]);
-            //console.log("index to be removed Horizontal = " + indexToRemoveHor);
-            //console.log("index to be removed Vertical = " + indexToRemoveVer);
-            horizontal[randomRow].splice(indexToRemoveHor , 1);
-            vertical[verRow].splice(indexToRemoveVer, 1);
-            console.log("after splice vertical["+verRow+"] = " + vertical[verRow]);
-          }
+          
           console.log("answerPositions['answer_pos_'"+(k+1)+"] = " + answerPositions["answer_pos_"+(k+1)]);
-          console.log("after splice horizontal[randomRow] = " + horizontal[randomRow]);
-          bool = true;
+
+          grid.updateHorizontal(horizontal, vertical, answerPositions["answer_pos_"+(k+1)], randomRow-1);
+          
         }else{
-          bool = false;
+          found = false; 
         }
       }
 
@@ -121,207 +276,174 @@ Grid.prototype.generateAnswer = function(answer){
       console.log(" =====================VERTICAL! =================");
       console.log("===================================================");
       console.log("songAnswer[k] = " + songAnswer[k]);
-     
-      //var randomCol = ver_cell[Math.floor(Math.random() * ver_cell.length)];
-      var bool = false;
 
-      while(bool == false){
+      var found = false;
+
+      while(found == false){
         var randomCol = ver_cell[Math.floor(Math.random() * ver_cell.length)];
-        if(vertical[randomCol].length >= songAnswer[k].length){
+        if(vertical[randomCol-1].length >= songAnswer[k].length){
           console.log("randomCol = " + randomCol);
           var counter = 0;
-          for(var i = 0; i < songAnswer[k].length; i++){
-            $('#cell_'+vertical[randomCol][i]).html(''+ songAnswer[k].charAt(counter));
-            answerPositions["answer_pos_"+(k+1)].push(''+ vertical[randomCol][i]);
-            counter++;
+          console.log("vertical[randomCol-1] = " + vertical[randomCol-1]);
+
+          var occupied_container = [];
+          var head = parseInt('1' + vertical[randomCol-1][0].split('')[1]);
+          console.log("head = " + head);
+          //for(var i = 0; i < 10; i++){
+            for(var j = head; j < head+80; j += 10){
+              if(vertical[randomCol-1].indexOf(j.toString()) < 0){
+                console.log("j = " + j);
+                occupied_container.push([j.toString()]);
+              }
+            }
+          //}
+          console.log("occupied_container.length = " + occupied_container.length);
+          if(occupied_container.length > 0){
+            var startPoint, endPoint;
+            var usableRow = false;
+            for(var m=0; m < occupied_container.length; m++){
+              if( occupied_container.length > 1){
+                if( m == 0){
+                  console.log("CASE - A");
+                  var top = (occupied_container[m] - head) / 10;
+                  var bottom = (occupied_container[m+1] - occupied_container[m] - 10) / 10;
+                  console.log("occupied_container[m] = " + occupied_container[m]);
+                  console.log("occupied_container[m+1] = " + occupied_container[m+1]);
+                  console.log("top = " + top);
+                  console.log("bottom = " + bottom);
+                  console.log("songAnswer[k].length = " + songAnswer[k].length);
+                  if( top >= songAnswer[k].length ){
+                    startPoint = parseInt(head);
+                    endPoint = parseInt(head) + (songAnswer[k].length * 10) - 10;
+                    usableRow = true;
+                    console.log("CASE - A1");
+                  }else if(bottom >= songAnswer[k].length){
+                    startPoint = parseInt(occupied_container[m]) + 10;
+                    endPoint = parseInt(occupied_container[m]) + (songAnswer[k].length * 10);
+                    usableRow = true;
+                    console.log("CASE - A2");
+                  }
+                }else if(m == occupied_container.length-1){
+                  console.log("CASE - C");
+                  var top = (occupied_container[m] - occupied_container[m-1] - 10) / 10;
+                  //console.log("(parseInt(head)+80) = " + (parseInt(head)+80));
+                  var bottom = ((head+80) - occupied_container[m]) / 10;
+                  console.log("occupied_container[m] = " + occupied_container[m]);
+                  console.log("typeof occupied_container[m] = " + typeof occupied_container[m]);
+                  console.log("occupied_container[m-1] = " + occupied_container[m-1]);
+                  console.log("top = " + top);
+                  console.log("bottom = " + bottom);
+                  console.log("songAnswer[k].length = " + songAnswer[k].length);
+                  if( top >= songAnswer[k].length ){
+                    startPoint = parseInt(occupied_container[m-1]) + 10;
+                    endPoint = parseInt(occupied_container[m-1]) + (songAnswer[k].length * 10);
+                    usableRow = true;
+                    console.log("CASE - C1");
+                  }else if(bottom >= songAnswer[k].length){
+                    startPoint = parseInt(occupied_container[m]) + 10;
+                    endPoint = parseInt(occupied_container[m]) + (songAnswer[k].length * 10);
+                    usableRow = true;
+                    console.log("CASE - C2");
+                  }else{
+                    console.log("typeof right = " + typeof right);
+                    console.log("songAnswer[k].length = " + songAnswer[k].length);
+                  }
+                }else{
+                  console.log("CASE - B");
+                  var top = (occupied_container[m] - occupied_container[m-1] - 10) / 10;
+                  var bottom = (occupied_container[m+1] - occupied_container[m] - 10) / 10;
+                  console.log("occupied_container[m] = " + occupied_container[m]);
+                  console.log("occupied_container[m+1] = " + occupied_container[m+1]);
+                  console.log("top = " + top);
+                  console.log("bottom = " + bottom);
+                  console.log("songAnswer[k].length = " + songAnswer[k].length);
+                  if( top >= songAnswer[k].length){
+                    startPoint = parseInt(occupied_container[m-1]) + 10;
+                    endPoint = parseInt(occupied_container[m-1]) + (songAnswer[k].length * 10);
+                    usableRow = true;
+                    console.log("CASE - B1");
+                  }else if(bottom >= songAnswer[k].length){
+                    startPoint = parseInt(occupied_container[m]) + 10;
+                    endPoint = parseInt(occupied_container[m]) + (songAnswer[k].length * 10);
+                    usableRow = true;
+                    console.log("CASE - B2");
+                  }
+                }
+              }else{
+                console.log("CASE - D");
+                var top = (occupied_container[m] - head) / 10;
+                var bottom = ((head+80) - occupied_container[m]) / 10;
+                console.log("top = " + top);
+                console.log("bottom = " + bottom);
+                console.log("songAnswer[k].length = " + songAnswer[k].length);
+                if( top >= songAnswer[k].length ){
+                  startPoint = parseInt(head);
+                  endPoint = parseInt(head) + (songAnswer[k].length * 10) - 10;
+                  usableRow = true;
+                  console.log("CASE - D1");
+                }else if(bottom >= songAnswer[k].length){
+                  startPoint = parseInt(occupied_container[m]) + 10;
+                  endPoint = parseInt(occupied_container[m]) + (songAnswer[k].length * 10);
+                  usableRow = true;
+                  console.log("CASE - D2");
+                }
+              }
+            }
+
+            if(usableRow == true){
+              var counter = 0;
+              console.log("startPoint = " + startPoint);
+              console.log("endPoint = " + endPoint);
+              for(var i = startPoint; i <= endPoint; i +=10){
+                $('#cell_'+ i).html(''+ songAnswer[k].charAt(counter));
+                console.log("k= " + k);
+                console.log("answerPositions['answer_pos_'"+(k+1)+"] = " + answerPositions["answer_pos_"+(k+1)]);
+                answerPositions["answer_pos_"+(k+1)].push(''+ i);
+                counter++;
+              }
+              found = true;
+            }else{
+              console.log("THIS ROW IS NOT USABLE");
+              found = false;
+            }
+          }else{
+            for(var i = 0; i < songAnswer[k].length; i++){
+              $('#cell_'+vertical[randomCol-1][i]).html(''+ songAnswer[k].charAt(counter));
+              answerPositions["answer_pos_"+(k+1)].push(''+ vertical[randomCol-1][i]);
+              counter++;
+            }
+            found = true;
           }
-          for(var j = 0; j < songAnswer[k].length; j++){
-            console.log("vertical[randomCol] = " + vertical[randomCol]);
-            console.log("answerPositions[answer_pos_"+(k+1)+"][j] = " + answerPositions["answer_pos_"+(k+1)][j]);
-            var indexToRemoveVer = vertical[randomCol].indexOf(answerPositions["answer_pos_"+(k+1)][j]);
-            var horRow = parseInt(answerPositions["answer_pos_"+(k+1)][j].split('')[0]);
-            console.log("horRow = " + verRow);
-            var indexToRemoveHor = horizontal[horRow].indexOf(answerPositions["answer_pos_"+(k+1)][j]);
-            
-            vertical[randomCol].splice(indexToRemoveVer, 1);
-            horizontal[horRow].splice(indexToRemoveHor, 1);
-            console.log("after splice horizontal["+horRow+"] = " + horizontal[horRow]);
-          }
-          console.log("answerPositions['answer_pos_'"+(k+1)+"] = " + answerPositions["answer_pos_"+(k+1)]);
-          console.log("after splice vertical[randomCol] = " + vertical[randomCol] );
-          bool = true;
+          
+          grid.updateVertical(horizontal, vertical, answerPositions["answer_pos_"+(k+1)], randomCol-1);
+
+          // for(var j = 0; j < songAnswer[k].length; j++){
+          //   console.log("vertical[randomCol-1] = " + vertical[randomCol-1]);
+          //   console.log("answerPositions[answer_pos_"+(k+1)+"][j] = " + answerPositions["answer_pos_"+(k+1)][j]);
+          //   var indexToRemoveVer = vertical[randomCol-1].indexOf(answerPositions["answer_pos_"+(k+1)][j]);
+          //   var horRow = parseInt(answerPositions["answer_pos_"+(k+1)][j].split('')[0]);
+          //   console.log("horRow = " + horRow);
+          //   var indexToRemoveHor = horizontal[horRow-1].indexOf(answerPositions["answer_pos_"+(k+1)][j]);
+          //   console.log("indexToRemoveHor = " + indexToRemoveHor);
+          //   console.log("before splice horizontal["+horRow+"] = " + horizontal[horRow-1]);
+          //   vertical[randomCol-1].splice(indexToRemoveVer, 1);
+          //   horizontal[horRow-1].splice(indexToRemoveHor, 1);
+          //   console.log("after splice horizontal["+horRow+"] = " + horizontal[horRow-1]);
+          // }
+          // console.log("answerPositions['answer_pos_'"+(k+1)+"] = " + answerPositions["answer_pos_"+(k+1)]);
+          // console.log("after splice vertical[randomCol-1] = " + vertical[randomCol-1] );
+          //found = true;
         }else{
-          bool = false;
+          found = false;
         }
-      }
-
-      
-
-    }
+      }//end of while loop
+    }//end of if else horizontal or vertical
   }
   for(var ans in answerPositions){
     if(answerPositions.hasOwnProperty(ans)){
       console.log("Answer Position = " + answerPositions[ans]);
     }
   }
-
-  // for(var k = 0; k < songAnswer.length; k++){
-
-  //   var answerLength = songAnswer[k].length;
-  //   var ranPos = Math.floor(Math.random() * 2);
-  //   //console.log("randomPosition = " + ranPos);
-  //   answerPositions["answer_pos_"+(k+1)] = [];
-  //   if(position[ranPos] === 'horizontal'){
-  //     console.log("===================================================");
-  //     console.log(" ======== HORIZONTAL! ========");
-  //     console.log("songAnswer[k] = " + songAnswer[k]);
-
-  //     //check songPosition array
-
-  //    if(!songPosition.horizontal.length == 0){
-  //     console.log("AAA");
-  //     //console.log("hor_cell before splice = " + hor_cell);
-  //     // for(var i in songPosition.horizontal){
-  //     //   //console.log("songPosition.horizontal[i] = " + songPosition.horizontal[i]);
-  //     //   var indexToRemove = hor_cell.indexOf(songPosition.horizontal[i])
-  //     //   hor_cell.splice(indexToRemove , 1);
-  //     // }
-  //     //console.log("hor_cell after splice = " + hor_cell);
-  //     console.log("songAnswer[k].length  = " + songAnswer[k].length );
-  //     var randomRow = hor_cell[Math.floor(Math.random() * hor_cell.length)];
-  //     var randomCol = ver_cell[Math.floor(Math.random() * (ver_cell.length - songAnswer[k].length))];
-  //     console.log("randomRow = " + randomRow);
-  //     console.log("randomCol = " + randomCol);
-  //     var counter = 0;
-  //       for(var m = randomCol; m < (randomCol + songAnswer[k].length); m++){
-  //         //console.log("songAnswer[k].charAt(c) = " + songAnswer[k].charAt(counter));
-  //         //console.log("randomRow = " + randomRow + " and m = " + m);
-  //         $('#cell_'+randomRow+m).html(''+ songAnswer[k].charAt(counter));
-  //         answerPositions["answer_pos_"+(k+1)].push(''+randomRow+m);
-  //         songPosition.vertical.push(m);
-  //         counter++;
-  //       }
-  //      songPosition.horizontal.push(randomRow);
-  //       for(var i in songPosition.horizontal){
-  //         var indexToRemove = hor_cell.indexOf(songPosition.horizontal[i]);
-  //         console.log("Horizontal index to be removed = " + indexToRemove);
-  //         hor_cell.splice(indexToRemove , 1);
-  //        }
-  //        console.log("current songPosition.horizontal = " + songPosition.horizontal);
-  //        console.log("current songPosition.vertical = " + songPosition.vertical); 
-  //        console.log("after splice current hor_cell = " + hor_cell);
-  //        console.log("after splice current ver_cell = " + ver_cell);
-  //      console.log("===================================================");
-  //     }else{
-  //       console.log("===================================================");
-  //       console.log("BBB");
-  //       var randomRow = hor_cell[Math.floor(Math.random() * hor_cell.length)];
-  //       var randomCol = ver_cell[Math.floor(Math.random() * (ver_cell.length - songAnswer[k].length + 2))];
-  //       console.log("randomRow = " + randomRow);
-  //       console.log("randomCol = " + randomCol);
-
-  //       var counter = 0;
-  //         for(var m = randomCol; m < (randomCol + songAnswer[k].length); m++){
-  //           //console.log("songAnswer[k].charAt(c) = " + songAnswer[k].charAt(counter));
-  //           //console.log("randomRow = " + randomRow + " and m = " + m);
-  //           $('#cell_'+randomRow+m).html(''+ songAnswer[k].charAt(counter));
-  //           answerPositions["answer_pos_"+(k+1)].push(''+randomRow+m);
-  //           songPosition.vertical.push(m);
-  //           counter++;
-  //         }
-  //        songPosition.horizontal.push(randomRow);
-  //        for(var i in songPosition.horizontal){
-  //         var indexToRemove = hor_cell.indexOf(songPosition.horizontal[i])
-  //         console.log("Horizontal index to be removed = " + indexToRemove);
-  //         hor_cell.splice(indexToRemove , 1);
-  //        }
-        
-  //        console.log("current songPosition.horizontal = " + songPosition.horizontal);
-  //        console.log("current songPosition.vertical = " + songPosition.vertical); 
-  //        console.log("after splice current hor_cell = " + hor_cell);
-  //        console.log("after splice current ver_cell = " + ver_cell);
-  //        console.log("===================================================");
-  //     }
-  //       console.log("songPosition = " + songPosition);
-  //   }else if(position[ranPos] === 'vertical'){
-
-  //    if(!songPosition.vertical.length == 0){
-  //     console.log("===================================================");
-  //     console.log("CCC");
-  //     console.log(" ======== VERTICAL! ========= ");
-  //     console.log("songAnswer[k] = " + songAnswer[k]);
-  //     // console.log("ver_cell before splice = " + ver_cell);
-  //     // for(var i in songPosition.vertical){
-  //     //  //console.log("songPosition.vertical[i] = " + songPosition.vertical[i]);
-  //     //   var indexToRemove = ver_cell.indexOf(songPosition.vertical[i])
-  //     //   ver_cell.splice(indexToRemove , 1);
-
-  //     // }
-  //     // console.log("ver_cell after splice = " + ver_cell);
-      
-     
-  //     var randomRow = hor_cell[Math.floor(Math.random() * (hor_cell.length - songAnswer[k].length + 2))];
-  //     var randomCol = ver_cell[Math.floor(Math.random() * ver_cell.length)];
-  //     console.log("randomRow = " + randomRow);
-  //     console.log("randomCol = " + randomCol);
-  //     var counter = 0;
-  //       for(var n = randomRow; n < (randomRow + songAnswer[k].length); n++){
-  //         $('#cell_'+n+randomCol).html(''+ songAnswer[k].charAt(counter));
-  //         answerPositions["answer_pos_"+(k+1)].push(''+n+randomCol);
-  //         songPosition.horizontal.push(n);
-  //         counter++;
-  //       }
-  //      songPosition.vertical.push(randomCol);
-
-  //        for(var i in songPosition.vertical){
-  //           var indexToRemove = ver_cell.indexOf(songPosition.vertical[i]);
-  //           console.log("Vertical index to be removed = " + indexToRemove);
-  //           ver_cell.splice(indexToRemove , 1);
-  //        }
-  //        console.log("current songPosition.horizontal = " + songPosition.horizontal);
-  //        console.log("current songPosition.vertical = " + songPosition.vertical); 
-  //        console.log("after splice current hor_cell = " + hor_cell);
-  //        console.log("after splice current ver_cell = " + ver_cell);
-  //      console.log("===================================================");
-  //    }else{
-  //     console.log("===================================================");
-  //     console.log("DDD");
-  //     console.log("VERTICAL!");
-  //     console.log("songAnswer[k] = " + songAnswer[k]);
-  //     var randomRow = hor_cell[Math.floor(Math.random() * (hor_cell.length - songAnswer[k].length + 2))];
-  //     var randomCol = ver_cell[Math.floor(Math.random() * ver_cell.length)];
-  //     console.log("randomRow = " + randomRow);
-  //     console.log("randomCol = " + randomCol);
-  //     var counter = 0;
-  //     for(var n = randomRow; n < (randomRow + songAnswer[k].length); n++){
-  //       $('#cell_'+n+randomCol).html(''+ songAnswer[k].charAt(counter));
-  //       answerPositions["answer_pos_"+(k+1)].push(''+n+randomCol);
-  //       songPosition.horizontal.push(n);
-  //       counter++;
-  //     }
-  //      songPosition.vertical.push(randomCol);
-
-  //        for(var i in songPosition.vertical){
-  //           var indexToRemove = ver_cell.indexOf(songPosition.vertical[i]);
-  //           console.log("Vertical index to be removed = " + indexToRemove);
-  //           ver_cell.splice(indexToRemove , 1);
-  //        }
-  //        console.log("current songPosition.horizontal = " + songPosition.horizontal);
-  //        console.log("current songPosition.vertical = " + songPosition.vertical); 
-  //        console.log("after splice current hor_cell = " + hor_cell);
-  //        console.log("after splice current ver_cell = " + ver_cell);
-  //      console.log("===================================================");
-  //    }
-     
-  //   }
-  // }//end of for loop
-  // console.log("===================================================");
-  // console.log("final songPosition.horizontal = " + songPosition.horizontal);
-  // console.log("final songPosition.vertical = " + songPosition.vertical);
-  
-  // console.log("Answer Position 1 = " + answerPositions["answer_pos_1"]);
-  // console.log("Answer Position 2 = " + answerPositions["answer_pos_2"]);
-  // console.log("Answer Position 3 = " + answerPositions["answer_pos_3"]);
 }
 
 Grid.prototype.populateTable = function(){
@@ -361,7 +483,8 @@ angular.module('lamusiqueApp')
       console.log('~~~~~~~~~~~~ data["title"] = ' + data['title']);
       console.log('********************* data =  ' + data['title'] + ' received at ' + Date.now());
       $scope.artist = angular.uppercase(data['artist']);
-      $scope.correctAnswer = angular.uppercase(data['title']);
+      //$scope.correctAnswer = angular.uppercase(data['title']);
+      $scope.correctAnswer = 'ALL ABOUT THAT BASS OF MISTER EMINEM';
       console.log("$scope.correctAnswer = " + $scope.correctAnswer);
       console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
       var grid = new Grid($scope);
@@ -490,7 +613,7 @@ angular.module('lamusiqueApp')
                 for(var x = 0; x < answers[quizAnswer][w].length; x++){
                   $("<td>").text('_').appendTo(tr);
                 }       
-                if(w !== quizAnswer.length - 1){
+                if(w !== quizAnswer.length - 1 && quiz_answer.length > 1){
                   $("<td style='text-decoration: none;'>").html('&nbsp;&nbsp;&nbsp;&nbsp;').appendTo(tr);
                 }
               }
@@ -509,7 +632,7 @@ angular.module('lamusiqueApp')
       console.log("*************************************************");
       console.log("************ Your time = "+ $scope.mediaPlayer.currentTime + " seconds");
       console.log("*************************************************");
-      $scope.mediaPlayer.next();
+      //$rootScope.$emit('guess-time', $scope.mediaPlayer.currentTime); 
     }
 
     $scope.$watch('answer', function(val) {
