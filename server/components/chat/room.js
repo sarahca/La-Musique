@@ -1,5 +1,6 @@
 var redisLib = require("redis");
 var async = require('async');
+var config = require('../../config/environment');
 
 var rooms = {}; // keep list of all channels on this server
 var room; // keep a reference of the Room object
@@ -14,8 +15,8 @@ function getRoom(channel) {
 function Room(channel) {
   this.channel = channel;
   this.players = [];
-  this.redisSub = redisLib.createClient();
-  this.redisPub = redisLib.createClient();
+  this.redisSub = redisLib.createClient(6379, config.redis.hostname);
+  this.redisPub = redisLib.createClient(6379, config.redis.hostname);
   this.redisSub.subscribe(this.channel);
 
   this.redisSub.on('message', function(channel, data) {

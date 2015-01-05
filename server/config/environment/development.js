@@ -8,5 +8,9 @@ module.exports = {
     uri: 'mongodb://localhost/lamusique-dev'
   },
 
+  redis: {
+    hostname: 'localhost'
+  },
+
   seedDB: true
 };

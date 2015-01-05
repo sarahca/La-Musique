@@ -14,6 +14,7 @@ exports.register = function (req, res) {
   var controller = this;
   newUser.save(function(err, user){
     if ( err ) {
+      console.log( 'user save ' + err);
       res.send(400,JSON.stringify({ message: 'username and email are already used'}) )
       console.log('username and email are already used');
     }
