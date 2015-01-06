@@ -3,21 +3,21 @@
     <div ng-controller="MediaplayerCtrl">
       <audio media-player="mediaPlayer" playlist="audioPlaylist"></audio>
       <div class="player-control">
-       <!--  <div class="btn" ng-click="mediaPlayer.play()">
+        <div class="btn" ng-click="mediaPlayer.play()">
           <span>Simple Play</span>
           <i class="fa fa-play"></i>
         </div>
         <div class="btn" ng-click="mediaPlayer.playPause()">
           <i class="fa" ng-class="{ 'fa-pause': mediaPlayer.playing, 'fa-play': !mediaPlayer.playing }"></i>
-        </div> -->
-        <!-- <div class="btn" ng-click="mediaPlayer.next()">
+        </div>
+        <div class="btn" ng-click="mediaPlayer.next()">
           <span>Next</span>
           <i class="fa fa-step-forward"></i>
         </div>
         <div class="btn" ng-click="mediaPlayer.prev()">
           <i class="fa fa-step-backward"></i>
           <span>Prev</span>
-        </div> -->
+        </div>
         <div class="btn btn-noclick">
           <span>currentTrack: <span class="badge">{{mediaPlayer.currentTrack}}</span></span>
         </div>
@@ -40,7 +40,7 @@
           </div>    
         </div> <!-- END OF PROGRESS DIV -->      
       </div><!-- END OF MAIN CTRL CLASS-->
-      <pre>
+      <!-- <pre>
         <code>
           mediaPlayer = {
             playing: {{mediaPlayer.playing}}
@@ -54,6 +54,6 @@
             loadPercent: {{mediaPlayer.loadPercent}}
           };
         </code>
-      </pre>
+      </pre> -->
     </div><!-- END OF DIV with NG-CONTROLLER DIRECTIVE -->
 </div><!--END OF ROW-->

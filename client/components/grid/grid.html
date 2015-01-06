@@ -1,140 +1,108 @@
 <!-- <div class="col-md-6"> -->
     <div ng-controller='GridCtrl'>
       <h1 id="wordSearch">Word Search</h1>
-      
-        <table class="answerTable">
-          <tr>
-
-          </tr>
-        </table>
       <br/>
-      
+      <h4>YOUR ANSWER <input type="text" ng-model="answer" ng-change="change()" /><span id="answerValidation"></span></h4>
+      <br/>
       <table class="musicGrid" id="musicSearch" >
         <tr>
-          <td id="cell_00">T</td>
-          <td id="cell_01">A</td>
-          <td id="cell_02">B</td>
-          <td id="cell_03">C</td>
-          <td id="cell_04">J</td>
-          <td id="cell_05">K</td>
-          <td id="cell_06">I</td>
-          <td id="cell_07">O</td>
-          <td id="cell_08">P</td>
-          <td id="cell_09">Q</td>
+          <td id="cell_11"></td>
+          <td id="cell_12"></td>
+          <td id="cell_13"></td>
+          <td id="cell_14"></td>
+          <td id="cell_15"></td>
+          <td id="cell_16"></td>
+          <td id="cell_17"></td>
+          <td id="cell_18"></td>
+          <td id="cell_19"></td>
         </tr>
          <tr>
-          <td id="cell_10">T</td>
-          <td id="cell_11">A</td>
-          <td id="cell_12">B</td>
-          <td id="cell_13">C</td>
-          <td id="cell_14">J</td>
-          <td id="cell_15">K</td>
-          <td id="cell_16">I</td>
-          <td id="cell_17">O</td>
-          <td id="cell_18">P</td>
-          <td id="cell_19">Q</td>
+          <td id="cell_21"></td>
+          <td id="cell_22"></td>
+          <td id="cell_23"></td>
+          <td id="cell_24"></td>
+          <td id="cell_25"></td>
+          <td id="cell_26"></td>
+          <td id="cell_27"></td>
+          <td id="cell_28"></td>
+          <td id="cell_29"></td>
         </tr>
          <tr>
-          <td id="cell_20">T</td>
-          <td id="cell_21">A</td>
-          <td id="cell_22">B</td>
-          <td id="cell_23">C</td>
-          <td id="cell_24">J</td>
-          <td id="cell_25">K</td>
-          <td id="cell_26">I</td>
-          <td id="cell_27">O</td>
-          <td id="cell_28">P</td>
-          <td id="cell_29">Q</td>
+          <td id="cell_31"></td>
+          <td id="cell_32"></td>
+          <td id="cell_33"></td>
+          <td id="cell_34"></td>
+          <td id="cell_35"></td>
+          <td id="cell_36"></td>
+          <td id="cell_37"></td>
+          <td id="cell_38"></td>
+          <td id="cell_39"></td>
         </tr>
          <tr>
-          <td id="cell_30">T</td>
-          <td id="cell_31">A</td>
-          <td id="cell_32">B</td>
-          <td id="cell_33">C</td>
-          <td id="cell_34">J</td>
-          <td id="cell_35">K</td>
-          <td id="cell_36">I</td>
-          <td id="cell_37">O</td>
-          <td id="cell_38">P</td>
-          <td id="cell_39">Q</td>
+          <td id="cell_41"></td>
+          <td id="cell_42"></td>
+          <td id="cell_43"></td>
+          <td id="cell_44">L</td>
+          <td id="cell_45">A</td>
+          <td id="cell_46"></td>
+          <td id="cell_47"></td>
+          <td id="cell_48"></td>
+          <td id="cell_49"></td>
         </tr>
          <tr>
-          <td id="cell_40">T</td>
-          <td id="cell_41">A</td>
-          <td id="cell_42">B</td>
-          <td id="cell_43">C</td>
-          <td id="cell_44">J</td>
-          <td id="cell_45">K</td>
-          <td id="cell_46">I</td>
-          <td id="cell_47">O</td>
-          <td id="cell_48">P</td>
-          <td id="cell_49">Q</td>
+          <td id="cell_51"></td>
+          <td id="cell_52">M</td>
+          <td id="cell_53">U</td>
+          <td id="cell_54">S</td>
+          <td id="cell_55">I</td>
+          <td id="cell_56">Q</td>
+          <td id="cell_57">U</td>
+          <td id="cell_58">E</td>
+          <td id="cell_59"></td>
         </tr>
          <tr>
-          <td id="cell_50">T</td>
-          <td id="cell_51">A</td>
-          <td id="cell_52">B</td>
-          <td id="cell_53">C</td>
-          <td id="cell_54">J</td>
-          <td id="cell_55">K</td>
-          <td id="cell_56">I</td>
-          <td id="cell_57">O</td>
-          <td id="cell_58">P</td>
-          <td id="cell_59">Q</td>
+          <td id="cell_61"></td>
+          <td id="cell_62"></td>
+          <td id="cell_63"></td>
+          <td id="cell_64"></td>
+          <td id="cell_65"></td>
+          <td id="cell_66"></td>
+          <td id="cell_67"></td>
+          <td id="cell_68"></td>
+          <td id="cell_69"></td>
         </tr>
          <tr>
-          <td id="cell_60">T</td>
-          <td id="cell_61">A</td>
-          <td id="cell_62">B</td>
-          <td id="cell_63">C</td>
-          <td id="cell_64">J</td>
-          <td id="cell_65">K</td>
-          <td id="cell_66">I</td>
-          <td id="cell_67">O</td>
-          <td id="cell_68">P</td>
-          <td id="cell_69">Q</td>
+          <td id="cell_71"></td>
+          <td id="cell_72"></td>
+          <td id="cell_73"></td>
+          <td id="cell_74"></td>
+          <td id="cell_75"></td>
+          <td id="cell_76"></td>
+          <td id="cell_77"></td>
+          <td id="cell_78"></td>
+          <td id="cell_79"></td>
         </tr>
          <tr>
-          <td id="cell_70">T</td>
-          <td id="cell_71">A</td>
-          <td id="cell_72">B</td>
-          <td id="cell_73">C</td>
-          <td id="cell_74">J</td>
-          <td id="cell_75">K</td>
-          <td id="cell_76">I</td>
-          <td id="cell_77">O</td>
-          <td id="cell_78">P</td>
-          <td id="cell_79">Q</td>
+          <td id="cell_81"></td>
+          <td id="cell_82"></td>
+          <td id="cell_83"></td>
+          <td id="cell_84"></td>
+          <td id="cell_85"></td>
+          <td id="cell_86"></td>
+          <td id="cell_87"></td>
+          <td id="cell_88"></td>
+          <td id="cell_89"></td>
         </tr>
          <tr>
-          <td id="cell_80">T</td>
-          <td id="cell_81">A</td>
-          <td id="cell_82">B</td>
-          <td id="cell_83">C</td>
-          <td id="cell_84">J</td>
-          <td id="cell_85">K</td>
-          <td id="cell_86">I</td>
-          <td id="cell_87">O</td>
-          <td id="cell_88">P</td>
-          <td id="cell_89">Q</td>
-        </tr>
-         <tr>
-          <td id="cell_90">T</td>
-          <td id="cell_91">A</td>
-          <td id="cell_92">B</td>
-          <td id="cell_93">C</td>
-          <td id="cell_94">J</td>
-          <td id="cell_95">K</td>
-          <td id="cell_96">I</td>
-          <td id="cell_97">O</td>
-          <td id="cell_98">P</td>
-          <td id="cell_99">Q</td>
+          <td id="cell_91"></td>
+          <td id="cell_92"></td>
+          <td id="cell_93"></td>
+          <td id="cell_94"></td>
+          <td id="cell_95"></td>
+          <td id="cell_96"></td>
+          <td id="cell_97"></td>
+          <td id="cell_98"></td>
+          <td id="cell_99"></td>
         </tr>
       </table>
-      <br/>
-      <div>
-      
-        <h4>YOUR ANSWER <input type="text" ng-model="answer" ng-change="change()" /><span id="answerValidation"></span></h4>
-        
-      </div>
     </div>

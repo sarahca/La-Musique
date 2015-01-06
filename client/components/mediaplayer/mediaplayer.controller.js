@@ -19,10 +19,12 @@ var playSong = function (scope, rootScope){
   }, 5000);
 }
 
+
 angular.module('lamusiqueApp')
   .controller('MediaplayerCtrl', function ($scope, $http, socket, $timeout, $rootScope) {
 
     $scope.getSongPlayerUrl = function (amazonId) {
+      console.log("******AMAZON ID = " + amazonId);
       return 'http://www.amazon.com/gp/dmusic/get_sample_url.html/ref=dm_dp_trk_' + amazonId + '?ie=UTF8&ASIN=' + amazonId +'&DownloadLocation=WEBSITE'
     };
 
@@ -72,4 +74,3 @@ angular.module('lamusiqueApp')
 
     });
   });
-
