@@ -1,7 +1,18 @@
 'use strict';
 
+function flashMessage(scope) {
+  $('.flash')
+   .fadeIn(500).delay(3000)
+   .fadeOut(500, function() {
+   scope.messages.splice(0);
+  });
+ }
+
 angular.module('lamusiqueApp')
-  .controller('LoginCtrl', function ($scope, $http, socket, $timeout, $rootScope) {
+  .controller('LoginCtrl', function ($scope, $http, socket, $timeout, $rootScope, UserService) {
+
+    $scope.errorMessages = [];
+    $scope.user = UserService;
 
     $scope.login = function(isValid) {
       console.log('trying to submit');
@@ -15,12 +26,8 @@ angular.module('lamusiqueApp')
           $rootScope.$broadcast("userLoggedIn", data);
         }).
         error(function(data, status, headers, config) {
-          console.log(data.message);
+          $scope.errorMessages.push(data.message);
         });
       }
-    }
-
-    $scope.loginWhilePlaying = function(isValid) {
-      
     }
   });

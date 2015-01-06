@@ -448,6 +448,13 @@ Room.prototype.joinNoticeMessage = function(player) {
     'time' : Date.now(),
   };
   this.saveAndPublishMessage(message);
+
+  var command = {
+    'message_type': 'command',
+    'command': 'user joined',
+    'time': Date.now(),
+  };
+  this.broadcast(command);
 }
 
 //broadcast message to everyone (except player) when someone leaves the room
@@ -459,6 +466,13 @@ Room.prototype.leaveNoticeMessage = function(player){
     'time' : Date.now(),
   }
   this.saveAndPublishMessage(message);
+
+  var command = {
+    'message_type': 'command',
+    'command': 'user left',
+    'time': Date.now(),
+  };
+  this.broadcast(command);
 }
 
 

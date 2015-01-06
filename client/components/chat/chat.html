@@ -1,16 +1,34 @@
-<h1> Chat </h1>
+<div ng-controller="ChatCtrl" class="ng-scope">
+  <div class="panel panel-primary chat">
+    <div class="panel-heading">
+      <span class="glyphicon glyphicon-comment"></span> 
+      {{numberOfPlayers}} player(s) in the room
+    </div>
 
-<div ng-controller="ChatCtrl">
-  <div id="chat">
-    <div ng-repeat="msg in messages track by $index"> 
-      <p>
-        <strong> <span ng-show="msg.nickname"> {{msg.nickname}} </span> </strong> {{msg.time | date:'HH:mm:ss'}} 
-      </p>
-      <p ng-style="{'color': msg.color}"> {{msg.text}}</p>
+    <div id="chat" class="panel-body">
+      <div ng-repeat="msg in messages track by $index"> 
+        <div class="row">
+          <div class="col-md-4">
+            <strong> <span ng-show="msg.nickname"> {{msg.nickname}} </span> </strong> 
+          </div>
+          <div class="col-md-8">
+            <span> {{msg.time | date:'HH:mm:ss'}} </span>
+            <span ng-style="{'color': msg.color}"> {{msg.text}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="panel-footer">
+      <div class="row">
+        <form ng-submit="sendMessage()" >
+          <div class="col-md-4">
+            <label id="nickname" contenteditable="true" ng-model="nickname">{{nickname}}</label>
+          </div>
+          <div class="col-md-8">
+            <input type="text" class="form-control input-sm" ng-model="newMsg.text"/>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
-  <form ng-submit="sendMessage()" >
-    <label id="nickname" contenteditable="true" ng-model="nickname">{{nickname}}</label>
-    <input type="text" ng-model="newMsg.text"/>
-  </form>
 </div>

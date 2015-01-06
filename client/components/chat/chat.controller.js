@@ -15,6 +15,7 @@ angular.module('lamusiqueApp')
     $scope.channelName = $scope.pathname.replace(/\//, '');
     $scope.messages = [];
     $scope.roundInProgress = false;
+    $scope.numberOfPlayers = 0;
 
     $timeout(function() {
       $http.get('/api/user/isLoggedIn')
@@ -172,8 +173,13 @@ angular.module('lamusiqueApp')
         case 'update points':
           $rootScope.$emit('update points', command);
           break;
-    }    
-
+        case 'user joined':
+          $scope.numberOfPlayers += 1;
+          break;
+        case 'user left':
+          $scope.numberOfPlayers -= 1;
+          break;
+      }    
     });
 
     // methods which processes the feedback coming from the backend when trying to change nickname
