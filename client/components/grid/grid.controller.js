@@ -4,14 +4,12 @@ console.log('in grid controller');
 var answerPositions = {};
 
 var Grid = function(scope){
-  console.log("~~~~ ALOHA ~~~~~");
   var isMouseDown = false;
   var isSelected;
   var selectedWord = "";
   
   $("#musicSearch td")
     .on("mousedown",function() {
-      console.log("MOUSE DOWN");
       isMouseDown = true;
       selectedWord += $(this).text();
       $(this).addClass("selected");
@@ -26,50 +24,32 @@ var Grid = function(scope){
     })
 
     .on("mouseup", function(){
-        console.log(" MOUSE UP");
         isMouseDown = false;
-        console.log("SELECTED WORD = " + selectedWord);
         scope.validateAnswer(selectedWord,"grid");
         selectedWord = "";
-        console.log("SELECTED WORD-2 = " + selectedWord);
     });
 
     grid = this;
 }
 
 Grid.prototype.updateHorizontal = function(horizontal, vertical, answer, horRow){
-  console.log("UPDATE HORIZONTAL - answer = " + answer);
   for(var j = 0; j < answer.length; j++){
-      console.log("horizontal[randomRow-1] = " + horizontal[horRow]);
-      console.log("answer[j] = " + answer[j]);
-      var indexToRemoveHor = horizontal[horRow].indexOf(answer[j]);
-      var verRow = parseInt(answer[j].split('')[1]);
-      console.log("verRow = " + verRow);
-      var indexToRemoveVer = vertical[verRow-1].indexOf(answer[j]);
-      console.log("index to be removed Horizontal = " + indexToRemoveHor);
-      console.log("index to be removed Vertical = " + indexToRemoveVer);
-      horizontal[horRow].splice(indexToRemoveHor , 1);
-      vertical[verRow-1].splice(indexToRemoveVer, 1);
-      console.log("after splice vertical["+verRow+"] = " + vertical[verRow-1]);
+    var indexToRemoveHor = horizontal[horRow].indexOf(answer[j]);
+    var verRow = parseInt(answer[j].split('')[1]);
+    var indexToRemoveVer = vertical[verRow-1].indexOf(answer[j]);
+    horizontal[horRow].splice(indexToRemoveHor , 1);
+    vertical[verRow-1].splice(indexToRemoveVer, 1);
   }
-  console.log("~~~~~~~~~after splice horizontal[horRow] = " + horizontal[horRow]);
 }
 
 Grid.prototype.updateVertical = function(horizontal,vertical,answer,verRow){
-  console.log("UPDATE VERTICAL - answer = " + answer);
   for(var j = 0; j < answer.length; j++){
-    console.log("vertical[verRow] = " + vertical[verRow]);
     var indexToRemoveVer = vertical[verRow].indexOf(answer[j]);
     var horRow = parseInt(answer[j].split('')[0]);
-    console.log("horRow = " + horRow);
     var indexToRemoveHor = horizontal[horRow-1].indexOf(answer[j]);
-    console.log("indexToRemoveHor = " + indexToRemoveHor);
-    console.log("before splice horizontal["+horRow+"] = " + horizontal[horRow-1]);
     vertical[verRow].splice(indexToRemoveVer, 1);
     horizontal[horRow-1].splice(indexToRemoveHor, 1);
-    console.log("after splice horizontal["+horRow+"] = " + horizontal[horRow-1]);
   }
-  console.log("~~~~~~~~~after splice vertical[verRow] = " + vertical[verRow] );
 }
 
 Grid.prototype.generateAnswer = function(answer){
@@ -103,13 +83,10 @@ Grid.prototype.generateAnswer = function(answer){
   var hor_cell = [1,2,3,4,5,6,7,8,9];
   var ver_cell = [1,2,3,4,5,6,7,8,9];
 
-  console.log("songAnswer = " + songAnswer);
-  console.log("songAnswer.length = " + songAnswer.length);
   var occupiedHor = [];
   var occupiedVer = [];
   var ranPos = Math.floor(Math.random() * 2);
-  console.log("ranPos = " + ranPos);
-  console.log("position[ranPos] = " + position[ranPos]);
+
   if(position[ranPos] === 'horizontal'){
     var posHorizontal = true;
     var posVertical = false;
@@ -119,24 +96,14 @@ Grid.prototype.generateAnswer = function(answer){
   }
   for(var k = 0; k < songAnswer.length; k++){
     var answerLength = songAnswer[k].length;
-    console.log("~~~~~~~~~k = " + k);
     answerPositions["answer_pos_"+(k+1)] = [];
-    console.log("~~~~~~~~~answerPositions['answer_pos_'"+(k+1)+"] = " + answerPositions["answer_pos_"+(k+1)]);
     if(posHorizontal === true){
-      console.log("===================================================");
-      console.log(" =====================HORIZONTAL! =================");
-      console.log("===================================================");
-      console.log("songAnswer[k] = " + songAnswer[k]);
-      console.log("songAnswer[k].length = " + songAnswer[k].length);
-     
       var found = false;
 
       while(found == false){
         if(k === 0){
-          console.log("~~~~ FIRST WORD ~~~~")
           var randomRow = hor_cell[Math.floor(Math.random() * hor_cell.length)];
           var counter = 0;
-          console.log("randomRow = " + randomRow);
           for(var i = 0; i < songAnswer[k].length; i++){
             $('#cell_'+horizontal[randomRow-1][i]).html(''+ songAnswer[k].charAt(counter));
             answerPositions["answer_pos_"+(k+1)].push(''+ horizontal[randomRow-1][i]);
@@ -145,122 +112,78 @@ Grid.prototype.generateAnswer = function(answer){
           found = true;
           grid.updateHorizontal(horizontal, vertical, answerPositions["answer_pos_"+(k+1)], randomRow-1);
         }else{
-          console.log("~~~~ NOT FIRST WORD ~~~~")
           var counter = 0;
           var startPoint, endPoint;
           var usableRow = false;
 
           for(var x = 0; x < horizontal.length; x++){
-            console.log("~~~~~ ROW = " + x);
             var occupied_container = [];
-            console.log("horizontal["+x+"] = " + horizontal[x]);
             var head = parseInt((x + 1) + '1');
-            console.log("head = " + head);
             for(var j = head; j < head+8; j++){
               if(horizontal[x].indexOf(j.toString()) < 0){
-                console.log("j = " + j);
                 occupied_container.push([j.toString()]);
               }
             }
-          
-            console.log("occupied_container.length = " + occupied_container.length);
+
             if(occupied_container.length > 0){
               for(var m=0; m < occupied_container.length; m++){
                 if( occupied_container.length > 1){
                   if( m == 0){
-                    console.log("CASE - A");
                     var left = occupied_container[m] - head;
                     var right = occupied_container[m+1] - occupied_container[m] - 1;
-                    console.log("occupied_container[m] = " + occupied_container[m]);
-                    console.log("occupied_container[m+1] = " + occupied_container[m+1]);
-                    console.log("left = " + left);
-                    console.log("right = " + right);
                     if( left >= songAnswer[k].length ){
                       startPoint = parseInt(head);
                       endPoint = parseInt(head) + songAnswer[k].length - 1;
                       usableRow = true;
-                      console.log("CASE - A1");
                     }else if(right >= songAnswer[k].length){
                       startPoint = parseInt(occupied_container[m]) + 1;
                       endPoint = parseInt(occupied_container[m]) + songAnswer[k].length;
-                      usableRow = true;
-                      console.log("CASE - A2");
+                      usableRow = true;;
                     }
                   }else if(m == occupied_container.length-1){
-                    console.log("CASE - C");
                     var left = occupied_container[m] - occupied_container[m-1] - 1;
                     var right = (head+8) - occupied_container[m];
-                    console.log("occupied_container[m] = " + occupied_container[m]);
-                    console.log("typeof occupied_container[m] = " + typeof occupied_container[m]);
-                    console.log("occupied_container[m-1] = " + occupied_container[m-1]);
-                    console.log("left = " + left);
-                    console.log("right = " + right);
-                    console.log("songAnswer[k].length = " + songAnswer[k].length);
                     if( left >= songAnswer[k].length ){
                       startPoint = parseInt(occupied_container[m-1]) + 1;
                       endPoint = parseInt(occupied_container[m-1]) + songAnswer[k].length;
                       usableRow = true;
-                      console.log("CASE - C1");
                     }else if(right >= songAnswer[k].length){
                       startPoint = parseInt(occupied_container[m]) + 1;
                       endPoint = parseInt(occupied_container[m]) + songAnswer[k].length;
                       usableRow = true;
-                      console.log("CASE - C2");
-                    }else{
-                      console.log("left = " + left);
-                      console.log("right = " + right);
-                      console.log("typeof right = " + typeof right);
-                      console.log("songAnswer[k].length = " + songAnswer[k].length);
-                      console.log("typeof songAnswer[k].length = " + typeof songAnswer[k].length);
                     }
                   }else{
-                    console.log("CASE - B");
                     var left = occupied_container[m] - occupied_container[m-1] - 1;
                     var right = occupied_container[m+1] - occupied_container[m] - 1;
-                    console.log("occupied_container[m] = " + occupied_container[m]);
-                    console.log("occupied_container[m+1] = " + occupied_container[m+1]);
-                    console.log("left = " + left);
-                    console.log("right = " + right);
                     if( left >= songAnswer[k].length){
                       startPoint = parseInt(occupied_container[m-1]) + 1;
                       endPoint = parseInt(occupied_container[m-1]) + songAnswer[k].length;
                       usableRow = true;
-                      console.log("CASE - B1");
                     }else if(right >= songAnswer[k].length){
                       startPoint = parseInt(occupied_container[m]) + 1;
                       endPoint = parseInt(occupied_container[m]) + songAnswer[k].length;
                       usableRow = true;
-                      console.log("CASE - B2");
                     }
                   }
                 }else{
-                  console.log("CASE - D");
                   var left = occupied_container[m] - head;
                   var right = (head+8) - occupied_container[m];
-                  console.log("left = " + left);
-                  console.log("right = " + right);
                   if( left >= songAnswer[k].length ){
                     startPoint = parseInt(head);
                     endPoint = parseInt(head) + songAnswer[k].length - 1;
                     usableRow = true;
-                    console.log("CASE - D1");
                   }else if(right >= songAnswer[k].length){
                     startPoint = parseInt(occupied_container[m]) + 1;
                     endPoint = parseInt(occupied_container[m]) + songAnswer[k].length;
                     usableRow = true;
-                    console.log("CASE - D2");
                   }
                 }
               }
 
               if(usableRow == true){
                 var counter = 0;
-                console.log("startPoint = " + startPoint);
-                console.log("endPoint = " + endPoint);
                 for(var i = startPoint; i <= endPoint; i++){
                   $('#cell_'+ i).html(''+ songAnswer[k].charAt(counter));
-                  console.log("k= " + k);
-                  console.log("answerPositions['answer_pos_'"+(k+1)+"] = " + answerPositions["answer_pos_"+(k+1)]);
                   answerPositions["answer_pos_"+(k+1)].push(''+ i);
                   counter++;
                 }
@@ -268,15 +191,11 @@ Grid.prototype.generateAnswer = function(answer){
                 grid.updateHorizontal(horizontal, vertical, answerPositions["answer_pos_"+(k+1)], x);
                 break;
               }else{
-                console.log("THIS ROW IS NOT USABLE");
                 found = false;
               }
             }else{ // if occupied_container.length < 1 or whole rows are not occupied
-              console.log("ROW IS FREE");
-              console.log("horizontal["+x+"] = " + horizontal[x]);
               var counter = 0;
               for(var i = 0; i < songAnswer[k].length; i++){
-                console.log("YO!");
                 $('#cell_'+horizontal[x][i]).html(''+ songAnswer[k].charAt(counter));
                 answerPositions["answer_pos_"+(k+1)].push(''+ horizontal[x][i]);
                 counter++;
@@ -287,35 +206,15 @@ Grid.prototype.generateAnswer = function(answer){
             }
           }
         }//end of else
-          
-          
-        // }else{
-        //   found = false; 
-        // }
       }//end of while loop
-      console.log("~~~~~~~~~answerPositions['answer_pos_'"+(k+1)+"] = " + answerPositions["answer_pos_"+(k+1)]);
-
-      
-    
-    posHorizontal = false;
-    posVertical = true;
-    console.log("posHorizontal = " + posHorizontal);
-    console.log("posVertical = " + posVertical);
-      
+      posHorizontal = false;
+      posVertical = true;
     }else if(posVertical === true){
-      console.log("===================================================");
-      console.log(" =====================VERTICAL! =================");
-      console.log("===================================================");
-      console.log("songAnswer[k] = " + songAnswer[k]);
-
       var found = false;
-
       while(found == false){
         if(k === 0){
-          console.log("~~~~ FIRST WORD ~~~~")
           var randomCol = hor_cell[Math.floor(Math.random() * hor_cell.length)];
           var counter = 0;
-          console.log("randomCol = " + randomCol);
           for(var i = 0; i < songAnswer[k].length; i++){
             $('#cell_'+vertical[randomCol-1][i]).html(''+ songAnswer[k].charAt(counter));
             answerPositions["answer_pos_"+(k+1)].push(''+ vertical[randomCol-1][i]);
@@ -324,118 +223,78 @@ Grid.prototype.generateAnswer = function(answer){
           found = true;
           grid.updateVertical(horizontal, vertical, answerPositions["answer_pos_"+(k+1)], randomCol-1);
         }else{
-          console.log("~~~~ NOT FIRST WORD ~~~~")
           var counter = 0;
           var startPoint, endPoint;
           var usableRow = false;
           
           for(var x = 0; x < vertical.length; x++){
-            console.log("~~~~~ COLUMN = " + x);
             var occupied_container = [];
-            console.log("vertical["+x+"] = " + vertical[x]);
             var head =  parseInt('1' + (x + 1));
-            console.log("head = " + head);
             for(var j = head; j < head+80; j += 10){
               if(vertical[x].indexOf(j.toString()) < 0){
                 console.log("j = " + j);
                 occupied_container.push([j.toString()]);
               }
             }
-            console.log("occupied_container.length = " + occupied_container.length);
+
             if(occupied_container.length > 0){
               for(var m=0; m < occupied_container.length; m++){
                 if( occupied_container.length > 1){
                   if( m == 0){
-                    console.log("CASE - A");
                     var top = (occupied_container[m] - head) / 10;
                     var bottom = (occupied_container[m+1] - occupied_container[m] - 10) / 10;
-                    console.log("occupied_container[m] = " + occupied_container[m]);
-                    console.log("occupied_container[m+1] = " + occupied_container[m+1]);
-                    console.log("top = " + top);
-                    console.log("bottom = " + bottom);
-                    console.log("songAnswer[k].length = " + songAnswer[k].length);
                     if( top >= songAnswer[k].length ){
                       startPoint = parseInt(head);
                       endPoint = parseInt(head) + (songAnswer[k].length * 10) - 10;
                       usableRow = true;
-                      console.log("CASE - A1");
                     }else if(bottom >= songAnswer[k].length){
                       startPoint = parseInt(occupied_container[m]) + 10;
                       endPoint = parseInt(occupied_container[m]) + (songAnswer[k].length * 10);
                       usableRow = true;
-                      console.log("CASE - A2");
                     }
                   }else if(m == occupied_container.length-1){
-                    console.log("CASE - C");
                     var top = (occupied_container[m] - occupied_container[m-1] - 10) / 10;
-                    //console.log("(parseInt(head)+80) = " + (parseInt(head)+80));
                     var bottom = ((head+80) - occupied_container[m]) / 10;
-                    console.log("occupied_container[m] = " + occupied_container[m]);
-                    console.log("typeof occupied_container[m] = " + typeof occupied_container[m]);
-                    console.log("occupied_container[m-1] = " + occupied_container[m-1]);
-                    console.log("top = " + top);
-                    console.log("bottom = " + bottom);
-                    console.log("songAnswer[k].length = " + songAnswer[k].length);
                     if( top >= songAnswer[k].length ){
                       startPoint = parseInt(occupied_container[m-1]) + 10;
                       endPoint = parseInt(occupied_container[m-1]) + (songAnswer[k].length * 10);
                       usableRow = true;
-                      console.log("CASE - C1");
                     }else if(bottom >= songAnswer[k].length){
                       startPoint = parseInt(occupied_container[m]) + 10;
                       endPoint = parseInt(occupied_container[m]) + (songAnswer[k].length * 10);
                       usableRow = true;
-                      console.log("CASE - C2");
                     }
                   }else{
-                    console.log("CASE - B");
                     var top = (occupied_container[m] - occupied_container[m-1] - 10) / 10;
                     var bottom = (occupied_container[m+1] - occupied_container[m] - 10) / 10;
-                    console.log("occupied_container[m] = " + occupied_container[m]);
-                    console.log("occupied_container[m+1] = " + occupied_container[m+1]);
-                    console.log("top = " + top);
-                    console.log("bottom = " + bottom);
-                    console.log("songAnswer[k].length = " + songAnswer[k].length);
                     if( top >= songAnswer[k].length){
                       startPoint = parseInt(occupied_container[m-1]) + 10;
                       endPoint = parseInt(occupied_container[m-1]) + (songAnswer[k].length * 10);
                       usableRow = true;
-                      console.log("CASE - B1");
                     }else if(bottom >= songAnswer[k].length){
                       startPoint = parseInt(occupied_container[m]) + 10;
                       endPoint = parseInt(occupied_container[m]) + (songAnswer[k].length * 10);
                       usableRow = true;
-                      console.log("CASE - B2");
                     }
                   }
                 }else{
-                  console.log("CASE - D");
                   var top = (occupied_container[m] - head) / 10;
                   var bottom = ((head+80) - occupied_container[m]) / 10;
-                  console.log("top = " + top);
-                  console.log("bottom = " + bottom);
-                  console.log("songAnswer[k].length = " + songAnswer[k].length);
                   if( top >= songAnswer[k].length ){
                     startPoint = parseInt(head);
                     endPoint = parseInt(head) + (songAnswer[k].length * 10) - 10;
                     usableRow = true;
-                    console.log("CASE - D1");
                   }else if(bottom >= songAnswer[k].length){
                     startPoint = parseInt(occupied_container[m]) + 10;
                     endPoint = parseInt(occupied_container[m]) + (songAnswer[k].length * 10);
                     usableRow = true;
-                    console.log("CASE - D2");
                   }
                 }
               }
               if(usableRow == true){
                 var counter = 0;
-                console.log("startPoint = " + startPoint);
-                console.log("endPoint = " + endPoint);
                 for(var i = startPoint; i <= endPoint; i +=10){
                   $('#cell_'+ i).html(''+ songAnswer[k].charAt(counter));
-                  console.log("k= " + k);
-                  console.log("answerPositions['answer_pos_'"+(k+1)+"] = " + answerPositions["answer_pos_"+(k+1)]);
                   answerPositions["answer_pos_"+(k+1)].push(''+ i);
                   counter++;
                 }
@@ -443,12 +302,9 @@ Grid.prototype.generateAnswer = function(answer){
                 grid.updateVertical(horizontal, vertical, answerPositions["answer_pos_"+(k+1)], x);
                 break;
               }else{
-                console.log("THIS ROW IS NOT USABLE");
                 found = false;
               }
             }else{ // if occupied_container.length < 1 or whole rows are not occupied
-              console.log("COL IS FREE");
-              console.log("vertical["+x+"] = " + vertical[x]);
               var counter = 0;
               for(var i = 0; i < songAnswer[k].length; i++){
                 $('#cell_'+vertical[x][i]).html(''+ songAnswer[k].charAt(counter));
@@ -464,15 +320,13 @@ Grid.prototype.generateAnswer = function(answer){
       }//end of while loop
      posHorizontal = true;
     posVertical = false;
-    console.log("posHorizontal = " + posHorizontal);
-    console.log("posVertical = " + posVertical);
     }//end of if else horizontal or vertical
   }
-  for(var ans in answerPositions){
-    if(answerPositions.hasOwnProperty(ans)){
-      console.log("Answer Position = " + answerPositions[ans]);
-    }
-  }
+  // for(var ans in answerPositions){
+  //   if(answerPositions.hasOwnProperty(ans)){
+  //     console.log("Answer Position = " + answerPositions[ans]);
+  //   }
+  // }
 }
 
 Grid.prototype.populateTable = function(){
@@ -529,26 +383,12 @@ angular.module('lamusiqueApp')
       $scope.generateAnswerPlaceholder($scope.correctAnswer,null,false);
     });
 
-    // just another suggestion,
-    //IN THE CHAT CONTROLLER, I added an event listener (line 196) which listens for the event 'guess-time'
-    // in order to send a message to the back end to give points to the player
-    // I was planning to prepare the backend to give points to players.
-
-
-    //$scope.correctAnswer = 'SWEET HOME ALABAMA';
-
-    //$timeout(function () {
-
-      
-    //});
-
     $scope.generateAnswerPlaceholder = (function(){
 
       var answers = {};
       var ans_positions = {};
       
       function fullAnswerValidation(obj){
-        console.log("~~~~~~~ I AM INSIDE fullAnswerValidation ~~~~~~~~~~");
         for(var ans_pos in obj){
           var answers = obj[ans_pos];
           for(var ans in answers){
@@ -572,21 +412,14 @@ angular.module('lamusiqueApp')
           quizAnswer = quizAnswer.toUpperCase();
           var answer_table = $('.answerTable').find('tbody').empty();
           var tr = $('<tr>').appendTo(answer_table);
-          console.log("########### quizAnswer = " + quizAnswer + " ,artist = " + $scope.artist);
 
           //check if answer is in answers{} cache
           if(answers[quizAnswer] != null){
-            console.log("========== Answer is in cache : " + answers[quizAnswer]);
-            // console.log("answers[quizAnswer].length = " + answers[quizAnswer].length)
-            // console.log("quizAnswer in cache = " + answers[quizAnswer]);
-            // console.log("validation = " + validation);
-            // console.log("userAnswer = " + userAnswer);
             for(var r = 1; r < answers[quizAnswer].length; r++){
               if(ans_positions[r] == null){
                 ans_positions[r] = [];
                 ans_positions[r].push(answers[quizAnswer][r]);
                 ans_positions[r].push(false);
-                //console.log("ans_positions["+r+"] = " + ans_positions[r]);
               }
             }
 
@@ -642,7 +475,6 @@ angular.module('lamusiqueApp')
             }
 
           }else{
-            //console.log("==========Answer NOT in cache yet!");
             answers[quizAnswer] = [];
             answers[quizAnswer].push(quizAnswer);
             var quiz_answer =  answers[quizAnswer][0].split(" ");
@@ -688,11 +520,8 @@ angular.module('lamusiqueApp')
     }, true);
 
     $scope.validateAnswer = function(userInput, type){
-      console.log("~~~~ INSIDE VALIDATE ANSWER ~~~~~");
-      console.log("######### $scope.correctAnswer = " + $scope.correctAnswer);
       if(type === "grid"){
         if($scope.correctAnswer.split(" ").indexOf(userInput) > -1){
-          console.log("CORRECT");
           $scope.generateAnswerPlaceholder($scope.correctAnswer, userInput, true)
           $('#musicSearch td').each(function(i, elem){
             if($(elem).hasClass("selected") == true){
