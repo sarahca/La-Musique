@@ -41,11 +41,12 @@
             <li><a href="#"><option value="r-and-b">R&ampB</option></a></li>
         </select>
       </div> <!--END GENRE DROP DOWN -->
-      <div class="col-md-3" ng-show="user.getUserAdmin() && roundInProgress">
+      <!-- <div class="col-md-3" ng-show="user.getUserAdmin() && roundInProgress">
         <label>
           <input type="checkbox"> Bot Mode
         </label>
-      </div> <!-- END OF BOT MODE-->
+      </div> --> 
+      <!-- END OF BOT MODE-->
       <!-- PAUSE THE GAME -->
       <div class="col-md-3" ng-show="user.getUserAdmin() && roundInProgress && !gameOnPause">
         <button id="pause-button" type="button" class="btn btn-default" ng-click="pauseGame()"> Pause game </button>

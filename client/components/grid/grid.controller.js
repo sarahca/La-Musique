@@ -367,6 +367,7 @@ angular.module('lamusiqueApp')
       console.log('--- IN GRID UPDATE ---- title is ' +  data.song['title'] );
       console.log('--- IN GRID UPDATE ---- artist is ' +  data.song['artist'] );
       $scope.song = data.song;
+      $scope.question = "The " + data.question + " is:";
       $scope.artist = angular.uppercase(data.song['artist']);
       $scope.correctAnswer = angular.uppercase(data['title']);
       if(data.question === 'title'){

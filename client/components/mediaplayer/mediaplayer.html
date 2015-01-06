@@ -1,9 +1,8 @@
-<div class="row" >
-  <h2>Media Player:</h2>
+<div class="row" id="media-player-row">
     <div ng-controller="MediaplayerCtrl">
-      <audio media-player="mediaPlayer" playlist="audioPlaylist"></audio>
+      <audio media-player="mediaPlayer" playlist="audioPlaylist" ></audio>
       <div class="player-control">
-        <div class="btn" ng-click="mediaPlayer.play()">
+        <!-- <div class="btn" ng-click="mediaPlayer.play()">
           <span>Simple Play</span>
           <i class="fa fa-play"></i>
         </div>
@@ -20,17 +19,15 @@
         </div>
         <div class="btn btn-noclick">
           <span>currentTrack: <span class="badge">{{mediaPlayer.currentTrack}}</span></span>
+        </div> -->
+        
+        <div class="btn btn-noclick pull-right">
+          <span>volume: <span class="badge pull-right">{{mediaPlayer.volume * 100 | number:0}}%</span></span>
         </div>
-        <div class="btn btn-noclick">
-          <span><i class="fa fa-clock-o"></i>: <span class="badge">{{mediaPlayer.formatTime}}</span></span>
-        </div>
-        <div class="btn btn-noclick">
-          <span>volume: <span class="badge">{{mediaPlayer.volume * 100 | number:0}}%</span></span>
-        </div>
-        <div class="btn" ng-click="mediaPlayer.setVolume(mediaPlayer.volume - 0.1)">
+        <div class="btn pull-right" ng-click="mediaPlayer.setVolume(mediaPlayer.volume - 0.1)">
           <span><i class="fa fa-volume-down"></i></span>
         </div>
-        <div class="btn" ng-click="mediaPlayer.setVolume(mediaPlayer.volume + 0.1)">
+        <div class="btn pull-right" ng-click="mediaPlayer.setVolume(mediaPlayer.volume + 0.1)">
           <span><i class="fa fa-volume-up"></i></span>
         </div>
         <div class="progress" ng-click="mediaPlayer.seek(mediaPlayer.duration * seekPercentage($event))">
