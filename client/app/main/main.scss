@@ -22,7 +22,11 @@
     background: #4393B9;
 }
 
-.musicGrid, .chat{
+#media-player-row {
+    margin-top: 20px;
+}
+
+.musicGrid{
     width: 450px;
     height: 450px;
     border:1px solid black;
@@ -74,6 +78,13 @@
 
 #gridContainer{
     padding-bottom: 50px;
+}
+
+.chat {
+    margin-top: 65px;
+    width: 560px;
+    height: 550px;
+    border:1px solid black;
 }
 
 .footer {
