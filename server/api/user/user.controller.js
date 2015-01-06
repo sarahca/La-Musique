@@ -14,9 +14,10 @@ exports.register = function (req, res) {
   var controller = this;
   newUser.save(function(err, user){
     if ( err ) {
-      console.log( 'user save ' + err);
-      res.send(400,JSON.stringify({ message: 'username and email are already used'}) )
-      console.log('username and email are already used');
+      console.log('user save ' + JSON.stringify(err.errors));
+      //res.send(400,JSON.stringify({ message: 'username and email are already used'}) )
+      //console.log('username and email are already used');
+      res.send(400, JSON.stringify(err.errors));
     }
     else {
       var data = {
@@ -58,8 +59,10 @@ exports.login = function (req, res) {
   var o = { 'email': email, 'password': password}
   var query  = User.where(o);
   query.findOne(function ( err, user) {
-    if ( err || !user )
-      res.send(404, JSON.stringify({message: "this account doesn't seem to exist. Register?"}));
+    if ( err || !user ){
+      console.log('error in login ' + err);
+      res.send(404, JSON.stringify({message: "This account doesn't seem to exist. Register?"}));
+    }
     else {
       console.log(user);
       req.session.userId = user._id;
