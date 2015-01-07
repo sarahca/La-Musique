@@ -50,8 +50,8 @@ function PlayerSocket(socket){
         self.room.changeNickname(self, d['new_nickname']);
         break;
       case 'new song request':
-        console.log('player requested new song');
-        self.room.processNextSongRequestMessage(self, d);
+        if (self.room)
+          self.room.processNextSongRequestMessage(self, d);
         break;
       case 'submit guess':
         self.room.processGuessTime(self, d);

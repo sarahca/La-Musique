@@ -14,8 +14,9 @@
   overflow-y: scroll;
   position: relative;
   //overflow: auto;
-  min-height: 100%;
-  margin-bottom: -40px;
+  height: 305px;
+  //min-height: 100%;
+  //margin-bottom: -55px;
 }
 .panel-body:after {
   content: "";

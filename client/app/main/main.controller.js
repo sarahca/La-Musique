@@ -62,6 +62,10 @@ angular.module('lamusiqueApp')
     $rootScope.$on('update round details', function(e, data) {
       $scope.questionSelected = data['question'];
       $scope.genreSelected = data['genre'];
+    });
+
+    $rootScope.$on('round ended', function() {
+      $scope.roundInProgress = false;
     })
 
   });
