@@ -1,9 +1,40 @@
 <div class="container"  ng-controller="LandingCtrl as LandingCtrl">
-  <h1> Landing page </h1>
-  <button id="enter" ng-click="enter()"> Enter </button>
-  <hr>
-  <div ng-include="'components/login/login.html'"></div>
-  <hr>
-  <div ng-include="'components/register/register.html'"></div>
+  <nav class="navbar navbar-default" role="navigation">
+    <div class="container-fluid">
+      <a class="navbar-brand"  href="#" style="float: right" >
+        <button id="right-panel-link" type="submit" class="btn btn-default arrow-button" href= "#right-panel" name="">
+          <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+        </button>
+      </a>
+    </div>
+  </nav>
+
+  <!---BEGINNING OF RIGHT SLIDING PANEL FOR LOGIN/REGISTER-->
+  <div id="right-panel" class="panel">
+    <div ng-include="'components/login/login.html'"></div>
+    <div ng-include="'components/register/register.html'"></div> 
+  </div><!--END OF THE RIGHT SLIDING PANEL-->
   
+  <div class="container">
+    <div class="row vertical-center-row">
+        <div class="col-lg-12">
+            <div class="row ">
+                <div class="col-xs-4 col-xs-offset-4">
+                  <img src="assets/images/icon-1.png" class="landingIcon icon-1"/>
+                  <img src="assets/images/icon-2.png" class="landingIcon icon-2"/>
+                  <span id="appName">LA MUSIQUE</span>
+                  <img src="assets/images/icon-3.png" ng-click="enter()" class="landingIcon icon-3"/>
+                  <img src="assets/images/icon-16.png" class="landingIcon icon-4"/>
+                  <img src="assets/images/icon-5.png" class="landingIcon icon-5"/>
+                  <img src="assets/images/icon-6.png" class="landingIcon icon-6"/>
+                  <img src="assets/images/icon-7.png" class="landingIcon icon-7"/>
+                  <img src="assets/images/icon-9.png" class="landingIcon icon-9"/>
+                  <img src="assets/images/icon-10.png" class="landingIcon icon-10"/>
+                  <img src="assets/images/icon-13.png" class="landingIcon icon-13"/>
+                  <img src="assets/images/icon-15.png" class="landingIcon icon-15"/>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
 </div>

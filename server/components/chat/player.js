@@ -30,7 +30,6 @@ function PlayerSocket(socket){
 
   // player posts a message- message received in json format and saved as a JS object
   this.socket.on('post_message', function (data) {
-
     var d = JSON.parse(data);
     d['nickname'] = self.nickname;
     d['message_type'] = 'message';
@@ -51,19 +50,26 @@ function PlayerSocket(socket){
         self.room.changeNickname(self, d['new_nickname']);
         break;
       case 'new song request':
+        console.log('player requested new song');
         self.room.processNextSongRequestMessage(self, d);
         break;
       case 'submit guess':
         self.room.processGuessTime(self, d);
         break;
       case 'almost right answer':
-        console.log('player submitted almost right answer');
         self.room.submitFeedback(self, d);
         break;
       case 'answer already submitted':
-        self.room.AnswerAlreadyRegistered(self);
+        self.room.answerAlreadyRegistered(self);
+        break;
+      case 'guess after end':
+        self.room.guessedTooLate(self);
+        break;
+      case 'invalid nickname':
+        self.room.invalidNickname(self);
         break;
     }    
+
   });
 };
 

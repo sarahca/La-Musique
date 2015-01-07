@@ -361,12 +361,14 @@ angular.module('lamusiqueApp')
     }
 
     $rootScope.$on('update grid', function (e, data){
+      console.log('receiving update grid event');
       $scope.resetGrid();
       console.log('--- IN GRID UPDATE---- need to update grid received at ' + Date.now());
       console.log('--- IN GRID UPDATE ---- question in grid is guess the ' + data.question);
       console.log('--- IN GRID UPDATE ---- title is ' +  data.song['title'] );
       console.log('--- IN GRID UPDATE ---- artist is ' +  data.song['artist'] );
       $scope.song = data.song;
+      $scope.question = "The " + data.question + " is:";
       $scope.artist = angular.uppercase(data.song['artist']);
       $scope.correctAnswer = angular.uppercase(data['title']);
       if(data.question === 'title'){
@@ -508,11 +510,15 @@ angular.module('lamusiqueApp')
       console.log("*************************************************");
       console.log("************ Your time = "+ $scope.mediaPlayer.currentTime + " seconds");
       console.log("*************************************************");
+      var time = $scope.mediaPlayer.currentTime
       var data = {
         song: $scope.song, 
-        guessTime: $scope.mediaPlayer.currentTime
+        guessTime: time
       };
-      $rootScope.$emit('guess-time', data); 
+      if (time < 30)
+        $rootScope.$emit('guess-time', data); 
+      else
+        $rootScope.$emit('good slow guess');
     }
 
     $scope.$watch('answer', function(val) {

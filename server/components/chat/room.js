@@ -3,7 +3,6 @@ var async = require('async');
 var config = require('../../config/environment');
 
 var rooms = {}; // keep list of all channels on this server
-var room; // keep a reference of the Room object
 
 
 function getRoom(channel) {
@@ -18,19 +17,19 @@ function Room(channel) {
   this.redisSub = redisLib.createClient(6379, config.redis.hostname);
   this.redisPub = redisLib.createClient(6379, config.redis.hostname);
   this.redisSub.subscribe(this.channel);
-
+  var room = this;
   this.redisSub.on('message', function(channel, data) {
     var message = JSON.parse(data);
     console.log('From redis: ' + data);
     room.broadcast(message);
   });
   console.log('Room ' + channel + ' created');
-  room = this; // keep a reference to the Room object
 }
 
 Room.prototype.addPlayer = function(player){  
+  var room = this;
   if ( player.nickname ) {
-    room.redisPub.sadd('users-' + room.channel, player.nickname, function(err, inserted) {
+    this.redisPub.sadd('users-' + room.channel, player.nickname, function(err, inserted) {
       console.log(player.nickname + ' inserted ' + inserted + ' err ' + err);
       if (inserted == 0) {
         room.getRandomNickname(player, player.nickname);
@@ -50,9 +49,9 @@ Room.prototype.addPlayer = function(player){
 }
 
 Room.prototype.getRandomNickname = function(player, nickname) {
-
+  var room = this;
   async.timesSeries(20, function (n, next) {
-    var potentialNickname = nickname + ' ' + (n + 1);
+    var potentialNickname = nickname + (n + 1);
     //in redis, save set of users in the room- gives default nickname to new player
     room.redisPub.sadd('users-' + room.channel, potentialNickname, function(err, inserted) {
       if (inserted == 1)
@@ -80,10 +79,11 @@ Room.prototype.getRandomNickname = function(player, nickname) {
 
 // helper method for new players
 Room.prototype.newPlayerSetUp = function (player) {
-  room.welcomeNewPlayer(player);
-  room.players.push(player);
-  room.joinNoticeMessage(player);
-  room.redisPub.get('admin-' + room.channel, function(err, res){
+  this.welcomeNewPlayer(player);
+  this.players.push(player);
+  this.joinNoticeMessage(player);
+  var room = this;
+  this.redisPub.get('admin-' + room.channel, function(err, res){
     if ( err ){
       console.log("couldn't get current admin");
     }
@@ -104,7 +104,7 @@ Room.prototype.newPlayerSetUp = function (player) {
 
 // helper method: get player from players based on nickname
 Room.prototype.getPlayerFromPlayersList = function (nickname ) {
-  return room.players.filter(function (player) {
+  return this.players.filter(function (player) {
     return (player.nickname == nickname);
   });
 }
@@ -112,8 +112,9 @@ Room.prototype.getPlayerFromPlayersList = function (nickname ) {
 
 // set owner of the room ie admin player = first person to join the channel
 Room.prototype.setAdminPlayer = function() {
+  var room = this;
   var keys, keysValues, keyValueObject, adminNickname;
-  room.redisPub.keys('user-' + room.channel + '-*', function(err, replies) {
+  this.redisPub.keys('user-' + room.channel + '-*', function(err, replies) {
     console.log(replies);
     if ( !err && replies) {
       keys = replies;
@@ -167,8 +168,8 @@ Room.prototype.broadcastNextSong = function(song, questionType, questionGenre) {
     'genre': questionGenre,
     'time': Date.now(),
   };
-  room.redisPub.publish(room.channel, JSON.stringify(message));
-  room.redisPub.set('song-' + room.channel, song._id, function(err, res){
+  this.redisPub.publish(this.channel, JSON.stringify(message));
+  this.redisPub.set('song-' + this.channel, song._id, function(err, res){
     if ( err ){
       console.log("couldn't set song id");
     }
@@ -179,8 +180,8 @@ Room.prototype.broadcastNextSong = function(song, questionType, questionGenre) {
 };
 
 Room.prototype.processNextSongRequestMessage =  function(player, message) {
-
-  room.redisPub.get('admin-' + room.channel, function(err, res){
+  var room = this;
+  this.redisPub.get('admin-' + room.channel, function(err, res){
     if (!err && (res == player.nickname)) {
       player.getNextSong(message['song_genre'], function(err, song){
         room.broadcastNextSong(song, message['question'], message['song_genre']);
@@ -210,8 +211,9 @@ Room.prototype.submitFeedback = function (player, message) {
 }
 
 Room.prototype.processGuessTime = function (player, data) {
+  var room = this;
   var songId;
-  room.redisPub.get("song-" + room.channel, function (err, reply){
+  this.redisPub.get("song-" + room.channel, function (err, reply){
     if (! err && reply){
       songId = reply;
       if (data.song._id != songId) {
@@ -220,39 +222,42 @@ Room.prototype.processGuessTime = function (player, data) {
       }
       else {
         var points = Math.floor(30 - data['guess_time']);
-        var playerData = {
-          'nickname': player.nickname,
-          'points': points,
-        };
-        room.redisPub.lrange('leaders-' + room.channel, 0, -1, function (err, reply){
-          if ( !err && reply ){
-            var currentLeaders = reply;
-            var alreadySubmitted = currentLeaders.filter(function (p) {
-              var currentPlayer = JSON.parse(p);
-              return (currentPlayer.nickname == player.nickname);
-            });
-            if (alreadySubmitted.length < 1){
-              room.redisPub.rpush('leaders-' + room.channel, JSON.stringify(playerData), function(err, inserted) {
-                if (! err && inserted) {
-                  if (player.username != 'New Player') {
-                    player.updatePoints(points, function(updatedPoints){
-                      room.sendPointsUpdate(player, updatedPoints, points);
-                    });
-                  }
-                  else {
-                    var updatedPoints = player.points + points;
-                    room.sendPointsUpdate(player, updatedPoints, points);
-                  }
-
-                  room.orderPlayersAndNotify(data['song_id']);
-                }
+        if (points == 0)
+          room.guessedTooLate(player);
+        else {
+          var playerData = {
+            'nickname': player.nickname,
+            'points': points,
+          };
+          room.redisPub.lrange('leaders-' + room.channel, 0, -1, function (err, reply){
+            if ( !err && reply ){
+              var currentLeaders = reply;
+              var alreadySubmitted = currentLeaders.filter(function (p) {
+                var currentPlayer = JSON.parse(p);
+                return (currentPlayer.nickname == player.nickname);
               });
+              if (alreadySubmitted.length < 1){
+                room.redisPub.rpush('leaders-' + room.channel, JSON.stringify(playerData), function(err, inserted) {
+                  if (! err && inserted) {
+                    if (player.username != 'New Player') {
+                      player.updatePoints(points, function(updatedPoints){
+                        room.sendPointsUpdate(player, updatedPoints, points);
+                      });
+                    }
+                    else {
+                      var updatedPoints = player.points + points;
+                      room.sendPointsUpdate(player, updatedPoints, points);
+                    }
+                    room.orderPlayersAndNotify(data['song_id']);
+                  }
+                });
+              }
+              else {
+                room.AnswerAlreadyRegistered(player);
+              }
             }
-            else {
-              room.AnswerAlreadyRegistered(player);
-            }
-          }
-        });
+          });
+        }
       }
     };
   });
@@ -278,7 +283,7 @@ Room.prototype.sendPointsUpdate = function (player, updatedPoints, newPoints) {
   player.receiveMessage(message);
 }
 
-Room.prototype.AnswerAlreadyRegistered = function(player){
+Room.prototype.answerAlreadyRegistered = function(player){
   var message = {
     'message_type': 'bot',
     'text': player.nickname + ', your answer has already been registered for this song',
@@ -288,8 +293,20 @@ Room.prototype.AnswerAlreadyRegistered = function(player){
   player.receiveMessage(message);
 }
 
+Room.prototype.guessedTooLate = function(player) {
+  console.log('player guessed too late in room');
+  var message = {
+    'message_type': 'bot',
+    'text': 'Too bad :-( ! It was the right answer but it was too late',
+    'player_nickname': player.nickname,
+    'time' : Date.now(),
+  }
+  player.receiveMessage(message);
+}
+
 Room.prototype.orderPlayersAndNotify = function (songId) {
-  room.redisPub.lrange('leaders-' + room.channel, 0, -1, function (err, reply){
+  var room = this;
+  this.redisPub.lrange('leaders-' + room.channel, 0, -1, function (err, reply){
     if ( !err && reply ){
       console.log('reply ' + reply);
       var players = reply.map(function (p){
@@ -315,12 +332,14 @@ Room.prototype.orderPlayersAndNotify = function (songId) {
 }
 
 Room.prototype.comparePlayersPoints = function(player1, player2){
+  var room = this;
   return (player2.points - player1.points);
 }
 
 
 // handle front end request to change nickname
 Room.prototype.changeNickname = function (player, newNickname) {
+  var room = this;
   var oldNickname = player.nickname;
   room.redisPub.sadd('users-' + room.channel, newNickname, function(err, inserted) {
     if ( inserted == 1 ) {
@@ -350,14 +369,22 @@ Room.prototype.changeNickname = function (player, newNickname) {
       console.log('sorry, this nickname is already being used');
       room.changeNicknameFeedback(player, newNickname, 0);
     }
-
   });
+}
+
+Room.prototype.invalidNickname = function (player) {
+  var message = {
+    'message_type': 'bot',
+    'text': 'Sorry, nicknames have to be between 1 and 8 characters long',
+    'time' : Date.now(),
+  };
+  player.receiveMessage(message);
 }
 
 // rename player key after nickname has been updated
 Room.prototype.renameUserKey = function(oldNickname, newNickname) {
-  var keyBase = 'user-' + room.channel + '-';
-  room.redisPub.rename(keyBase + oldNickname, keyBase + newNickname, function(err, res) {
+  var keyBase = 'user-' + this.channel + '-';
+  this.redisPub.rename(keyBase + oldNickname, keyBase + newNickname, function(err, res) {
     if ( err )
       console.log("couldn't rename key for " + oldNickname + ' -> ' + err);
     else
@@ -367,7 +394,7 @@ Room.prototype.renameUserKey = function(oldNickname, newNickname) {
 
 // inform the user if their nickname has been changed or not
 Room.prototype.changeNicknameFeedback = function (player, newNickname, inserted) {
-   var message = {
+  var message = {
     'message_type': 'command',
     'command': 'nickname update feedback',
     'time' : Date.now(),
@@ -393,6 +420,23 @@ Room.prototype.nicknameChangeNotice = function (oldNickname, newNickname) {
     'time': Date.now(),
   };
   this.saveAndPublishMessage(message);
+}
+
+Room.prototype.numberOfPlayersNotice = function() {
+  var numbPlayers;
+  var room = this
+  this.redisPub.scard('users-' + this.channel, function(err, res) {
+    if ( !err  && res) {
+      numbPlayers = res;
+      var message = {
+        'message_type': 'command',
+        'command': 'update player number',
+        'number_players': numbPlayers,
+        'time': Date.now(),
+      };
+      room.broadcast(message);
+    }
+  });
 }
 
 //greet new player
@@ -436,7 +480,7 @@ Room.prototype.adminPlayerGreeting = function(player) {
     'time': Date.now(),
     'exclude_users': [player.nickname],
   };
-  room.broadcast(notAdminCommand);
+  this.broadcast(notAdminCommand);
 }
 
 // broadcast message to everyone except player when someone joined the room
@@ -448,6 +492,7 @@ Room.prototype.joinNoticeMessage = function(player) {
     'time' : Date.now(),
   };
   this.saveAndPublishMessage(message);
+  this.numberOfPlayersNotice();
 }
 
 //broadcast message to everyone (except player) when someone leaves the room
@@ -459,16 +504,18 @@ Room.prototype.leaveNoticeMessage = function(player){
     'time' : Date.now(),
   }
   this.saveAndPublishMessage(message);
+  this.numberOfPlayersNotice();
 }
 
 
 //add method to redisClient to save message in a DB- data is a JS object
 Room.prototype.saveAndPublishMessage = function(data) {
+  var room = this;
   var jsonData = JSON.stringify(data);
   var timestamp = Date.now();
   var key = 'message-' + this.channel + '-' + timestamp;
 
-  room.redisPub.set(key , jsonData, function(err, res){
+  this.redisPub.set(key , jsonData, function(err, res){
     if ( err ){
       console.log("couldn't add message to redis database");
     }
@@ -479,6 +526,7 @@ Room.prototype.saveAndPublishMessage = function(data) {
 };
 
 Room.prototype.broadcast = function (message) {
+  console.log('broadcasting msg');
   async.each(this.players, function (player) {
     if (!('exclude_users' in message) ||
       message['exclude_users'].indexOf(player.nickname) == -1)
@@ -487,12 +535,13 @@ Room.prototype.broadcast = function (message) {
 };
 
 Room.prototype.removePlayer = function(player) {
+  var room = this;
   console.log('removing player ' + player.nickname);
-  for ( var i = 0; i < room.players.length; i++ ) {
+  for ( var i = 0; i < this.players.length; i++ ) {
     if (player.room.players[i].nickname === player.nickname ) {
-      room.players.splice(i, 1);
+      this.players.splice(i, 1);
       console.log('room removed 1 player');
-      room.redisPub.srem('users-' + room.channel, player.nickname, function(err, res){
+      this.redisPub.srem('users-' + this.channel, player.nickname, function(err, res){
         if ( !err ) {
           // player was removed 
           room.leaveNoticeMessage(player);
@@ -526,6 +575,7 @@ Room.prototype.removePlayer = function(player) {
 }
 
 Room.prototype.getMessages = function(socket) {
+  var room = this;
   var messages = [];
   redisClient.keys('message-' + this.channel + '-*', function(err, keys){
     console.log('getting history from redis');
@@ -550,6 +600,7 @@ Room.prototype.getMessages = function(socket) {
 
 
 Room.prototype.isEmpty = function() {
+  var room = this;
   this.redisPub.scard('users-' + this.channel, function(err, res) {
     if ( !err  && ( res == 0) ) {
       console.log('room is empty');
