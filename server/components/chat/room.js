@@ -220,39 +220,43 @@ Room.prototype.processGuessTime = function (player, data) {
       }
       else {
         var points = Math.floor(30 - data['guess_time']);
-        var playerData = {
-          'nickname': player.nickname,
-          'points': points,
-        };
-        room.redisPub.lrange('leaders-' + room.channel, 0, -1, function (err, reply){
-          if ( !err && reply ){
-            var currentLeaders = reply;
-            var alreadySubmitted = currentLeaders.filter(function (p) {
-              var currentPlayer = JSON.parse(p);
-              return (currentPlayer.nickname == player.nickname);
-            });
-            if (alreadySubmitted.length < 1){
-              room.redisPub.rpush('leaders-' + room.channel, JSON.stringify(playerData), function(err, inserted) {
-                if (! err && inserted) {
-                  if (player.username != 'New Player') {
-                    player.updatePoints(points, function(updatedPoints){
-                      room.sendPointsUpdate(player, updatedPoints, points);
-                    });
-                  }
-                  else {
-                    var updatedPoints = player.points + points;
-                    room.sendPointsUpdate(player, updatedPoints, points);
-                  }
-
-                  room.orderPlayersAndNotify(data['song_id']);
-                }
+        if (points == 0)
+          room.guessedTooLate(player);
+        else {
+          var playerData = {
+            'nickname': player.nickname,
+            'points': points,
+          };
+          room.redisPub.lrange('leaders-' + room.channel, 0, -1, function (err, reply){
+            if ( !err && reply ){
+              var currentLeaders = reply;
+              var alreadySubmitted = currentLeaders.filter(function (p) {
+                var currentPlayer = JSON.parse(p);
+                return (currentPlayer.nickname == player.nickname);
               });
+              if (alreadySubmitted.length < 1){
+                room.redisPub.rpush('leaders-' + room.channel, JSON.stringify(playerData), function(err, inserted) {
+                  if (! err && inserted) {
+                    if (player.username != 'New Player') {
+                      player.updatePoints(points, function(updatedPoints){
+                        room.sendPointsUpdate(player, updatedPoints, points);
+                      });
+                    }
+                    else {
+                      var updatedPoints = player.points + points;
+                      room.sendPointsUpdate(player, updatedPoints, points);
+                    }
+
+                    room.orderPlayersAndNotify(data['song_id']);
+                  }
+                });
+              }
+              else {
+                room.AnswerAlreadyRegistered(player);
+              }
             }
-            else {
-              room.AnswerAlreadyRegistered(player);
-            }
-          }
-        });
+          });
+        }
       }
     };
   });
@@ -278,13 +282,24 @@ Room.prototype.sendPointsUpdate = function (player, updatedPoints, newPoints) {
   player.receiveMessage(message);
 }
 
-Room.prototype.AnswerAlreadyRegistered = function(player){
+Room.prototype.answerAlreadyRegistered = function(player){
   var message = {
     'message_type': 'bot',
     'text': player.nickname + ', your answer has already been registered for this song',
     'player_nickname': player.nickname,
     'time' : Date.now(),
   };
+  player.receiveMessage(message);
+}
+
+Room.prototype.guessedTooLate = function(player) {
+  console.log('player guessed too late in room');
+  var message = {
+    'message_type': 'bot',
+    'text': 'Too bad :-( ! It was the right answer but it was too late',
+    'player_nickname': player.nickname,
+    'time' : Date.now(),
+  }
   player.receiveMessage(message);
 }
 
@@ -354,6 +369,15 @@ Room.prototype.changeNickname = function (player, newNickname) {
   });
 }
 
+Room.prototype.invalidNickname = function (player) {
+  var message = {
+    'message_type': 'bot',
+    'text': 'Sorry, nicknames have to be between 1 and 8 characters long',
+    'time' : Date.now(),
+  };
+  player.receiveMessage(message);
+}
+
 // rename player key after nickname has been updated
 Room.prototype.renameUserKey = function(oldNickname, newNickname) {
   var keyBase = 'user-' + room.channel + '-';
@@ -393,6 +417,22 @@ Room.prototype.nicknameChangeNotice = function (oldNickname, newNickname) {
     'time': Date.now(),
   };
   this.saveAndPublishMessage(message);
+}
+
+Room.prototype.numberOfPlayersNotice = function() {
+  var numbPlayers;
+  room.redisPub.scard('users-' + this.channel, function(err, res) {
+    if ( !err  && res) {
+      numbPlayers = res;
+      var message = {
+        'message_type': 'command',
+        'command': 'update player number',
+        'number_players': numbPlayers,
+        'time': Date.now(),
+      };
+      room.broadcast(message);
+    }
+  });
 }
 
 //greet new player
@@ -448,13 +488,7 @@ Room.prototype.joinNoticeMessage = function(player) {
     'time' : Date.now(),
   };
   this.saveAndPublishMessage(message);
-
-  var command = {
-    'message_type': 'command',
-    'command': 'user joined',
-    'time': Date.now(),
-  };
-  this.broadcast(command);
+  room.numberOfPlayersNotice();
 }
 
 //broadcast message to everyone (except player) when someone leaves the room
@@ -466,13 +500,7 @@ Room.prototype.leaveNoticeMessage = function(player){
     'time' : Date.now(),
   }
   this.saveAndPublishMessage(message);
-
-  var command = {
-    'message_type': 'command',
-    'command': 'user left',
-    'time': Date.now(),
-  };
-  this.broadcast(command);
+  room.numberOfPlayersNotice();
 }
 
 

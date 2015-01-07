@@ -5,13 +5,13 @@
       {{numberOfPlayers}} player(s) in the room
     </div>
 
-    <div id="chat" class="panel-body">
+    <div class="panel-body">
       <div ng-repeat="msg in messages track by $index"> 
         <div class="row">
-          <div class="col-md-4">
-            <strong> <span ng-show="msg.nickname"> {{msg.nickname}} </span> </strong> 
+          <div class="col-md-2">
+            <strong ng-show="msg.nickname"> {{msg.nickname}} </strong> 
           </div>
-          <div class="col-md-8">
+          <div class="col-md-10" style="word-wrap: break-word">
             <span> {{msg.time | date:'HH:mm:ss'}} </span>
             <span ng-style="{'color': msg.color}"> {{msg.text}}</span>
           </div>
@@ -21,11 +21,12 @@
     <div class="panel-footer">
       <div class="row">
         <form ng-submit="sendMessage()" >
-          <div class="col-md-4">
+          <div class="col-md-2">
             <label id="nickname" contenteditable="true" ng-model="nickname">{{nickname}}</label>
           </div>
-          <div class="col-md-8">
-            <input type="text" class="form-control input-sm" ng-model="newMsg.text"/>
+          <div class="col-md-10">
+            <textarea rows="2" cols="20" wrap="hard" class="form-control input-sm" ng-model="newMsg.text">
+            </textarea>
           </div>
         </form>
       </div>
