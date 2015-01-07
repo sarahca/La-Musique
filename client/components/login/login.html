@@ -1,11 +1,11 @@
 <div id="login" ng-controller="LoginCtrl as LoginCtrl">
     <h3> Login </h3>
 
-    <div class="flash row-fluid">
+    <!-- <div class="flash row-fluid">
       <div class="flash-inner span4 offset4 alert alert-warning" ng-repeat="errorMsg in errorMessages">
         {{errorMsg}}
       </div>
-    </div>
+    </div> -->
  
     <form name="loginForm" ng-submit="login(loginForm.$valid)" novalidate >
       <div class="form-group">
@@ -19,8 +19,5 @@
         <p ng-show="loginForm.password.$error.required && loginForm.password.$dirty" class="help-block">A password is required.</p>
       </div>
       <button type="submit" class="btn btn-default" ng-disabled="loginForm.$invalid" style="width:100%;">Submit</button>
-      <button id="register-button">
-        <span style="color:white;">Need an account? </span><a><span id="signUpLink" href="#">Sign Up</span></a>
-      </button>
     </form>
   </div>

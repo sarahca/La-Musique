@@ -1,20 +1,20 @@
 <div id="register" ng-controller="RegisterCtrl as RegisterCtrl">
     <h3> Register </h3>
     <!--ERROR MESSAGES -->
-    <div class="flash row-fluid">
+   <!--  <div class="flash row-fluid">
       <div class="flash-inner span4 offset4 alert alert-warning" ng-repeat="errorMsg in errorMessages">
         {{errorMsg}}
       </div>
-    </div>
+    </div> -->
 
     <!--END ERROR MESSAGES -->
     <form name="registerForm" ng-submit="registerSubmit(registerForm.$valid)" novalidate>
       <div class="form-group">
         <label for="registerUsername">Username</label>
-        <input type="text" class="form-control" name="registerUsername" placeholder="Enter username" ng-model="user.registerUsername" ng-minlength="3" ng-maxlength="8" required>
+        <input type="text" class="form-control" name="registerUsername" placeholder="Enter username" ng-model="user.registerUsername" ng-minlength="3" ng-maxlength="6" required>
         <p ng-show="registerForm.registerUsername.$error.required && registerForm.registerUsername.$dirty" class="help-block">A username is required.</p>
         <p ng-show="registerForm.registerUsername.$error.minlength" class="help-block">Username is too short (min. 3 characters).</p>
-        <p ng-show="registerForm.registerUsername.$error.maxlength" class="help-block">Username is too long (max. 8 characters).</p>
+        <p ng-show="registerForm.registerUsername.$error.maxlength" class="help-block">Username is too long (max. 6 characters).</p>
       </div>
       <div class="form-group">
         <label for="email">Email address</label>
@@ -35,8 +35,5 @@
         <div ng-show="registerForm.confirmPassword.$error && registerForm.confirmPassword.$dirty && !registerForm.confirmPassword.$error.required" > Confirm password doesn't match</div>
       </div> -->
       <button type="submit" class="btn btn-default" ng-disabled="registerForm.$invalid" style="width:100%;">Submit</button>
-      <button id="backto-login-button" style="display: inline-block;">
-      <span style="color:white;">Already have an account? </span><a><span id="backToLogin" href="#">Login</span></a>
-    </button>
     </form>
   </div> 
