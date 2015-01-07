@@ -45,29 +45,42 @@ angular.module('lamusiqueApp')
         .error(function(data, status, headers, config) {
           console.log(data);
         });
-      newSongRequestCommand({'genre': $rootScope.genreSelected, 'question': $rootScope.questionSelected});
       // caught by the main controller to set message
       $rootScope.$emit('new player joined'); 
     };
 
     // update nickname when the player is changing it in contenteditable label
-    function onNicknameChange (el) {
-      if (el.text() != $scope.nickname) {
-        var message = {
-        'channel': $scope.channelName,
-        'message_type': 'command',
-        'command': 'nickname',
-        'new_nickname': el.text(),
-      }
-      $scope.socket.emit('command', JSON.stringify(message));
-      }    
+    function onNicknameChange (newNickname) {
+      if (newNickname != $scope.nickname) {
+        if (newNickname.length < 1 || newNickname.length > 8) {
+          var command = {
+            'channel': $scope.channelName,
+            'message_type': 'command',
+            'command': 'invalid nickname',
+            'time': Date.now()
+          }
+          $scope.socket.emit('command', JSON.stringify(command));
+          var oldNickname = $scope.nickname;
+          var el = angular.element('#nickname');
+          el.text(oldNickname);
+        }
+        else {
+          var message = {
+            'channel': $scope.channelName,
+            'message_type': 'command',
+            'command': 'nickname',
+            'new_nickname': newNickname,
+          };
+          $scope.socket.emit('command', JSON.stringify(message));   
+        }
+      }   
     };
 
     // listen for changes on contenteditable label
     $timeout( function () {
       var el = angular.element('#nickname');
       el.bind('blur', function () {
-        onNicknameChange(el);
+        onNicknameChange(el.text());
       });
       el.bind('keydown keypress', function (event) {
         if (event.which == 13) { // ENTER
@@ -79,8 +92,9 @@ angular.module('lamusiqueApp')
 
     // post a new message
     $scope.sendMessage = function() {
+      console.log('sending message ' + $scope.newMsg.text);
       var text = $scope.newMsg.text;
-      if ($scope.roundInProgress && !checkIfAnswer(text)) {
+      if (!checkIfAnswer(text)) {
         var message = {
           'channel': $scope.channelName,
           'text': text,
@@ -92,10 +106,11 @@ angular.module('lamusiqueApp')
     };
 
     function checkIfAnswer(text){
+      if ( !$scope.roundInProgress )
+        return false;
       var text = text.trim().toLowerCase();
       var expectedAnswer = $scope.currentSong[$scope.currentQuestion];
       var lDist = new Levenshtein(text, expectedAnswer);
-      console.log("ldist = " + lDist);
       if (text == expectedAnswer)
         sendAnswer(text);
       if ((lDist > 0 ) && (lDist <= 5))
@@ -112,8 +127,25 @@ angular.module('lamusiqueApp')
         song: $scope.currentSong,
         guessTime: time,
       };
-      $rootScope.$emit('guess-time', data);
+      if (time < 30){
+        console.log('submitted before end of the song');
+        $rootScope.$emit('guess-time', data);
+      }
+      else {
+        $rootScope.$emit('good slow guess');
+      }
     };
+
+    $rootScope.$on('good slow guess', function(){
+       var message = {
+        'channel': $scope.channelName,
+        'message_type': 'command',
+        'command': 'guess after end',
+        'nickname': $scope.nickname,
+        'time': Date.now(),
+      };
+      $scope.socket.emit('command', JSON.stringify(message));
+    });
 
     function almostRightAnswerNotice(text){
       var message = {
@@ -125,7 +157,6 @@ angular.module('lamusiqueApp')
         'time': Date.now(),
       };
       $scope.socket.emit('command', JSON.stringify(message));
-
     }
 
     $rootScope.$on('song details for chat', function(e, data){
@@ -163,6 +194,7 @@ angular.module('lamusiqueApp')
           break;
         case 'is admin':
           changeAdminStatus(true);
+          newSongRequestCommand({'genre': $rootScope.genreSelected, 'question': $rootScope.questionSelected});
           break;
         case 'not admin':
           $scope.user.setUserAdmin(false);
@@ -173,11 +205,8 @@ angular.module('lamusiqueApp')
         case 'update points':
           $rootScope.$emit('update points', command);
           break;
-        case 'user joined':
-          $scope.numberOfPlayers += 1;
-          break;
-        case 'user left':
-          $scope.numberOfPlayers -= 1;
+        case 'update player number':
+          $scope.numberOfPlayers = command['number_players'];
           break;
       }    
     });
@@ -206,6 +235,7 @@ angular.module('lamusiqueApp')
           break;
         case 'bot':
           message['color'] =  'black'; 
+          message['nickname'] = 'MusicBot';
           break;
         case 'message':
           var nickname = message['nickname'];

@@ -361,6 +361,7 @@ angular.module('lamusiqueApp')
     }
 
     $rootScope.$on('update grid', function (e, data){
+      console.log('receiving update grid event');
       $scope.resetGrid();
       console.log('--- IN GRID UPDATE---- need to update grid received at ' + Date.now());
       console.log('--- IN GRID UPDATE ---- question in grid is guess the ' + data.question);
@@ -509,11 +510,15 @@ angular.module('lamusiqueApp')
       console.log("*************************************************");
       console.log("************ Your time = "+ $scope.mediaPlayer.currentTime + " seconds");
       console.log("*************************************************");
+      var time = $scope.mediaPlayer.currentTime
       var data = {
         song: $scope.song, 
-        guessTime: $scope.mediaPlayer.currentTime
+        guessTime: time
       };
-      $rootScope.$emit('guess-time', data); 
+      if (time < 30)
+        $rootScope.$emit('guess-time', data); 
+      else
+        $rootScope.$emit('good slow guess');
     }
 
     $scope.$watch('answer', function(val) {
