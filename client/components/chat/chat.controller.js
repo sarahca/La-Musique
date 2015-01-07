@@ -26,7 +26,9 @@ angular.module('lamusiqueApp')
         })
         .error(function(data, status, headers, config) {
           $scope.joinChannel();
-        });     
+        });   
+      var el = angular.element('#chat-body');
+      el.scrollTop = el.scrollHeight; 
     });
 
     // player joins the channel
@@ -119,16 +121,13 @@ angular.module('lamusiqueApp')
     }
 
     function sendAnswer(text) {
-      console.log('message is the right answer');
       var time = $scope.mediaPlayer.player().currentTime;
-      console.log('time submitted ' + time);
-      console.log(time + ' in send answer');
       var data = {
         song: $scope.currentSong,
         guessTime: time,
       };
       if (time < 30){
-        console.log('submitted before end of the song');
+
         $rootScope.$emit('guess-time', data);
       }
       else {
@@ -160,7 +159,6 @@ angular.module('lamusiqueApp')
     }
 
     $rootScope.$on('song details for chat', function(e, data){
-      console.log('updating round details in chat question is ' + data.question);
       $scope.currentSong = data.song;
       $scope.currentQuestion = data.question;
     });
@@ -244,7 +242,6 @@ angular.module('lamusiqueApp')
             $scope.users[nickname] = getRandomRolor();
           }
           message['color'] = $scope.users[nickname];
-          console.log('in scope.users ' + $scope.users[nickname]);
           break;
       }
       $scope.messages.push(message);
@@ -297,7 +294,6 @@ angular.module('lamusiqueApp')
     };
     //send guess time
     $rootScope.$on('guess-time', function (e, data){
-      console.log("TIME RECEIVED FROM GRID = " + data.guessTime);
       submitGuessTime(data);
     });
 

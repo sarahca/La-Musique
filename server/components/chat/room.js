@@ -526,7 +526,6 @@ Room.prototype.saveAndPublishMessage = function(data) {
 };
 
 Room.prototype.broadcast = function (message) {
-  console.log('broadcasting msg');
   async.each(this.players, function (player) {
     if (!('exclude_users' in message) ||
       message['exclude_users'].indexOf(player.nickname) == -1)

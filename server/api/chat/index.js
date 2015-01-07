@@ -8,5 +8,6 @@ var router = express.Router();
 
 router.post('/channel', controller.joinChannel);
 router.get('/channel', controller.getChannel);
+router.get('/reset', controller.reset);
 
 module.exports = router;

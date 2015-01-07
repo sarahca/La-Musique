@@ -10,9 +10,15 @@
   </nav>
 
   <!---BEGINNING OF RIGHT SLIDING PANEL FOR LOGIN/REGISTER-->
-  <div id="right-panel" class="panel">
-    <div ng-include="'components/login/login.html'"></div>
-    <div ng-include="'components/register/register.html'"></div> 
+  <div id="right-panel" class="landing-panel">
+    <div ng-include="'components/login/login.html'" ng-hide="inRegister"></div>
+    <button ng-show="!inRegister" id="register-button" ng-click="register()">
+        <span style="color:white;">Need an account? </span><a><span id="signUpLink" href="#">Sign Up</span></a>
+      </button>
+    <div ng-include="'components/register/register.html'" ng-show="inRegister"></div> 
+    <button ng-show="inRegister" id="backto-login-button" style="display: inline-block;" ng-click="login()">
+      <span style="color:white;">Already have an account? </span><a><span id="backToLogin" href="#">Login</span></a>
+    </button>
   </div><!--END OF THE RIGHT SLIDING PANEL-->
   
   <div class="container">

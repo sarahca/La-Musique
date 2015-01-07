@@ -6,11 +6,16 @@
   <div class="container">
     <h3 ng-show="newPlayer && !user.getUserAdmin()">There might a round in progress, the next one will start soon...</h3>
     <h3 ng-show="newPlayer && user.getUserAdmin()">The first round will start soon...</h3>
-    <h3 ng-show="secondsLeft > 0">Next round in ... {{secondsLeft}} seconds</h3>
-    <h3 ng-show="secondsLeft == 0">Next round ... NOW, GOOD LUCK!!</h3>
-    <h3 ng-show="roundInProgress" ng-model="questionSelected" ng-model="genreSelected"> 
-      Current round is 'guess the {{questionSelected}}' in {{genreSelected}} music
+    <h3 ng-show="secondsLeft > 0" ng-model="questionSelected" ng-model="genreSelected">
+      Next round is 'Guess the {{questionSelected}}' in {{genreSelected}} music in ... {{secondsLeft}} seconds
     </h3>
+    <h3 ng-show="roundInProgress && !gameOnPause" ng-model="questionSelected" ng-model="genreSelected">   
+      Current round is 'Guess the {{questionSelected}}' in {{genreSelected}} music
+    </h3>
+    <h3 ng-show="secondsLeft == 0">Next round ... NOW, GOOD LUCK!!</h3>
+    <!-- <h3 ng-show="roundInProgress" ng-model="questionSelected" ng-model="genreSelected"> 
+      Current round is 'guess the {{questionSelected}}' in {{genreSelected}} music
+    </h3> -->
     <h3 ng-show="user.getUserAdmin() && roundInProgress"> 
       You are the game admin and can choose the next round:
     </h3>

@@ -40,3 +40,8 @@ function processHttpGetRandomSongByGenre(req, res) {
   }); 
 }
 exports.processHttpGetRandomSongByGenre = processHttpGetRandomSongByGenre
+
+function populate(req, res){
+
+}
+exports.populate = populate;
