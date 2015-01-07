@@ -1,5 +1,5 @@
 <div ng-controller="ChatCtrl" class="ng-scope">
-  <div class="panel panel-primary chat">
+  <div class="panel panel-primary" id="chat">
     <div class="panel-heading">
       <span class="glyphicon glyphicon-comment"></span> 
       {{numberOfPlayers}} player(s) in the room
@@ -18,7 +18,7 @@
           </div>
         </div>
       </div><!-- END PANEL BODY-->
-      <div class="panel-footer">
+      <div class="panel-footer" id="chat-footer">
         <div class="row container-fluid">
           <form ng-submit="sendMessage()" >
             <div class="col-md-2">

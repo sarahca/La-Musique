@@ -1,5 +1,5 @@
 ///// CHAT ////////////////
-.chat {
+#chat.panel {
   margin-top: 65px;
   width: 560px;
   height: 400px;
@@ -10,7 +10,7 @@
 #chat-main {
   height: 360px;
 }
-.panel-body {
+#chat-body.panel-body {
   overflow-y: scroll;
   position: relative;
   //overflow: auto;
@@ -18,16 +18,16 @@
   //min-height: 100%;
   //margin-bottom: -55px;
 }
-.panel-body:after {
+#chat-body.panel-body:after {
   content: "";
   display: block;
 }
 
-.panel-footer, .panel-body:after {
+#chat-footer.panel-footer, #chat-body.panel-body:after {
   height: 40px;
 }
 
-.panel-footer {
+#chat-footer.panel-footer {
   position: relative;
   bottom: 0;
   left: 0;
@@ -37,22 +37,3 @@
 #chat-input, #nickname {
   width: 100%;
 }
-
-
-// ::-webkit-scrollbar-track
-// {
-//     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-//     background-color: #F5F5F5;
-// }
-
-// ::-webkit-scrollbar
-// {
-//     width: 12px;
-//     background-color: #F5F5F5;
-// }
-
-// ::-webkit-scrollbar-thumb
-// {
-//     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-//     background-color: #555;
-// }

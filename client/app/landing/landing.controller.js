@@ -11,7 +11,6 @@ angular.module('lamusiqueApp')
       $('.arrow-button').toggleClass("slideLeft");
     });
 
-    //line 13-28 not responding, something to do with angular
     $('#signUpLink').on('click', function(){
       console.log("signUpLink clicked");
       $('#login').hide();
