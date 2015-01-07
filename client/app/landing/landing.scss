@@ -2,10 +2,13 @@
     display: table;
     vertical-align: middle;
 }
+
 .vertical-center-row {
     display: table-cell;
     vertical-align: middle;
+    padding-top: 83px;
 }
+
 nav {
   position: fixed !important;
   right: 0;
@@ -19,11 +22,22 @@ nav {
   -o-transform: translate3d(0, 0, 0);
   transform: translate3d(0, 0, 0);
 }
+
+.navbar-default {
+  background-color: transparent !important;
+   border: none !important;
+}
+
 .active a {
   color: #f69c0e !important;
 }
 
-.toggle-button{
+.btn:focus {
+   outline: none !important;
+}
+
+.arrow-button{
+  transition: 1s;
   color: white;
   border: 1px solid black;
   background-color: black;
@@ -36,175 +50,175 @@ nav {
   -ms-animation: TOGGLE_BUTTON 1s ease-in-out infinite;
 }
 
-.toggle-button:hover{
+.arrow-button:hover, .arrow-button:focus, .arrow-button:active, .arrow-button.active, .open > .arrow-button.dropdown-toggle{
   color: white;
   background-color: black;
 }
 
-.navbar-nav > li {
-  width: 100%;
-  font-weight: 300;
-  font-size: 25px;
+.arrow-button.slideLeft{
+  margin-right: 201px;
 }
-#modal {
+
+.panel{
+  display: none;
+  width: 220px;
+  padding: 20px;
+  border-radius: 0;
+  background-color: #000;
+  color: #fff;
+}
+
+#appName{
+  color: #e27f3d;
+  font-family: 'Oswald', sans-serif;
+  position: absolute;
+  top: 192px;
+  left: 70px;
+  font-size: 30px;
+}
+
+#register{
   display: none;
 }
-#closeButton {
-  float: right;
-  margin-top: 10px;
-  font-size: 26px;
+
+#register-button{
+  color: #000 !important;
+  background-color: #000 !important;
+  border: none;
+  font-size: 12px;
+  margin-top: 12px;
+  width: 100%;
 }
-#closeButton a:hover {
+
+#backto-login-button {
+  color: #000 !important;
+  background-color: #000 !important;
+  border: none;
+  font-size: 12px;
+  margin-top: 12px;
+  width: 100%;
+}
+
+/* link to register if new user -color of the text in the button*/
+#signUpLink {
+  text-decoration: none !important;
+  color: yellow !important;
+}
+#signUpLink:hover {
   text-decoration: none;
 }
-.navbar-brand i {
-  padding: 20px;
+
+.landingIcon{
+  position: absolute;
 }
 
-.navbar-inverse {
-  background-color: transparent;
-  border-color: transparent;
-}
-#navbarwrap {
-  display: none;
-  color: #ffffff;
-  width: 300px;
-  height: 100%;
-  right: 100px;
-  top: 0;
-  background-color: #060606;
-  -webkit-backface-visibility: hidden;
-  -webkit-transform: translate3d(0, 0, 0);
-  -moz-transform: translate3d(0, 0, 0);
-  -ms-transform: translate3d(0, 0, 0);
-  -o-transform: translate3d(0, 0, 0);
-  transform: translate3d(0, 0, 0);
-  -webkit-transition: opacity 487ms ease-out 123ms;
-  -webkit-transition-delay: 123ms;
-  -moz-transition: opacity 487ms ease-out 123ms;
-  -o-transition: opacity 487ms ease-out 123ms;
-  transition: opacity 487ms ease-out 123ms;
-}
-
-
-
-.hexagon-1 {
+.icon-1{
   width: 100px;
-  height: 55px;
-  background: #f2f7f8;
-  position: absolute;
-
-}
-.hexagon-1:before {
-  content: "";
-  position: absolute;
-  top: -25px;
-  left: 0;
-  width: 0;
-  height: 0;
-  border-left: 50px solid transparent;
-  border-right: 50px solid transparent;
-  border-bottom: 25px solid #f2f7f8;
-}
-.hexagon-1:after {
-  content: "";
-  position: absolute;
-  bottom: -25px;
-  left: 0;
-  width: 0;
-  height: 0;
-  border-left: 50px solid transparent;
-  border-right: 50px solid transparent;
-  border-top: 25px solid #f2f7f8;
+  top: 150px;
+  left: -77px;
 }
 
-.hexagon-2 {
+.icon-2{
+  width: 80px;
+  top: 74px;
+  left: 220px;
+}
+
+.icon-3{
   width: 100px;
-  height: 55px;
-  background: #f6b517;
-  position: absolute;
-}
-.hexagon-2:before {
-  content: "";
-  position: absolute;
-  top: -25px;
-  left: 0;
-  width: 0;
-  height: 0;
-  border-left: 50px solid transparent;
-  border-right: 50px solid transparent;
-  border-bottom: 25px solid #f6b517;
-}
-.hexagon-2:after {
-  content: "";
-  position: absolute;
-  bottom: -25px;
-  left: 0;
-  width: 0;
-  height: 0;
-  border-left: 50px solid transparent;
-  border-right: 50px solid transparent;
-  border-top: 25px solid #f6b517;
+  top: 250px;
+  left: 98px;
+  animation: PLAY_BUTTON 1s ease-in-out infinite;
+  -webkit-animation: PLAY_BUTTON 1s ease-in-out infinite;
+  -o-animation: PLAY_BUTTON 1s ease-in-out infinite;
+  -moz-animation: PLAY_BUTTON 1s ease-in-out infinite;
+  -ms-animation: PLAY_BUTTON 1s ease-in-out infinite;
 }
 
-.hexagon-3 {
-  width: 100px;
-  height: 55px;
-  background: #c3d4dd;
-  position: absolute;
-
-}
-.hexagon-3:before {
-  content: "";
-  position: absolute;
-  top: -25px;
-  left: 0;
-  width: 0;
-  height: 0;
-  border-left: 50px solid transparent;
-  border-right: 50px solid transparent;
-  border-bottom: 25px solid #c3d4dd;
-}
-.hexagon-3:after {
-  content: "";
-  position: absolute;
-  bottom: -25px;
-  left: 0;
-  width: 0;
-  height: 0;
-  border-left: 50px solid transparent;
-  border-right: 50px solid transparent;
-  border-top: 25px solid #c3d4dd;
+.icon-3:hover{
+  opacity: 0.8;
 }
 
-.hexagon-4 {
-  width: 100px;
-  height: 55px;
-  background: #415b76;
-  position: absolute;
+.icon-4{
+  width: 40px;
+  top: 108px;
+  left:80px;
 }
-.hexagon-4:before {
-  content: "";
-  position: absolute;
-  top: -25px;
-  left: 0;
-  width: 0;
-  height: 0;
-  border-left: 50px solid transparent;
-  border-right: 50px solid transparent;
-  border-bottom: 25px solid #415b76;
+
+.icon-5{
+  width: 51px;
+  top: 66px;
+  left: -17px;
 }
-.hexagon-4:after {
-  content: "";
-  position: absolute;
-  bottom: -25px;
-  left: 0;
-  width: 0;
-  height: 0;
-  border-left: 50px solid transparent;
-  border-right: 50px solid transparent;
-  border-top: 25px solid #415b76;
+
+.icon-6{
+  width: 93px;
+  top: 170px;
+  left: 270px;
 }
+
+.icon-7{
+  width: 80px;
+  top: 292px;
+  left: -26px;
+}
+
+.icon-9{
+  width: 80px;
+  top: 6px;
+  left: 113px;
+}
+
+.icon-10{
+  width: 65px;
+  top: 288px;
+  left: 260px;
+}
+
+.icon-13{
+  width: 60px;
+  top: 423px;
+  left: 34px;
+}
+
+.icon-15{
+  width: 71px;
+  top: 364px;
+  left: 168px;
+}
+
+@keyframes PLAY_BUTTON {
+    0%{transform:scale(1)}
+    50%{transform:scale(0.9)}
+    100%{transform:scale(1)}
+}
+@-webkit-keyframes PLAY_BUTTON {
+    0%{transform:scale(1)}
+    50%{transform:scale(0.9)}
+    100%{transform:scale(1)}
+}
+@-o-keyframes PLAY_BUTTON {
+    0%{transform:scale(1)}
+    50%{transform:scale(0.9)}
+    100%{transform:scale(1)}
+}
+@-moz-keyframes PLAY_BUTTON {
+    0%{transform:scale(1)}
+    50%{transform:scale(0.9)}
+    100%{transform:scale(1)}
+}
+@-ms-keyframes PLAY_BUTTON {
+    0%{transform:scale(1)}
+    50%{transform:scale(0.9)}
+    100%{transform:scale(1)}
+}
+
+@-webkit-keyframes PLAY_BUTTON {
+    0%{transform:scale(1)}
+    50%{transform:scale(0.9)}
+    100%{transform:scale(1)}
+}
+
 
 @keyframes TOGGLE_BUTTON {
     0%{transform:scale(1)}
@@ -238,53 +252,3 @@ nav {
     100%{transform:scale(1)}
 }
 
-.hex1{
-    top:20px;
-    left:0px;    
-}
-.hex2{
-    top:20px;
-    left:110px;    
-}
-.hex3{
-    top:20px;
-    left:220px;    
-}
-.hex4{
-    top: 110px;
-    left: 55px;   
-}
-.hex5{
-    top: 110px;
-    left: 165px;   
-}
-.hex6{
-    top: 110px;
-    left: 275px;   
-}
-
-.hex7{
-    top:200px;
-    left:0px;    
-}
-.hex8{
-    top:200px;
-    left:110px;    
-}
-.hex9{
-    top:200px;
-    left:220px;    
-}
-
-.hex10{
-    top: 290px;
-    left: -55px;   
-}
-.hex11{
-    top: 290px;
-    left: 55px;   
-}
-.hex12{
-    top: 290px;
-    left: 165px;   
-}

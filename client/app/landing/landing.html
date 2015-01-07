@@ -1,61 +1,40 @@
 <div class="container"  ng-controller="LandingCtrl as LandingCtrl">
-  <h1>La Musiques</h1>
-  <!--MAIN NAVIGATION-->
-    <nav class="navbar navbar-inverse">
+  <nav class="navbar navbar-default" role="navigation">
+    <div class="container-fluid">
+      <a class="navbar-brand"  href="#" style="float: right" >
+        <button id="right-panel-link" type="submit" class="btn btn-default arrow-button" href= "#right-panel" name="">
+          <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+        </button>
+      </a>
+    </div>
+  </nav>
 
-        <div id="modal">
-            <p id="closeButton"><a href="javascript:$.pageslide.close()">&#10006</a></p>
-            
-            <ul class="nav navbar-nav">
-              <li class="active"><a href="index.html" >HOME</a></li>
-              <li><a href="contact.html" >CONTACT</a></li>
-            </ul>
-
-        </div><!--END OF MODAL-->
-        
-        <div id="bar">
-            <div id="menu_button">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                <span class="sr-only">Toggle navigation</span>
-              </button>
-              <a class="navbar-brand" href="#modal" style="float: right">
-                <button id="arrow-button" type="submit" class="btn btn-default toggle-button" name="">
-                  <span id="right-panel-link" href="#right-panel" class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-                </button>
-              </a>
-            </div>
-            <div id="bcm_logo"></div>
-        </div>
-    </nav><!--END OF MAIN NAVIGATION-->
+  <!---BEGINNING OF RIGHT SLIDING PANEL FOR LOGIN/REGISTER-->
+  <div id="right-panel" class="panel">
+    <div ng-include="'components/login/login.html'"></div>
+    <div ng-include="'components/register/register.html'"></div> 
+  </div><!--END OF THE RIGHT SLIDING PANEL-->
+  
   <div class="container">
     <div class="row vertical-center-row">
         <div class="col-lg-12">
             <div class="row ">
                 <div class="col-xs-4 col-xs-offset-4">
-                  <div class="hexagon-1 hex1"></div>
-                  <div class="hexagon-2 hex2"></div>
-                  <div class="hexagon-3 hex3"></div>
-
-                  <div class="hexagon-1 hex4"></div>
-                  <div class="hexagon-4 hex5"></div>
-                  <div class="hexagon-2 hex6"></div>
-                  
-                  <div class="hexagon-3 hex7"></div>
-                  <div class="hexagon-2 hex8"></div>
-                  <div class="hexagon-1 hex9"></div>
-                  
-                  <div class="hexagon-2 hex10"></div>
-                  <div class="hexagon-4 hex11"></div>
-                  <div class="hexagon-3 hex12"></div>
+                  <img src="assets/images/icon-1.png" class="landingIcon icon-1"/>
+                  <img src="assets/images/icon-2.png" class="landingIcon icon-2"/>
+                  <span id="appName">LA MUSIQUE</span>
+                  <img src="assets/images/icon-3.png" ng-click="enter()" class="landingIcon icon-3"/>
+                  <img src="assets/images/icon-16.png" class="landingIcon icon-4"/>
+                  <img src="assets/images/icon-5.png" class="landingIcon icon-5"/>
+                  <img src="assets/images/icon-6.png" class="landingIcon icon-6"/>
+                  <img src="assets/images/icon-7.png" class="landingIcon icon-7"/>
+                  <img src="assets/images/icon-9.png" class="landingIcon icon-9"/>
+                  <img src="assets/images/icon-10.png" class="landingIcon icon-10"/>
+                  <img src="assets/images/icon-13.png" class="landingIcon icon-13"/>
+                  <img src="assets/images/icon-15.png" class="landingIcon icon-15"/>
                 </div>
             </div>
         </div>
     </div>
   </div>
-<!--   <button id="enter" ng-click="enter()"> Enter </button>
-  <hr>
-  <div ng-include="'components/login/login.html'"></div>
-  <hr>
-  <div ng-include="'components/register/register.html'"></div> -->
-  
 </div>
