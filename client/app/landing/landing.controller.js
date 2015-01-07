@@ -4,6 +4,7 @@
 angular.module('lamusiqueApp')
   .controller('LandingCtrl', function ( $scope, $http, socket, $timeout, $rootScope, $location, UserService) {
   $scope.user = UserService;
+  $scope.inRegister =  false;
 
     $('#right-panel-link').panelslider({side: 'right', clickClose: false, duration: 700 });
     $('#right-panel-link').on('click', function(){
@@ -57,6 +58,13 @@ angular.module('lamusiqueApp')
     $scope.enter = function() {
       $scope.redirect($rootScope.channel);
     };
+
+    $scope.register = function() {
+      $scope.inRegister =  true;
+    }
+    $scope.login = function() {
+      $scope.inRegister =  false;
+    }
 
     $rootScope.$on("userLoggedIn", function(e, data) {
       controller.saveUserDataOnLogin(data);
