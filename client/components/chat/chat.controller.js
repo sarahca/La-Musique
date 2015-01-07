@@ -92,8 +92,9 @@ angular.module('lamusiqueApp')
 
     // post a new message
     $scope.sendMessage = function() {
-      var text = $scope.newMsg.text.value;
-      if ($scope.roundInProgress && !checkIfAnswer(text)) {
+      console.log('sending message ' + $scope.newMsg.text);
+      var text = $scope.newMsg.text;
+      if (!checkIfAnswer(text)) {
         var message = {
           'channel': $scope.channelName,
           'text': text,
@@ -101,10 +102,12 @@ angular.module('lamusiqueApp')
         };
         $scope.socket.emit('post_message', JSON.stringify(message));
       }
-      $scope.newMsg.text.value = '';
+      $scope.newMsg.text = '';
     };
 
     function checkIfAnswer(text){
+      if ( !$scope.roundInProgress )
+        return false;
       var text = text.trim().toLowerCase();
       var expectedAnswer = $scope.currentSong[$scope.currentQuestion];
       var lDist = new Levenshtein(text, expectedAnswer);

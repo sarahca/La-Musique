@@ -30,7 +30,7 @@ function PlayerSocket(socket){
 
   // player posts a message- message received in json format and saved as a JS object
   this.socket.on('post_message', function (data) {
-
+    console.log('post message');
     var d = JSON.parse(data);
     d['nickname'] = self.nickname;
     d['message_type'] = 'message';
