@@ -3,7 +3,6 @@ var async = require('async');
 var config = require('../../config/environment');
 
 var rooms = {}; // keep list of all channels on this server
-var room; // keep a reference of the Room object
 
 
 function getRoom(channel) {
@@ -18,17 +17,17 @@ function Room(channel) {
   this.redisSub = redisLib.createClient(6379, config.redis.hostname);
   this.redisPub = redisLib.createClient(6379, config.redis.hostname);
   this.redisSub.subscribe(this.channel);
-
+  var room = this;
   this.redisSub.on('message', function(channel, data) {
     var message = JSON.parse(data);
     console.log('From redis: ' + data);
     room.broadcast(message);
   });
   console.log('Room ' + channel + ' created');
-  room = this; // keep a reference to the Room object
 }
 
 Room.prototype.addPlayer = function(player){  
+  var room = this;
   if ( player.nickname ) {
     room.redisPub.sadd('users-' + room.channel, player.nickname, function(err, inserted) {
       console.log(player.nickname + ' inserted ' + inserted + ' err ' + err);
@@ -50,9 +49,9 @@ Room.prototype.addPlayer = function(player){
 }
 
 Room.prototype.getRandomNickname = function(player, nickname) {
-
+  var room = this;
   async.timesSeries(20, function (n, next) {
-    var potentialNickname = nickname + ' ' + (n + 1);
+    var potentialNickname = nickname + (n + 1);
     //in redis, save set of users in the room- gives default nickname to new player
     room.redisPub.sadd('users-' + room.channel, potentialNickname, function(err, inserted) {
       if (inserted == 1)
@@ -80,6 +79,7 @@ Room.prototype.getRandomNickname = function(player, nickname) {
 
 // helper method for new players
 Room.prototype.newPlayerSetUp = function (player) {
+  var room = this;
   room.welcomeNewPlayer(player);
   room.players.push(player);
   room.joinNoticeMessage(player);
@@ -104,6 +104,7 @@ Room.prototype.newPlayerSetUp = function (player) {
 
 // helper method: get player from players based on nickname
 Room.prototype.getPlayerFromPlayersList = function (nickname ) {
+  var room = this;
   return room.players.filter(function (player) {
     return (player.nickname == nickname);
   });
@@ -112,6 +113,7 @@ Room.prototype.getPlayerFromPlayersList = function (nickname ) {
 
 // set owner of the room ie admin player = first person to join the channel
 Room.prototype.setAdminPlayer = function() {
+  var room = this;
   var keys, keysValues, keyValueObject, adminNickname;
   room.redisPub.keys('user-' + room.channel + '-*', function(err, replies) {
     console.log(replies);
@@ -159,6 +161,7 @@ Room.prototype.setAdminPlayer = function() {
 
 //Room broadcasts next song
 Room.prototype.broadcastNextSong = function(song, questionType, questionGenre) {
+  var room = this;
   var message = {
     'message_type': 'command',
     'command': 'next song to play',
@@ -179,7 +182,7 @@ Room.prototype.broadcastNextSong = function(song, questionType, questionGenre) {
 };
 
 Room.prototype.processNextSongRequestMessage =  function(player, message) {
-
+  var room = this;
   room.redisPub.get('admin-' + room.channel, function(err, res){
     if (!err && (res == player.nickname)) {
       player.getNextSong(message['song_genre'], function(err, song){
@@ -200,6 +203,7 @@ Room.prototype.processNextSongRequestMessage =  function(player, message) {
 };
 
 Room.prototype.submitFeedback = function (player, message) {
+  var room = this;
   var feedbackMessage = {
     'message_type': 'bot',
     'text': "You submitted " + message['answer'] + ", it's pretty close to the right answer, try again!",
@@ -210,6 +214,7 @@ Room.prototype.submitFeedback = function (player, message) {
 }
 
 Room.prototype.processGuessTime = function (player, data) {
+  var room = this;
   var songId;
   room.redisPub.get("song-" + room.channel, function (err, reply){
     if (! err && reply){
@@ -263,6 +268,7 @@ Room.prototype.processGuessTime = function (player, data) {
 }
 
 Room.prototype.sendPointsUpdate = function (player, updatedPoints, newPoints) {
+  var room = this;
   player.points = updatedPoints;
   var command = {
     'message_type': 'command',
@@ -283,6 +289,7 @@ Room.prototype.sendPointsUpdate = function (player, updatedPoints, newPoints) {
 }
 
 Room.prototype.answerAlreadyRegistered = function(player){
+  var room = this;
   var message = {
     'message_type': 'bot',
     'text': player.nickname + ', your answer has already been registered for this song',
@@ -293,6 +300,7 @@ Room.prototype.answerAlreadyRegistered = function(player){
 }
 
 Room.prototype.guessedTooLate = function(player) {
+  var room = this;
   console.log('player guessed too late in room');
   var message = {
     'message_type': 'bot',
@@ -304,6 +312,7 @@ Room.prototype.guessedTooLate = function(player) {
 }
 
 Room.prototype.orderPlayersAndNotify = function (songId) {
+  var room = this;
   room.redisPub.lrange('leaders-' + room.channel, 0, -1, function (err, reply){
     if ( !err && reply ){
       console.log('reply ' + reply);
@@ -330,12 +339,14 @@ Room.prototype.orderPlayersAndNotify = function (songId) {
 }
 
 Room.prototype.comparePlayersPoints = function(player1, player2){
+  var room = this;
   return (player2.points - player1.points);
 }
 
 
 // handle front end request to change nickname
 Room.prototype.changeNickname = function (player, newNickname) {
+  var room = this;
   var oldNickname = player.nickname;
   room.redisPub.sadd('users-' + room.channel, newNickname, function(err, inserted) {
     if ( inserted == 1 ) {
@@ -370,6 +381,7 @@ Room.prototype.changeNickname = function (player, newNickname) {
 }
 
 Room.prototype.invalidNickname = function (player) {
+  var room = this;
   var message = {
     'message_type': 'bot',
     'text': 'Sorry, nicknames have to be between 1 and 8 characters long',
@@ -380,6 +392,7 @@ Room.prototype.invalidNickname = function (player) {
 
 // rename player key after nickname has been updated
 Room.prototype.renameUserKey = function(oldNickname, newNickname) {
+  var room = this;
   var keyBase = 'user-' + room.channel + '-';
   room.redisPub.rename(keyBase + oldNickname, keyBase + newNickname, function(err, res) {
     if ( err )
@@ -391,7 +404,8 @@ Room.prototype.renameUserKey = function(oldNickname, newNickname) {
 
 // inform the user if their nickname has been changed or not
 Room.prototype.changeNicknameFeedback = function (player, newNickname, inserted) {
-   var message = {
+  var room = this;
+  var message = {
     'message_type': 'command',
     'command': 'nickname update feedback',
     'time' : Date.now(),
@@ -410,6 +424,7 @@ Room.prototype.changeNicknameFeedback = function (player, newNickname, inserted)
 
 // inform users that someone changed their nickname
 Room.prototype.nicknameChangeNotice = function (oldNickname, newNickname) {
+  var room = this;
   var message = {
     'message_type': 'notification',
     'text': oldNickname + ' will now be called ' + newNickname,
@@ -420,6 +435,7 @@ Room.prototype.nicknameChangeNotice = function (oldNickname, newNickname) {
 }
 
 Room.prototype.numberOfPlayersNotice = function() {
+  var room = this;
   var numbPlayers;
   room.redisPub.scard('users-' + this.channel, function(err, res) {
     if ( !err  && res) {
@@ -437,6 +453,7 @@ Room.prototype.numberOfPlayersNotice = function() {
 
 //greet new player
 Room.prototype.welcomeNewPlayer = function(player) {
+  var room = this;
   var message = {
     'message_type': 'bot',
     'text': 'Welcome ' + player.nickname,
@@ -456,6 +473,7 @@ Room.prototype.welcomeNewPlayer = function(player) {
 
 // inform player they are the admin of the game
 Room.prototype.adminPlayerGreeting = function(player) {
+  var room = this;
   var message = {
     'message_type': 'bot',
     'text': 'Hey ' + player.nickname + ', you are now the game admin',
@@ -481,6 +499,7 @@ Room.prototype.adminPlayerGreeting = function(player) {
 
 // broadcast message to everyone except player when someone joined the room
 Room.prototype.joinNoticeMessage = function(player) {
+  var room = this;
   var message = {
     'message_type': 'notification',
     'text': player.nickname + ' joined the room',
@@ -493,6 +512,7 @@ Room.prototype.joinNoticeMessage = function(player) {
 
 //broadcast message to everyone (except player) when someone leaves the room
 Room.prototype.leaveNoticeMessage = function(player){
+  var room = this;
   var message = {
     'message_type': 'notification',
     'text': player.nickname + ' left the room.',
@@ -506,6 +526,7 @@ Room.prototype.leaveNoticeMessage = function(player){
 
 //add method to redisClient to save message in a DB- data is a JS object
 Room.prototype.saveAndPublishMessage = function(data) {
+  var room = this;
   var jsonData = JSON.stringify(data);
   var timestamp = Date.now();
   var key = 'message-' + this.channel + '-' + timestamp;
@@ -521,6 +542,7 @@ Room.prototype.saveAndPublishMessage = function(data) {
 };
 
 Room.prototype.broadcast = function (message) {
+  var room = this;
   async.each(this.players, function (player) {
     if (!('exclude_users' in message) ||
       message['exclude_users'].indexOf(player.nickname) == -1)
@@ -529,6 +551,7 @@ Room.prototype.broadcast = function (message) {
 };
 
 Room.prototype.removePlayer = function(player) {
+  var room = this;
   console.log('removing player ' + player.nickname);
   for ( var i = 0; i < room.players.length; i++ ) {
     if (player.room.players[i].nickname === player.nickname ) {
@@ -568,6 +591,7 @@ Room.prototype.removePlayer = function(player) {
 }
 
 Room.prototype.getMessages = function(socket) {
+  var room = this;
   var messages = [];
   redisClient.keys('message-' + this.channel + '-*', function(err, keys){
     console.log('getting history from redis');
@@ -592,6 +616,7 @@ Room.prototype.getMessages = function(socket) {
 
 
 Room.prototype.isEmpty = function() {
+  var room = this;
   this.redisPub.scard('users-' + this.channel, function(err, res) {
     if ( !err  && ( res == 0) ) {
       console.log('room is empty');
