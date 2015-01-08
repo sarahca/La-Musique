@@ -116,7 +116,12 @@ Grid.prototype.generateAnswer = function(answer){
           var startPoint, endPoint;
           var usableRow = false;
 
-          for(var x = 0; x < horizontal.length; x++){
+          var randomRowToStart = hor_cell[Math.floor(Math.random() * hor_cell.length)] - 1;
+
+          for(var x = randomRowToStart; x < horizontal.length; x++){
+            if(x === 8 && x < horizontal.length){
+              x = 0;
+            }
             var occupied_container = [];
             var head = parseInt((x + 1) + '1');
             for(var j = head; j < head+8; j++){
@@ -226,13 +231,18 @@ Grid.prototype.generateAnswer = function(answer){
           var counter = 0;
           var startPoint, endPoint;
           var usableRow = false;
+
+
+          var randomColToStart = hor_cell[Math.floor(Math.random() * hor_cell.length)] - 1;
           
-          for(var x = 0; x < vertical.length; x++){
+          for(var x = randomColToStart; x < vertical.length; x++){
+            if(x === 8 && x < vertical.length){
+              x = 0;
+            }
             var occupied_container = [];
             var head =  parseInt('1' + (x + 1));
             for(var j = head; j < head+80; j += 10){
               if(vertical[x].indexOf(j.toString()) < 0){
-                console.log("j = " + j);
                 occupied_container.push([j.toString()]);
               }
             }
@@ -322,11 +332,6 @@ Grid.prototype.generateAnswer = function(answer){
     posVertical = false;
     }//end of if else horizontal or vertical
   }
-  // for(var ans in answerPositions){
-  //   if(answerPositions.hasOwnProperty(ans)){
-  //     console.log("Answer Position = " + answerPositions[ans]);
-  //   }
-  // }
 }
 
 Grid.prototype.populateTable = function(){
@@ -341,7 +346,7 @@ Grid.prototype.populateTable = function(){
 angular.module('lamusiqueApp')
   .controller('GridCtrl', function ($rootScope, $scope, $filter, $timeout, MediaPlayer) {
     console.log('GridCtrl');
-    $scope.mediaPlayer = MediaPlayer.player();
+    
     $scope.correctAnswer = '';
 
     $scope.resetGrid = function(){
@@ -361,7 +366,7 @@ angular.module('lamusiqueApp')
     }
 
     $rootScope.$on('update grid', function (e, data){
-      console.log('receiving update grid event');
+      $scope.mediaPlayer = MediaPlayer.player();
       $scope.resetGrid();
       console.log('--- IN GRID UPDATE---- need to update grid received at ' + Date.now());
       console.log('--- IN GRID UPDATE ---- question in grid is guess the ' + data.question);
@@ -376,7 +381,6 @@ angular.module('lamusiqueApp')
       }else if(data.question === 'artist'){
         $scope.correctAnswer = angular.uppercase(data.song['artist']);
       }
-
       console.log("$scope.correctAnswer = " + $scope.correctAnswer);
       console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
       var grid = new Grid($scope);
@@ -434,9 +438,6 @@ angular.module('lamusiqueApp')
                 ans_positions[1][1] = true;
               }else if(userAnswer_len === 1 && quizAnswer.split(" ").length > 1){
                 var userAnswer_pos = answers[quizAnswer].indexOf(userAnswer);
-                // console.log("answers[quizAnswer] = " + answers[quizAnswer]);
-                // console.log("userAnswer_pos = " + userAnswer_pos)
-                // console.log("ans_positions[userAnswer_pos][1] = " + ans_positions[userAnswer_pos][1])
                 ans_positions[userAnswer_pos][1] = true;
               }else{ 
                 userAnswer = userAnswer.split(" ");
@@ -450,7 +451,6 @@ angular.module('lamusiqueApp')
               for(var t = 1; t < answers[quizAnswer].length; t++){
                 for(var u = 0; u < answers[quizAnswer][t].length; u++){
                   if(ans_positions[t][1] === true){
-                    //console.log("ans_positions[t] = " + ans_positions[t]);
                     $("<td>").text(''+ ans_positions[t][0][u]).appendTo(tr);
                     for(var l = 0; l < answerPositions['answer_pos_'+t].length; l++){
                       $('#cell_'+answerPositions['answer_pos_'+t][l]).addClass("selectedSuccess");
@@ -468,6 +468,9 @@ angular.module('lamusiqueApp')
             //Check if all answers's placeholders are filled with correct answers
             if(fullAnswerValidation(ans_positions)){
               console.log("ALL ANSWERS ARE CORRECT");
+              $("#musicSearch td").unbind('mousedown');
+              $("#musicSearch td").unbind('mouseup');
+              $("#musicSearch td").unbind('mouseover');
               $scope.calculateTotalTime();
               for(var p in answers){
                 if(answers.hasOwnProperty(p)){
@@ -505,8 +508,6 @@ angular.module('lamusiqueApp')
     $scope.answer = '';
     
     $scope.calculateTotalTime = function(){
-      $("#musicSearch td").unbind('mouseup');
-      $("#musicSearch td").unbind('mouseover');
       console.log("*************************************************");
       console.log("************ Your time = "+ $scope.mediaPlayer.currentTime + " seconds");
       console.log("*************************************************");
@@ -537,7 +538,6 @@ angular.module('lamusiqueApp')
           })
           
         }else{
-          console.log("INCORRECT");
           $('#musicSearch td').removeClass("selected");
 
         }
