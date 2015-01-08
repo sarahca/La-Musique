@@ -50,7 +50,7 @@ angular.module('lamusiqueApp')
           genre: data.genre
         };
         $scope.audioPlaylist.push(songToPlay);
-        if ( !$scope.mediaPlayer.playing ) {
+        if ( !$scope.mediaPlayer.playing && !$rootScope.gameOnPause) {
           playSong($scope, $rootScope);
         }
       });
@@ -59,17 +59,20 @@ angular.module('lamusiqueApp')
         $rootScope.$emit('round ended');
         $rootScope.$emit('reset countdown');
         $scope.audioPlaylist.shift();
-        if ($scope.audioPlaylist.length > 0) { 
+        if ($scope.audioPlaylist.length > 0 && !$rootScope.gameOnPause) { 
           playSong($scope, $rootScope);
         }
         else {
-          if (!$rootScope.gameOnPause) 
-            $scope.getNextSong(); 
+          $scope.getNextSong(); 
         }         
       });
 
-      $rootScope.$on('game restarted', function() {
-        $scope.getNextSong(); 
+
+      $rootScope.$on('game restarted notice', function() {
+        console.log('player got game restarted notice');
+        //$scope.getNextSong(); 
+        if (!$scope.mediaPlayer.playing && $scope.audioPlaylist.length > 0)
+          playSong($scope, $rootScope);
       });
 
     });

@@ -1,4 +1,9 @@
 ///// CHAT ////////////////
+
+#chat {
+  border-color: #5F7383;
+}
+
 #chat.panel {
   margin-top: 65px;
   width: 560px;
@@ -9,6 +14,12 @@
 
 #chat-main {
   height: 360px;
+}
+
+#chat-heading {
+  colof: black;
+  background-color: #EDAE53;
+  color: #5F7383;
 }
 #chat-body.panel-body {
   overflow-y: scroll;

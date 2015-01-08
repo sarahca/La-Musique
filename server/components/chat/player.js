@@ -68,6 +68,12 @@ function PlayerSocket(socket){
       case 'invalid nickname':
         self.room.invalidNickname(self);
         break;
+      case 'pause game':
+        self.room.gamePausedNotice(self);
+        break;
+      case 'restart game':
+        self.room.gameRestartedNotice(self);
+        break;
     }    
 
   });

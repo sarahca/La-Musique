@@ -4,21 +4,22 @@
 
   
   <div class="container">
-    <h3 ng-show="newPlayer && !user.getUserAdmin()">There might a round in progress, the next one will start soon...</h3>
+    <h3 ng-show="!roundInProgress && gameOnPause"> The game is on pause...</h3>
+    <h3 ng-show="newPlayer && !user.getUserAdmin() && !gameOnPause">There might a round in progress, the next one will start soon...</h3>
     <h3 ng-show="newPlayer && user.getUserAdmin()">The first round will start soon...</h3>
     <h3 ng-show="secondsLeft > 0" ng-model="questionSelected" ng-model="genreSelected">
       Next round is 'Guess the {{questionSelected}}' in {{genreSelected}} music in ... {{secondsLeft}} seconds
     </h3>
-    <h3 ng-show="roundInProgress && !gameOnPause" ng-model="questionSelected" ng-model="genreSelected">   
-      Current round is 'Guess the {{questionSelected}}' in {{genreSelected}} music
-    </h3>
+    <h3 ng-show="roundInProgress" ng-model="questionSelected" ng-model="genreSelected">   
+      Current round is <strong>'Guess the {{questionSelected}}' </strong> in {{genreSelected}} music. 
+      <span ng-show="user.getUserAdmin() && roundInProgress">
+        You are the game admin and can <strong>choose the next round</strong>:
+      </span>
+    </h3> 
     <h3 ng-show="secondsLeft == 0">Next round ... NOW, GOOD LUCK!!</h3>
-    <!-- <h3 ng-show="roundInProgress" ng-model="questionSelected" ng-model="genreSelected"> 
-      Current round is 'guess the {{questionSelected}}' in {{genreSelected}} music
-    </h3> -->
-    <h3 ng-show="user.getUserAdmin() && roundInProgress"> 
+    <!-- <h3 ng-show="user.getUserAdmin() && roundInProgress"> 
       You are the game admin and can choose the next round:
-    </h3>
+    </h3> -->
 
 
     <!--LAYOUT FOR ADMIN -->
@@ -56,7 +57,7 @@
       <div class="col-md-3" ng-show="user.getUserAdmin() && roundInProgress && !gameOnPause">
         <button id="pause-button" type="button" class="btn btn-default" ng-click="pauseGame()"> Pause game </button>
       </div>
-      <div class="col-md-3" ng-show="user.getUserAdmin() && roundInProgress && gameOnPause">
+      <div class="col-md-3" ng-show="user.getUserAdmin() && gameOnPause">
         <button id="pause-button" type="button" class="btn btn-default" ng-click="restartGame()"> Restart game </button>
       </div>
     </div> <!--END OF DROPDOWNS ROW -->
