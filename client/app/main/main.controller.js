@@ -38,6 +38,7 @@ angular.module('lamusiqueApp')
 
     $scope.pauseGame = function() {
       $scope.gameOnPause = $rootScope.gameOnPause = true;
+      $rootScope.$emit('game paused');
     };
 
     $scope.restartGame = function() {
@@ -48,6 +49,7 @@ angular.module('lamusiqueApp')
 
     //event sent by mediaPlayer controller when new song received
     $rootScope.$on('start countdown', function(){
+      $scope.gameOnPause = $rootScope.gameOnPause = false;
       $scope.roundInProgress = false;
       $scope.newPlayer =  false; //not a new player any more
       $scope.countdown();
@@ -67,5 +69,13 @@ angular.module('lamusiqueApp')
     $rootScope.$on('round ended', function() {
       $scope.roundInProgress = false;
     })
+
+    $rootScope.$on('game paused notice', function(){
+      $scope.gameOnPause = $rootScope.gameOnPause = true;
+    });
+
+    $rootScope.$on('game restarted notice', function(){
+      $scope.gameOnPause = $rootScope.gameOnPause = false;
+    });
 
   });

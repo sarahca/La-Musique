@@ -1,25 +1,32 @@
-
+header {
+    background-color: #5F7383;
+}
 
 #banner {
     border-bottom: none;
     margin-top: -20px;
-    height: 166px;
+    height: 115px;
     box-sizing: border-box;
 }
 
-#banner h1 {
-    font-size: 60px;
+#banner h3 {
+    font-size: 20px;
     line-height: 1;
     letter-spacing: -1px;
+    //background-color: #5F7383;
 }
 
 .hero-unit {
     position: relative;
-    padding: 15px 15px;
+    padding: 5px 5px;
     color: #F5F5F5;
-    /*text-align: center;*/
     text-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
-    background: #4393B9;
+}
+
+#leaderBoardContainer{
+    background-color: #009ddd;
+    color: white;
+    padding: 15px;
 }
 
 #media-player-row {
@@ -33,7 +40,8 @@
 }
 
 .musicGrid td{
-    background: lightblue;
+    background: #0dc19f;
+    color: white;
     border: 1px white solid;
     padding: 0;
     font-size: 31px;
@@ -49,7 +57,11 @@
 }
 
 .musicGrid td.selectedSuccess{
-    background-color: lightgreen;
+    background-color: #f3ae5d;
+}
+
+.progress-bar {
+    background-color: #EF5F50;
 }
 
 .answerTable{
@@ -57,11 +69,11 @@
 }
 
 .answerTable td{
-    width: 52px;
-    height: 52px;
-    font-size: 35px;
+    width: 50px;
+    height: 50px;
+    font-size: 30px;
     text-decoration: underline;
-    padding: 10px;
+    padding: 5px;
 }
 
 #answerValidation{

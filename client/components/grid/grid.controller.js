@@ -399,11 +399,21 @@ angular.module('lamusiqueApp')
             }
           }
         }
+        for(var p in answers){
+          if(answers.hasOwnProperty(p)){
+            console.log("p = " + p);
+            console.log("answers[p] = " + answers[p]);
+            answers[p] = null;
+            console.log("answers[p] now = " + answers[p]);
+          }
+        }    
+
+        console.log("answers = " + answers);
         return true;
       }
 
       return function(quizAnswer, userAnswer, validation){
-
+        console.log("~~~~answers = " + answers);
         if(quizAnswer === null){
           for(var p in ans_positions){
             if(ans_positions.hasOwnProperty(p)){
@@ -461,19 +471,17 @@ angular.module('lamusiqueApp')
               }
             }
 
-            //Check if all answers's placeholders are filled with correct answers
+             //Check if all answers's placeholders are filled with correct answers
             if(fullAnswerValidation(ans_positions)){
-              console.log("ALL ANSWERS ARE CORRECT");
+              answers[quizAnswer] = null;   
+              console.log("answers[quizAnswer] = " + answers[quizAnswer]);
+              console.log("ALL ANSWERS ARE CORRECT!");
               $("#musicSearch td").unbind('mousedown');
               $("#musicSearch td").unbind('mouseup');
               $("#musicSearch td").unbind('mouseover');
               $scope.calculateTotalTime();
-              for(var p in answers){
-                if(answers.hasOwnProperty(p)){
-                  answers[p] = null;
-                }
-              }       
-            }
+            }       
+            
 
           }else{
             answers[quizAnswer] = [];
@@ -493,7 +501,7 @@ angular.module('lamusiqueApp')
                 }
               }
             }
-          }        
+          } 
         }
       };
     }());

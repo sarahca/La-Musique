@@ -192,7 +192,8 @@ angular.module('lamusiqueApp')
           break;
         case 'is admin':
           changeAdminStatus(true);
-          newSongRequestCommand({'genre': $rootScope.genreSelected, 'question': $rootScope.questionSelected});
+          if ( !$scope.roundInProgress )
+            newSongRequestCommand({'genre': $rootScope.genreSelected, 'question': $rootScope.questionSelected});
           break;
         case 'not admin':
           $scope.user.setUserAdmin(false);
@@ -206,6 +207,13 @@ angular.module('lamusiqueApp')
         case 'update player number':
           $scope.numberOfPlayers = command['number_players'];
           break;
+        case 'pause game':
+          $rootScope.$emit('game paused notice');
+          break;
+        case 'restart game':
+          $rootScope.$emit('game restarted notice');
+          break;
+
       }    
     });
 
@@ -264,6 +272,26 @@ angular.module('lamusiqueApp')
       $scope.roundInProgress = false;
     });
 
+    $rootScope.$on('game paused', function(){
+      var message = {
+        'channel': $scope.channelName,
+        'message_type': 'command',
+        'command': 'pause game',
+        'time': Date.now(),
+      };
+      $scope.socket.emit('command', JSON.stringify(message));
+    });
+
+    $rootScope.$on('game restarted', function() {
+      var message = {
+        'channel': $scope.channelName,
+        'message_type': 'command',
+        'command': 'restart game',
+        'time': Date.now(),
+      };
+      $scope.socket.emit('command', JSON.stringify(message));
+    })
+
     // return a random color
     function getRandomRolor() {
       var letters = '0123456789'.split('');
@@ -321,7 +349,6 @@ angular.module('lamusiqueApp')
       $scope.socket.emit('command', JSON.stringify(message));
       $scope.hasSubmitted = true;
     };
-
 
   });
 
