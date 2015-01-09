@@ -27,9 +27,9 @@ var Grid = function(scope){
 
     .on("mouseup", function(event){
       event.stopPropagation();
-        isMouseDown = false;
-        scope.validateAnswer(selectedWord,"grid");
-        selectedWord = "";
+      isMouseDown = false;
+      scope.validateAnswer(selectedWord,"grid");
+      selectedWord = "";
     });
 
     grid = this;
@@ -403,21 +403,10 @@ angular.module('lamusiqueApp')
             }
           }
         }
-        for(var p in answers){
-          if(answers.hasOwnProperty(p)){
-            console.log("p = " + p);
-            console.log("answers[p] = " + answers[p]);
-            answers[p] = null;
-            console.log("answers[p] now = " + answers[p]);
-          }
-        }    
-
-        console.log("answers = " + answers);
         return true;
       }
 
       return function(quizAnswer, userAnswer, validation){
-        console.log("~~~~answers = " + answers);
         if(quizAnswer === null){
           for(var p in ans_positions){
             if(ans_positions.hasOwnProperty(p)){
@@ -480,8 +469,6 @@ angular.module('lamusiqueApp')
 
              //Check if all answers's placeholders are filled with correct answers
             if(fullAnswerValidation(ans_positions)){
-              answers[quizAnswer] = null;   
-              console.log("answers[quizAnswer] = " + answers[quizAnswer]);
               console.log("ALL ANSWERS ARE CORRECT!");
               $("#musicSearch td").unbind('mousedown');
               $("#musicSearch td").unbind('mouseup');
@@ -545,9 +532,7 @@ angular.module('lamusiqueApp')
 
     $scope.validateAnswer = function(userInput, type){
       if(type === "grid"){
-        console.log("userInput = " + userInput);
         if($scope.correctAnswer.split(" ").indexOf(userInput) > -1){
-          console.log("~~~~~~AHA !");
           $scope.generateAnswerPlaceholder($scope.correctAnswer, userInput, true)
           $('#musicSearch td').each(function(i, elem){
             if($(elem).hasClass("selected") == true){
