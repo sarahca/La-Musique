@@ -16,6 +16,14 @@ header {
     //background-color: #5F7383;
 }
 
+#navbar-main{
+    font-family: 'Oswald', sans-serif;
+}
+
+#navbarUserName{
+    text-transform: uppercase;
+}
+
 .hero-unit {
     position: relative;
     padding: 5px 5px;
@@ -90,4 +98,12 @@ header {
 
 #gridContainer{
     padding-bottom: 50px;
+}
+
+#inputBoxTitle, #wordSearch, #chat, #leaderBoardContainer{
+    font-family: 'Oswald', sans-serif;
+}
+
+#banner h3{
+    font-family: 'Oswald', sans-serif;
 }

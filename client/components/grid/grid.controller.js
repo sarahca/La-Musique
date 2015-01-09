@@ -417,7 +417,6 @@ angular.module('lamusiqueApp')
       }
 
       return function(quizAnswer, userAnswer, validation){
-        console.log("~~~~answers = " + answers);
         if(quizAnswer === null){
           for(var p in ans_positions){
             if(ans_positions.hasOwnProperty(p)){
