@@ -9,24 +9,27 @@ var Grid = function(scope){
   var selectedWord = "";
   
   $("#musicSearch td")
-    .on("mousedown",function() {
+    .on("mousedown",function(event) {
+      event.stopPropagation();
       isMouseDown = true;
       selectedWord += $(this).text();
       $(this).addClass("selected");
       return false;
     })
 
-    .on("mouseover",function () {
+    .on("mouseover",function (event) {
+      event.stopPropagation();
       if (isMouseDown) {
         selectedWord += $(this).text();
         $(this).addClass("selected");
       }
     })
 
-    .on("mouseup", function(){
-        isMouseDown = false;
-        scope.validateAnswer(selectedWord,"grid");
-        selectedWord = "";
+    .on("mouseup", function(event){
+      event.stopPropagation();
+      isMouseDown = false;
+      scope.validateAnswer(selectedWord,"grid");
+      selectedWord = "";
     });
 
     grid = this;
@@ -56,10 +59,6 @@ Grid.prototype.generateAnswer = function(answer){
   var MAXCELLSIZE = 9;
   var position = ["horizontal","vertical"];
   var songAnswer = answer.toUpperCase().split(" ");
-  var songPosition = {
-    horizontal: [],
-    vertical: []
-  };
 
   var horizontal = [['11', '12', '13', '14', '15', '16', '17', '18', '19'],
                     ['21', '22', '23', '24', '25', '26', '27', '28', '29'],
@@ -348,7 +347,7 @@ angular.module('lamusiqueApp')
     console.log('GridCtrl');
     
     $scope.correctAnswer = '';
-
+    $scope.hasSubmitted = false;
     $scope.resetGrid = function(){
       $('#musicSearch td').each(function(i, elem){
         $(elem).removeClass("selectedSuccess");
@@ -367,6 +366,7 @@ angular.module('lamusiqueApp')
 
     $rootScope.$on('update grid', function (e, data){
       $scope.mediaPlayer = MediaPlayer.player();
+      $scope.hasSubmitted = false;
       $scope.resetGrid();
       console.log('--- IN GRID UPDATE---- need to update grid received at ' + Date.now());
       console.log('--- IN GRID UPDATE ---- question in grid is guess the ' + data.question);
@@ -407,7 +407,6 @@ angular.module('lamusiqueApp')
       }
 
       return function(quizAnswer, userAnswer, validation){
-
         if(quizAnswer === null){
           for(var p in ans_positions){
             if(ans_positions.hasOwnProperty(p)){
@@ -454,6 +453,9 @@ angular.module('lamusiqueApp')
                     $("<td>").text(''+ ans_positions[t][0][u]).appendTo(tr);
                     for(var l = 0; l < answerPositions['answer_pos_'+t].length; l++){
                       $('#cell_'+answerPositions['answer_pos_'+t][l]).addClass("selectedSuccess");
+                      $('#cell_'+answerPositions['answer_pos_'+t][l]).unbind('mousedown');
+                      $('#cell_'+answerPositions['answer_pos_'+t][l]).unbind('mouseup');
+                      $('#cell_'+answerPositions['answer_pos_'+t][l]).unbind('mouseover');
                     }
                   }else{
                     $("<td>").text('_').appendTo(tr);
@@ -465,19 +467,17 @@ angular.module('lamusiqueApp')
               }
             }
 
-            //Check if all answers's placeholders are filled with correct answers
+             //Check if all answers's placeholders are filled with correct answers
             if(fullAnswerValidation(ans_positions)){
-              console.log("ALL ANSWERS ARE CORRECT");
+              console.log("ALL ANSWERS ARE CORRECT!");
               $("#musicSearch td").unbind('mousedown');
               $("#musicSearch td").unbind('mouseup');
               $("#musicSearch td").unbind('mouseover');
               $scope.calculateTotalTime();
-              for(var p in answers){
-                if(answers.hasOwnProperty(p)){
-                  answers[p] = null;
-                }
-              }       
+              
+              
             }
+            
 
           }else{
             answers[quizAnswer] = [];
@@ -497,7 +497,7 @@ angular.module('lamusiqueApp')
                 }
               }
             }
-          }        
+          } 
         }
       };
     }());
@@ -508,18 +508,22 @@ angular.module('lamusiqueApp')
     $scope.answer = '';
     
     $scope.calculateTotalTime = function(){
-      console.log("*************************************************");
-      console.log("************ Your time = "+ $scope.mediaPlayer.currentTime + " seconds");
-      console.log("*************************************************");
-      var time = $scope.mediaPlayer.currentTime
-      var data = {
-        song: $scope.song, 
-        guessTime: time
-      };
-      if (time < 30)
-        $rootScope.$emit('guess-time', data); 
-      else
-        $rootScope.$emit('good slow guess');
+      if($scope.hasSubmitted === false){
+        console.log("*************************************************");
+        console.log("************ Your time = "+ $scope.mediaPlayer.currentTime + " seconds");
+        console.log("*************************************************");
+        var time = $scope.mediaPlayer.currentTime
+        var data = {
+          song: $scope.song, 
+          guessTime: time
+        };
+        if (time < 30 && time > 0)
+          $rootScope.$emit('guess-time', data); 
+        else
+          $rootScope.$emit('good slow guess');
+        $scope.hasSubmitted = true;
+      }
+
     }
 
     $scope.$watch('answer', function(val) {
