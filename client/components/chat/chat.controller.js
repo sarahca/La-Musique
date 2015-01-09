@@ -326,6 +326,7 @@ angular.module('lamusiqueApp')
     });
 
     function submitGuessTime(data) {
+      console.log('received guess time ' + data.guessTime + ' for ' + data.song.title);
       if ($scope.hasSubmitted) {
         var message = {
           'channel': $scope.channelName,
