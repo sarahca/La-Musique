@@ -15,14 +15,14 @@ angular.module('lamusiqueApp')
     $scope.user = UserService;
 
     $scope.login = function(isValid) {
-      console.log('trying to submit');
+      //console.log('trying to submit');
       if (isValid) {
-        console.log('login form is valid');
+        //console.log('login form is valid');
         $http.post('/api/user/login',
          {'email': $scope.user.email,
           'password': $scope.user.password}).
         success(function(data, status, headers, config) {
-          console.log(data);
+          //console.log(data);
           $rootScope.$broadcast("userLoggedIn", data);
         }).
         error(function(data, status, headers, config) {

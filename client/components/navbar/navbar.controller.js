@@ -16,7 +16,7 @@ angular.module('lamusiqueApp')
     });
 
     $rootScope.$on('update points', function(e, data){
-      console.log('navbar received update points event for ' + data.points);
+      //console.log('navbar received update points event for ' + data.points);
       $scope.user.setUserPoints(data.points);
     });
 
