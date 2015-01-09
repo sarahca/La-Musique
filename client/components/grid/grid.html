@@ -1,12 +1,9 @@
 <!-- <div class="col-md-6"> -->
     <div ng-controller='GridCtrl'>
-      <h1 id="wordSearch"></h1>
       <br/>
-      <!--SUGGESTION SARAH-->
-      <h4>{{question}} <input type="text" ng-model="answer" ng-change="change()" /><span id="answerValidation"></span></h4>
+      <h4 id="inputBoxTitle">{{question}} <input type="text" ng-model="answer" ng-change="change()" /><span id="answerValidation"></span></h4>
       <br/>
-      <!--SUGGESTION SARAH-->
-      <h4>... OR TRY TO FIND THE ANSWER IN THE GRID BELOW </h4>
+      <h4 id="wordSearch">... OR TRY TO FIND THE ANSWER IN THE GRID BELOW </h4>
       <table class="musicGrid" id="musicSearch" >
         <tr>
           <td id="cell_11"></td>
