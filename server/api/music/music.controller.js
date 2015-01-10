@@ -16,8 +16,10 @@ var amazon_scraper = require('../../components/amazon_scraper/amazon_scraper.js'
         if ( err )
           callback({message: err}, null);
         if (song) {
+          console.log('song ' + JSON.stringify(song));
           amazon_scraper(song.artist, song.title, function(songID) {
             var outSong = JSON.parse(JSON.stringify(song));
+            console.log('amazon id ' + songID);
             outSong.amazonId = songID;
             callback(null, outSong);
           });
