@@ -253,7 +253,7 @@ Room.prototype.processGuessTime = function (player, data) {
                 });
               }
               else {
-                room.AnswerAlreadyRegistered(player);
+                room.answerAlreadyRegistered(player);
               }
             }
           });

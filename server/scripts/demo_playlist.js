@@ -30,7 +30,6 @@ var songs = [
   {artist: 'depeche mode' , title: 'enjoy the silence', genre: 'rock'},
   {artist: 'cardigans' , title: 'lovefool', genre: 'rock'},
   {artist: 'radiohead' , title: 'karma police', genre: 'rock'},
-  {artist: 'queen' , title: 'radio ga ga', genre: 'rock'}, // pop
   {artist: 'abba' , title: 'dancing queen', genre: 'pop'},
   {artist: 'madonna' , title: 'ray of light', genre: 'pop'},
   {artist: 'rihanna' , title: 'umbrella', genre: 'pop'},
