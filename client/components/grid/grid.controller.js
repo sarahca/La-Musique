@@ -353,7 +353,7 @@ angular.module('lamusiqueApp')
         $(elem).removeClass("selectedSuccess");
         $(elem).removeClass("selected");
       })
-      $scope.generateAnswerPlaceholder(null,null,false);
+      $scope.generateAnswerPlaceholder(null,null,false, true);
       $scope.answer = '';
       $('#answerValidation').html('');
 
@@ -386,7 +386,7 @@ angular.module('lamusiqueApp')
       var grid = new Grid($scope);
       grid.populateTable();
       grid.generateAnswer($scope.correctAnswer);
-      $scope.generateAnswerPlaceholder($scope.correctAnswer,null,false);
+      $scope.generateAnswerPlaceholder($scope.correctAnswer,null,false,true);
     });
 
     $scope.generateAnswerPlaceholder = (function(){
@@ -406,7 +406,19 @@ angular.module('lamusiqueApp')
         return true;
       }
 
-      return function(quizAnswer, userAnswer, validation){
+      return function(quizAnswer, userAnswer, validation, newRound){
+        if(newRound === true){
+          for(var ans in answers){
+            if(answers.hasOwnProperty(ans)){
+              answers[ans] = null;
+            }
+          }
+        }
+
+        console.log("userAnswer = " + userAnswer);
+        console.log("quizAnswer = " + quizAnswer);
+        console.log("answers[quizAnswer] = " + answers[quizAnswer]);
+
         if(quizAnswer === null){
           for(var p in ans_positions){
             if(ans_positions.hasOwnProperty(p)){
@@ -453,9 +465,9 @@ angular.module('lamusiqueApp')
                     $("<td>").text(''+ ans_positions[t][0][u]).appendTo(tr);
                     for(var l = 0; l < answerPositions['answer_pos_'+t].length; l++){
                       $('#cell_'+answerPositions['answer_pos_'+t][l]).addClass("selectedSuccess");
-                      $('#cell_'+answerPositions['answer_pos_'+t][l]).unbind('mousedown');
-                      $('#cell_'+answerPositions['answer_pos_'+t][l]).unbind('mouseup');
-                      $('#cell_'+answerPositions['answer_pos_'+t][l]).unbind('mouseover');
+                      // $('#cell_'+answerPositions['answer_pos_'+t][l]).unbind('mousedown');
+                      // $('#cell_'+answerPositions['answer_pos_'+t][l]).unbind('mouseup');
+                      // $('#cell_'+answerPositions['answer_pos_'+t][l]).unbind('mouseover');
                     }
                   }else{
                     $("<td>").text('_').appendTo(tr);
@@ -470,12 +482,10 @@ angular.module('lamusiqueApp')
              //Check if all answers's placeholders are filled with correct answers
             if(fullAnswerValidation(ans_positions)){
               console.log("ALL ANSWERS ARE CORRECT!");
-              $("#musicSearch td").unbind('mousedown');
-              $("#musicSearch td").unbind('mouseup');
-              $("#musicSearch td").unbind('mouseover');
-              $scope.calculateTotalTime();
-              
-              
+              // $("#musicSearch td").unbind('mousedown');
+              // $("#musicSearch td").unbind('mouseup');
+              // $("#musicSearch td").unbind('mouseover');
+              $scope.calculateTotalTime();      
             }
             
 
@@ -487,7 +497,7 @@ angular.module('lamusiqueApp')
               answers[quizAnswer].push(quiz_answer[v]);
             }
 
-            if(userAnswer === null){
+            if(userAnswer == null){
               for(var w = 1; w < answers[quizAnswer].length; w++){
                 for(var x = 0; x < answers[quizAnswer][w].length; x++){
                   $("<td>").text('_').appendTo(tr);
@@ -523,7 +533,6 @@ angular.module('lamusiqueApp')
           $rootScope.$emit('good slow guess');
         $scope.hasSubmitted = true;
       }
-
     }
 
     $scope.$watch('answer', function(val) {
@@ -533,7 +542,7 @@ angular.module('lamusiqueApp')
     $scope.validateAnswer = function(userInput, type){
       if(type === "grid"){
         if($scope.correctAnswer.split(" ").indexOf(userInput) > -1){
-          $scope.generateAnswerPlaceholder($scope.correctAnswer, userInput, true)
+          $scope.generateAnswerPlaceholder($scope.correctAnswer, userInput, true, false)
           $('#musicSearch td').each(function(i, elem){
             if($(elem).hasClass("selected") == true){
               $(elem).addClass("selectedSuccess");
@@ -551,13 +560,13 @@ angular.module('lamusiqueApp')
           $('#answerValidation').html('&#10004;');
           $('#answerValidation').removeClass('error');
           $('#answerValidation').addClass('success');
-          $scope.generateAnswerPlaceholder($scope.correctAnswer,angular.uppercase($scope.answer), true);
+          $scope.generateAnswerPlaceholder($scope.correctAnswer,angular.uppercase($scope.answer), true, false);
         }else if(userInput === $scope.correctAnswer){
           //$scope.calculateTotalTime();
           $('#answerValidation').html('&#10004;');
           $('#answerValidation').removeClass('error');
           $('#answerValidation').addClass('success');
-          $scope.generateAnswerPlaceholder($scope.correctAnswer,angular.uppercase($scope.answer), true);
+          $scope.generateAnswerPlaceholder($scope.correctAnswer,angular.uppercase($scope.answer), true, false);
         }else{
           $('#answerValidation').html('&#10008;');
           $('#answerValidation').addClass('error');

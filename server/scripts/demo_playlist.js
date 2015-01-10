@@ -30,7 +30,6 @@ var songs = [
   {artist: 'depeche mode' , title: 'enjoy the silence', genre: 'rock'},
   {artist: 'cardigans' , title: 'lovefool', genre: 'rock'},
   {artist: 'radiohead' , title: 'karma police', genre: 'rock'},
-  {artist: 'queen' , title: 'radio ga ga', genre: 'rock'}, // pop
   {artist: 'abba' , title: 'dancing queen', genre: 'pop'},
   {artist: 'madonna' , title: 'ray of light', genre: 'pop'},
   {artist: 'rihanna' , title: 'umbrella', genre: 'pop'},
@@ -41,7 +40,6 @@ var songs = [
   {artist: 'ace of base' , title: 'beautiful life', genre: 'pop'},
   {artist: 'eagle eye cherry' , title: 'save tonight', genre: 'pop'},
   {artist: 'michael jackson' , title: 'heal the world', genre: 'pop'},
-  {artist: 'ace of base' , title: 'happy nation', genre: 'pop'},
   {artist: 'phils collins' , title: 'two hearts', genre: 'pop'},
   {artist: 'britney spears' , title: 'womanizer', genre: 'pop'},
   {artist: 'bee gees' , title: 'night fever', genre: 'pop'},
