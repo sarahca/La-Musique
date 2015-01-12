@@ -16,11 +16,11 @@
         <div class="btn" ng-click="mediaPlayer.prev()">
           <i class="fa fa-step-backward"></i>
           <span>Prev</span>
-        </div>
-        <div class="btn btn-noclick">
+
+        </div> -->
+        <!-- <div class="btn btn-noclick">
           <span>currentTrack: <span class="badge">{{mediaPlayer.currentTrack}}</span></span>
-        </div>
-         -->
+        </div> -->
         <div class="btn btn-noclick pull-right">
           <span>volume: <span class="badge pull-right">{{mediaPlayer.volume * 100 | number:0}}%</span></span>
         </div>
@@ -31,7 +31,7 @@
           <span><i class="fa fa-volume-up"></i></span>
         </div>
         <div class="progress" ng-click="mediaPlayer.seek(mediaPlayer.duration * seekPercentage($event))">
-          <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" ng-style="{ width: mediaPlayer.currentTime*100/mediaPlayer.duration + '%' }"></div>
+          <div class="progress-bar" style= "background-color: #EF5F50" role="progressbar" aria-valuemin="0" aria-valuemax="100" ng-style="{ width: mediaPlayer.currentTime*100/mediaPlayer.duration + '%' }"></div>
           <div class="time" ng-show="mediaPlayer.formatTime">
               <span>{{mediaPlayer.formatTime}}</span><b>/</b><span>{{mediaPlayer.formatDuration}}</span>
           </div>    
