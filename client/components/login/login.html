@@ -1,0 +1,23 @@
+<div id="login" ng-controller="LoginCtrl as LoginCtrl">
+    <h3> Login </h3>
+
+    <!-- <div class="flash row-fluid">
+      <div class="flash-inner span4 offset4 alert alert-warning" ng-repeat="errorMsg in errorMessages">
+        {{errorMsg}}
+      </div>
+    </div> -->
+ 
+    <form name="loginForm" ng-submit="login(loginForm.$valid)" novalidate >
+      <div class="form-group">
+        <label for="email">Email address</label>
+        <input type="email" class="form-control" id="email" name="email" placeholder="Enter email" ng-model="user.email" required>
+        <p ng-show="loginForm.email.$error.required && loginForm.email.$dirty" class="help-block">An email address is required.</p>
+      </div>      
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" class="form-control" name="password" id="password" ng-model="user.password" placeholder="Password" required>
+        <p ng-show="loginForm.password.$error.required && loginForm.password.$dirty" class="help-block">A password is required.</p>
+      </div>
+      <button type="submit" class="btn btn-default" ng-disabled="loginForm.$invalid" style="width:100%;">Submit</button>
+    </form>
+  </div>

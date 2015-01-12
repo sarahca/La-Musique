@@ -1,0 +1,14 @@
+<div class="container" >
+  <div  class="row" ng-controller="LeaderboardCtrl">
+    <div class="col-lg-12">
+     <!--  <h2 class="page-header">TOP 5</h2> -->
+    <div class="col-md-2">
+      <span ng-show="leaders.length > 0"><strong> TOP 5 THIS ROUND</strong></span>
+    </div>
+    <div ng-repeat="leader in leaders">
+      <div class="col-md-2">
+        <span> {{leader.nickname}} - {{leader.points}} points</span>
+      </div>
+    </div>
+  </div>
+</div>

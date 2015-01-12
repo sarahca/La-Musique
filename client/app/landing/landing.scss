@@ -1,0 +1,254 @@
+.container {
+    display: table;
+    vertical-align: middle;
+}
+
+.vertical-center-row {
+    display: table-cell;
+    vertical-align: middle;
+    padding-top: 151px;
+}
+
+nav {
+  position: fixed !important;
+  right: 0;
+  top: 0;
+  float: right;
+  height: 100%;
+  z-index: 800;
+  -webkit-transform: translate3d(0, 0, 0);
+  -moz-transform: translate3d(0, 0, 0);
+  -ms-transform: translate3d(0, 0, 0);
+  -o-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+}
+
+.navbar-default {
+  background-color: transparent !important;
+   border: none !important;
+}
+
+.active a {
+  color: #f69c0e !important;
+}
+
+.btn:focus {
+   outline: none !important;
+}
+
+.arrow-button{
+  transition: 1s;
+  color: white;
+  border: 1px solid black;
+  background-color: black;
+  height: 40px;
+  border-radius: 50%;
+  animation: TOGGLE_BUTTON 1s ease-in-out infinite;
+  -webkit-animation: TOGGLE_BUTTON 1s ease-in-out infinite;
+  -o-animation: TOGGLE_BUTTON 1s ease-in-out infinite;
+  -moz-animation: TOGGLE_BUTTON 1s ease-in-out infinite;
+  -ms-animation: TOGGLE_BUTTON 1s ease-in-out infinite;
+}
+
+.arrow-button:hover, .arrow-button:focus, .arrow-button:active, .arrow-button.active, .open > .arrow-button.dropdown-toggle{
+  color: white;
+  background-color: black;
+}
+
+.arrow-button.slideLeft{
+  margin-right: 201px;
+}
+
+.landing-panel{
+  display: none;
+  width: 220px;
+  padding: 20px;
+  border-radius: 0;
+  background-color: #000;
+  color: #fff;
+}
+
+#appName{
+  color: #e27f3d;
+  font-family: 'Oswald', sans-serif;
+  position: absolute;
+  top: 192px;
+  left: 70px;
+  font-size: 30px;
+}
+
+// #register{
+//   display: none;
+// }
+
+#register-button{
+  color: #000 !important;
+  background-color: #000 !important;
+  border: none;
+  font-size: 12px;
+  margin-top: 12px;
+  width: 100%;
+}
+
+#backto-login-button {
+  color: #000 !important;
+  background-color: #000 !important;
+  border: none;
+  font-size: 12px;
+  margin-top: 12px;
+  width: 100%;
+}
+
+/* link to register if new user -color of the text in the button*/
+#signUpLink {
+  text-decoration: none !important;
+  color: yellow !important;
+}
+#signUpLink:hover {
+  text-decoration: none;
+}
+
+.landingIcon{
+  position: absolute;
+}
+
+.icon-1{
+  width: 100px;
+  top: 150px;
+  left: -77px;
+}
+
+.icon-2{
+  width: 80px;
+  top: 74px;
+  left: 220px;
+}
+
+.icon-3{
+  width: 100px;
+  top: 250px;
+  left: 98px;
+  animation: PLAY_BUTTON 1s ease-in-out infinite;
+  -webkit-animation: PLAY_BUTTON 1s ease-in-out infinite;
+  -o-animation: PLAY_BUTTON 1s ease-in-out infinite;
+  -moz-animation: PLAY_BUTTON 1s ease-in-out infinite;
+  -ms-animation: PLAY_BUTTON 1s ease-in-out infinite;
+}
+
+.icon-3:hover{
+  opacity: 0.8;
+}
+
+.icon-4{
+  width: 40px;
+  top: 108px;
+  left:80px;
+}
+
+.icon-5{
+  width: 51px;
+  top: 66px;
+  left: -17px;
+}
+
+.icon-6{
+  width: 93px;
+  top: 170px;
+  left: 270px;
+}
+
+.icon-7{
+  width: 80px;
+  top: 292px;
+  left: -26px;
+}
+
+.icon-9{
+  width: 80px;
+  top: 6px;
+  left: 113px;
+}
+
+.icon-10{
+  width: 65px;
+  top: 288px;
+  left: 260px;
+}
+
+.icon-13{
+  width: 60px;
+  top: 423px;
+  left: 34px;
+}
+
+.icon-15{
+  width: 71px;
+  top: 364px;
+  left: 168px;
+}
+
+@keyframes PLAY_BUTTON {
+    0%{transform:scale(1)}
+    50%{transform:scale(0.9)}
+    100%{transform:scale(1)}
+}
+@-webkit-keyframes PLAY_BUTTON {
+    0%{transform:scale(1)}
+    50%{transform:scale(0.9)}
+    100%{transform:scale(1)}
+}
+@-o-keyframes PLAY_BUTTON {
+    0%{transform:scale(1)}
+    50%{transform:scale(0.9)}
+    100%{transform:scale(1)}
+}
+@-moz-keyframes PLAY_BUTTON {
+    0%{transform:scale(1)}
+    50%{transform:scale(0.9)}
+    100%{transform:scale(1)}
+}
+@-ms-keyframes PLAY_BUTTON {
+    0%{transform:scale(1)}
+    50%{transform:scale(0.9)}
+    100%{transform:scale(1)}
+}
+
+@-webkit-keyframes PLAY_BUTTON {
+    0%{transform:scale(1)}
+    50%{transform:scale(0.9)}
+    100%{transform:scale(1)}
+}
+
+
+@keyframes TOGGLE_BUTTON {
+    0%{transform:scale(1)}
+    50%{transform:scale(0.9)}
+    100%{transform:scale(1)}
+}
+@-webkit-keyframes TOGGLE_BUTTON {
+    0%{transform:scale(1)}
+    50%{transform:scale(0.9)}
+    100%{transform:scale(1)}
+}
+@-o-keyframes TOGGLE_BUTTON {
+    0%{transform:scale(1)}
+    50%{transform:scale(0.9)}
+    100%{transform:scale(1)}
+}
+@-moz-keyframes TOGGLE_BUTTON {
+    0%{transform:scale(1)}
+    50%{transform:scale(0.9)}
+    100%{transform:scale(1)}
+}
+@-ms-keyframes TOGGLE_BUTTON {
+    0%{transform:scale(1)}
+    50%{transform:scale(0.9)}
+    100%{transform:scale(1)}
+}
+
+@-webkit-keyframes TOGGLE_BUTTON {
+    0%{transform:scale(1)}
+    50%{transform:scale(0.9)}
+    100%{transform:scale(1)}
+}
+
