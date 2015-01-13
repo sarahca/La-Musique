@@ -94,7 +94,7 @@ angular.module('lamusiqueApp')
 
     // post a new message
     $scope.sendMessage = function() {
-      console.log('sending message ' + $scope.newMsg.text);
+      //console.log('sending message ' + $scope.newMsg.text);
       var text = $scope.newMsg.text;
       if (!checkIfAnswer(text)) {
         var message = {

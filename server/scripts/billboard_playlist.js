@@ -1,3 +1,5 @@
+var config = require('../config/environment');
+
 var genres = ['country-songs', 'pop-songs', 'rock-songs', 'alternative-songs', 'r-and-b-songs'];
 var extraGenres = ['dance-electronic-songs', 'latin-songs', 'latin-pop-songs', 'hot-holiday-songs', 'jazz-songs'];
 var albumsGenres = ['Different Shades Of Blue'];
@@ -15,7 +17,8 @@ var async = require('async');
 var mongo = require('mongodb');
 var monk = require('monk');
 //var db = monk('localhost:27017/music');
-var db = monk('mongodb://localhost/lamusique-dev');
+//var db = monk('mongodb://localhost/lamusique-dev');
+var db = monk(config.mongo.uri);
 var collection = db.get('musics');
 
 
