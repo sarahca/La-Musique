@@ -9,29 +9,33 @@ var Grid = function(scope){
   var selectedWord = "";
   
   $("#musicSearch td")
-    .on("mousedown",function() {
+    .on("mousedown",function(event) {
+      event.stopPropagation();
       isMouseDown = true;
       selectedWord += $(this).text();
       $(this).addClass("selected");
       return false;
     })
 
-    .on("mouseover",function () {
+    .on("mouseover",function (event) {
+      event.stopPropagation();
       if (isMouseDown) {
         selectedWord += $(this).text();
         $(this).addClass("selected");
       }
     })
 
-    .on("mouseup", function(){
-        isMouseDown = false;
-        scope.validateAnswer(selectedWord,"grid");
-        selectedWord = "";
+    .on("mouseup", function(event){
+      event.stopPropagation();
+      isMouseDown = false;
+      scope.validateAnswer(selectedWord,"grid");
+      selectedWord = "";
     });
 
     grid = this;
 }
 
+//Remove indexes in horizontal array and associated indexes in vertical array
 Grid.prototype.updateHorizontal = function(horizontal, vertical, answer, horRow){
   for(var j = 0; j < answer.length; j++){
     var indexToRemoveHor = horizontal[horRow].indexOf(answer[j]);
@@ -42,6 +46,7 @@ Grid.prototype.updateHorizontal = function(horizontal, vertical, answer, horRow)
   }
 }
 
+//Remove indexes in vertical array and associated indexes in horizontal array
 Grid.prototype.updateVertical = function(horizontal,vertical,answer,verRow){
   for(var j = 0; j < answer.length; j++){
     var indexToRemoveVer = vertical[verRow].indexOf(answer[j]);
@@ -52,14 +57,11 @@ Grid.prototype.updateVertical = function(horizontal,vertical,answer,verRow){
   }
 }
 
+//Generate Quiz Answer in Grid
 Grid.prototype.generateAnswer = function(answer){
   var MAXCELLSIZE = 9;
   var position = ["horizontal","vertical"];
   var songAnswer = answer.toUpperCase().split(" ");
-  var songPosition = {
-    horizontal: [],
-    vertical: []
-  };
 
   var horizontal = [['11', '12', '13', '14', '15', '16', '17', '18', '19'],
                     ['21', '22', '23', '24', '25', '26', '27', '28', '29'],
@@ -116,7 +118,12 @@ Grid.prototype.generateAnswer = function(answer){
           var startPoint, endPoint;
           var usableRow = false;
 
-          for(var x = 0; x < horizontal.length; x++){
+          var randomRowToStart = hor_cell[Math.floor(Math.random() * hor_cell.length)] - 1;
+
+          for(var x = randomRowToStart; x < horizontal.length; x++){
+            if(x === 8 && x < horizontal.length){
+              x = 0;
+            }
             var occupied_container = [];
             var head = parseInt((x + 1) + '1');
             for(var j = head; j < head+8; j++){
@@ -226,13 +233,18 @@ Grid.prototype.generateAnswer = function(answer){
           var counter = 0;
           var startPoint, endPoint;
           var usableRow = false;
+
+
+          var randomColToStart = hor_cell[Math.floor(Math.random() * hor_cell.length)] - 1;
           
-          for(var x = 0; x < vertical.length; x++){
+          for(var x = randomColToStart; x < vertical.length; x++){
+            if(x === 8 && x < vertical.length){
+              x = 0;
+            }
             var occupied_container = [];
             var head =  parseInt('1' + (x + 1));
             for(var j = head; j < head+80; j += 10){
               if(vertical[x].indexOf(j.toString()) < 0){
-                console.log("j = " + j);
                 occupied_container.push([j.toString()]);
               }
             }
@@ -322,13 +334,9 @@ Grid.prototype.generateAnswer = function(answer){
     posVertical = false;
     }//end of if else horizontal or vertical
   }
-  // for(var ans in answerPositions){
-  //   if(answerPositions.hasOwnProperty(ans)){
-  //     console.log("Answer Position = " + answerPositions[ans]);
-  //   }
-  // }
 }
 
+//Populate Grid with random characters A-Z
 Grid.prototype.populateTable = function(){
   var alphabetSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   for(var p = 0; p < 10; p++){
@@ -341,15 +349,17 @@ Grid.prototype.populateTable = function(){
 angular.module('lamusiqueApp')
   .controller('GridCtrl', function ($rootScope, $scope, $filter, $timeout, MediaPlayer) {
     console.log('GridCtrl');
-    $scope.mediaPlayer = MediaPlayer.player();
+    
     $scope.correctAnswer = '';
+    $scope.hasSubmitted = false;
 
+    //resetGrid after each round
     $scope.resetGrid = function(){
       $('#musicSearch td').each(function(i, elem){
         $(elem).removeClass("selectedSuccess");
         $(elem).removeClass("selected");
       })
-      $scope.generateAnswerPlaceholder(null,null,false);
+      $scope.generateAnswerPlaceholder(null,null,false, true, null);
       $scope.answer = '';
       $('#answerValidation').html('');
 
@@ -360,8 +370,10 @@ angular.module('lamusiqueApp')
       }       
     }
 
+    //update grid ininiates the start of next round
     $rootScope.$on('update grid', function (e, data){
-      console.log('receiving update grid event');
+      $scope.mediaPlayer = MediaPlayer.player();
+      $scope.hasSubmitted = false;
       $scope.resetGrid();
       console.log('--- IN GRID UPDATE---- need to update grid received at ' + Date.now());
       console.log('--- IN GRID UPDATE ---- question in grid is guess the ' + data.question);
@@ -376,15 +388,15 @@ angular.module('lamusiqueApp')
       }else if(data.question === 'artist'){
         $scope.correctAnswer = angular.uppercase(data.song['artist']);
       }
-
       console.log("$scope.correctAnswer = " + $scope.correctAnswer);
       console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
       var grid = new Grid($scope);
       grid.populateTable();
       grid.generateAnswer($scope.correctAnswer);
-      $scope.generateAnswerPlaceholder($scope.correctAnswer,null,false);
+      $scope.generateAnswerPlaceholder($scope.correctAnswer,null,false,true, null);
     });
 
+    //Generate or Update Quiz Answer Placeholder
     $scope.generateAnswerPlaceholder = (function(){
 
       var answers = {};
@@ -402,7 +414,18 @@ angular.module('lamusiqueApp')
         return true;
       }
 
-      return function(quizAnswer, userAnswer, validation){
+      return function(quizAnswer, userAnswer, validation, newRound, ansType){
+        if(newRound === true){
+          for(var ans in answers){
+            if(answers.hasOwnProperty(ans)){
+              answers[ans] = null;
+            }
+          }
+        }
+
+        console.log("userAnswer = " + userAnswer);
+        console.log("quizAnswer = " + quizAnswer);
+        console.log("answers[quizAnswer] = " + answers[quizAnswer]);
 
         if(quizAnswer === null){
           for(var p in ans_positions){
@@ -434,9 +457,6 @@ angular.module('lamusiqueApp')
                 ans_positions[1][1] = true;
               }else if(userAnswer_len === 1 && quizAnswer.split(" ").length > 1){
                 var userAnswer_pos = answers[quizAnswer].indexOf(userAnswer);
-                // console.log("answers[quizAnswer] = " + answers[quizAnswer]);
-                // console.log("userAnswer_pos = " + userAnswer_pos)
-                // console.log("ans_positions[userAnswer_pos][1] = " + ans_positions[userAnswer_pos][1])
                 ans_positions[userAnswer_pos][1] = true;
               }else{ 
                 userAnswer = userAnswer.split(" ");
@@ -450,7 +470,6 @@ angular.module('lamusiqueApp')
               for(var t = 1; t < answers[quizAnswer].length; t++){
                 for(var u = 0; u < answers[quizAnswer][t].length; u++){
                   if(ans_positions[t][1] === true){
-                    //console.log("ans_positions[t] = " + ans_positions[t]);
                     $("<td>").text(''+ ans_positions[t][0][u]).appendTo(tr);
                     for(var l = 0; l < answerPositions['answer_pos_'+t].length; l++){
                       $('#cell_'+answerPositions['answer_pos_'+t][l]).addClass("selectedSuccess");
@@ -465,16 +484,18 @@ angular.module('lamusiqueApp')
               }
             }
 
-            //Check if all answers's placeholders are filled with correct answers
+             //Check if all answers's placeholders are filled with correct answers
             if(fullAnswerValidation(ans_positions)){
-              console.log("ALL ANSWERS ARE CORRECT");
-              $scope.calculateTotalTime();
-              for(var p in answers){
-                if(answers.hasOwnProperty(p)){
-                  answers[p] = null;
-                }
-              }       
+              if(ansType === 'grid'){
+                $scope.answer = quizAnswer;
+                $('#answerValidation').html('&#10004;');
+                $('#answerValidation').removeClass('error');
+                $('#answerValidation').addClass('success');
+              }
+              console.log("ALL ANSWERS ARE CORRECT!");
+              $scope.calculateTotalTime();      
             }
+            
 
           }else{
             answers[quizAnswer] = [];
@@ -484,7 +505,7 @@ angular.module('lamusiqueApp')
               answers[quizAnswer].push(quiz_answer[v]);
             }
 
-            if(userAnswer === null){
+            if(userAnswer == null){
               for(var w = 1; w < answers[quizAnswer].length; w++){
                 for(var x = 0; x < answers[quizAnswer][w].length; x++){
                   $("<td>").text('_').appendTo(tr);
@@ -494,7 +515,7 @@ angular.module('lamusiqueApp')
                 }
               }
             }
-          }        
+          } 
         }
       };
     }());
@@ -505,20 +526,21 @@ angular.module('lamusiqueApp')
     $scope.answer = '';
     
     $scope.calculateTotalTime = function(){
-      $("#musicSearch td").unbind('mouseup');
-      $("#musicSearch td").unbind('mouseover');
-      console.log("*************************************************");
-      console.log("************ Your time = "+ $scope.mediaPlayer.currentTime + " seconds");
-      console.log("*************************************************");
-      var time = $scope.mediaPlayer.currentTime
-      var data = {
-        song: $scope.song, 
-        guessTime: time
-      };
-      if (time < 30)
-        $rootScope.$emit('guess-time', data); 
-      else
-        $rootScope.$emit('good slow guess');
+      if($scope.hasSubmitted === false){
+        console.log("*************************************************");
+        console.log("************ Your time = "+ $scope.mediaPlayer.currentTime + " seconds");
+        console.log("*************************************************");
+        var time = $scope.mediaPlayer.currentTime
+        var data = {
+          song: $scope.song, 
+          guessTime: time
+        };
+        if (time < 30 && time > 0)
+          $rootScope.$emit('guess-time', data); 
+        else
+          $rootScope.$emit('good slow guess');
+        $scope.hasSubmitted = true;
+      }
     }
 
     $scope.$watch('answer', function(val) {
@@ -528,7 +550,7 @@ angular.module('lamusiqueApp')
     $scope.validateAnswer = function(userInput, type){
       if(type === "grid"){
         if($scope.correctAnswer.split(" ").indexOf(userInput) > -1){
-          $scope.generateAnswerPlaceholder($scope.correctAnswer, userInput, true)
+          $scope.generateAnswerPlaceholder($scope.correctAnswer, userInput, true, false, 'grid')
           $('#musicSearch td').each(function(i, elem){
             if($(elem).hasClass("selected") == true){
               $(elem).addClass("selectedSuccess");
@@ -537,7 +559,6 @@ angular.module('lamusiqueApp')
           })
           
         }else{
-          console.log("INCORRECT");
           $('#musicSearch td').removeClass("selected");
 
         }
@@ -547,13 +568,13 @@ angular.module('lamusiqueApp')
           $('#answerValidation').html('&#10004;');
           $('#answerValidation').removeClass('error');
           $('#answerValidation').addClass('success');
-          $scope.generateAnswerPlaceholder($scope.correctAnswer,angular.uppercase($scope.answer), true);
+          $scope.generateAnswerPlaceholder($scope.correctAnswer,angular.uppercase($scope.answer), true, false, 'inputBox');
         }else if(userInput === $scope.correctAnswer){
           //$scope.calculateTotalTime();
           $('#answerValidation').html('&#10004;');
           $('#answerValidation').removeClass('error');
           $('#answerValidation').addClass('success');
-          $scope.generateAnswerPlaceholder($scope.correctAnswer,angular.uppercase($scope.answer), true);
+          $scope.generateAnswerPlaceholder($scope.correctAnswer,angular.uppercase($scope.answer), true, false, 'inputBox');
         }else{
           $('#answerValidation').html('&#10008;');
           $('#answerValidation').addClass('error');

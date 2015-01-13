@@ -14,7 +14,7 @@ angular.module('lamusiqueApp')
     });
 
     $rootScope.$on('clear leaderboard', function() {
-      console.log('leaderboard received clear leaders event');
+      //console.log('leaderboard received clear leaders event');
       $scope.leaders = [];
     })
   });

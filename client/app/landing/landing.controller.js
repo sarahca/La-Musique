@@ -9,24 +9,7 @@ angular.module('lamusiqueApp')
     $('#right-panel-link').panelslider({side: 'right', clickClose: false, duration: 700 });
     $('#right-panel-link').on('click', function(){
       $('.arrow-button').toggleClass("slideLeft");
-    });
-
-    $('#signUpLink').on('click', function(){
-      console.log("signUpLink clicked");
-      $('#login').hide();
-      $('#register').show();
-      $('#register-button').hide();
-      $('#backto-login-button').show();
-    });
-
-    $('#backToLogin').on('click', function(){
-      console.log("backToLogin clicked");
-      $('#login').show();
-      $('#register').hide();
-      $('#backto-login-button').hide();
-      $('#register-button').show();
-    });
-    
+    });    
 
     var controller = this;
     controller.saveUserDataOnLogin = $scope.user.saveUserDataOnLogin;

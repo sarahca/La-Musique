@@ -253,7 +253,7 @@ Room.prototype.processGuessTime = function (player, data) {
                 });
               }
               else {
-                room.AnswerAlreadyRegistered(player);
+                room.answerAlreadyRegistered(player);
               }
             }
           });
@@ -336,6 +336,24 @@ Room.prototype.comparePlayersPoints = function(player1, player2){
   return (player2.points - player1.points);
 }
 
+
+Room.prototype.gamePausedNotice = function(player){
+  var message = {
+    'message_type': 'command',
+    'command': 'pause game',
+    'time': Date.now(),
+    };
+  this.broadcast(message);
+}
+
+Room.prototype.gameRestartedNotice = function(player){
+  var message = {
+    'message_type': 'command',
+    'command': 'restart game',
+    'time': Date.now(),
+    };
+  this.broadcast(message);
+}
 
 // handle front end request to change nickname
 Room.prototype.changeNickname = function (player, newNickname) {

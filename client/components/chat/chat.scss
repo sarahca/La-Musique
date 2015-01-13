@@ -1,20 +1,31 @@
 ///// CHAT ////////////////
+
+#chat {
+  border-color: #5F7383;
+}
+
 #chat.panel {
   margin-top: 65px;
   width: 560px;
-  height: 400px;
+  height: 520px;
   border:1px solid black;
   overflow-x: wrap;
 }
 
 #chat-main {
-  height: 360px;
+  height: 480px;
+}
+
+#chat-heading {
+  background-color: #EDAE53;
+  color: #5F7383;
+  font-style: bold;
 }
 #chat-body.panel-body {
   overflow-y: scroll;
   position: relative;
   //overflow: auto;
-  height: 305px;
+  height: 425px;
   //min-height: 100%;
   //margin-bottom: -55px;
 }
@@ -25,6 +36,7 @@
 
 #chat-footer.panel-footer, #chat-body.panel-body:after {
   height: 40px;
+  background-color: transparent;
 }
 
 #chat-footer.panel-footer {
